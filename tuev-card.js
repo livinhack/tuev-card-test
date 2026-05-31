@@ -2,6 +2,98 @@
 
 // console.log("TUEV CARD TEST 32");
 
+const TUEV_CARD_TRANSLATIONS = {
+    en: {
+        "error.no_entities": "No TÜV entities configured.",
+        "error.entity_not_found": "Entity not found",
+
+        "overlay.updating": "Updating…",
+        "overlay.updated": "Updated",
+        "overlay.expired": "Inspection expired!",
+        "overlay.due": "Inspection due!",
+        "overlay.updating_text": "Calculating new sticker.",
+        "overlay.updated_text": "New sticker applied.",
+        "overlay.question": "Inspection passed?",
+        "button.wait": "Please wait",
+        "button.done": "Done",
+        "button.confirm": "Confirm",
+
+        "details.next_inspection": "Next inspection",
+        "status.valid": "valid",
+        "status.due": "due",
+        "status.expired": "expired",
+
+        "editor.entities": "TÜV entities",
+        "editor.no_entity_selected": "No entity selected.",
+        "editor.remove": "Remove",
+        "editor.add": "Add",
+        "editor.close_picker": "Close selection",
+        "editor.search": "Search",
+        "editor.no_more_entities": "No more matching TÜV entities found.",
+        "editor.single_entity_hint": "A single entity automatically uses the single-card view.",
+        "editor.layout": "Layout",
+        "editor.layout_auto": "Automatic",
+        "editor.layout_horizontal": "Prefer side by side",
+        "editor.layout_vertical": "Stack vertically",
+        "editor.sort": "Sorting",
+        "editor.sort_config": "As configured",
+        "editor.sort_name": "Vehicle name",
+        "editor.sort_plate": "License plate",
+        "editor.sort_due_date": "Inspection due date",
+        "editor.sort_status": "Status",
+        "editor.show_details": "Show details",
+        "editor.badge_size": "Sticker size",
+        "editor.compact_badge_size": "Compact sticker size"
+    },
+    de: {
+        "error.no_entities": "Keine TÜV-Entitäten konfiguriert.",
+        "error.entity_not_found": "Entity nicht gefunden",
+
+        "overlay.updating": "Aktualisiere…",
+        "overlay.updated": "Aktualisiert",
+        "overlay.expired": "TÜV abgelaufen!",
+        "overlay.due": "TÜV fällig!",
+        "overlay.updating_text": "Neue Plakette wird berechnet.",
+        "overlay.updated_text": "Neue Plakette übernommen.",
+        "overlay.question": "Prüfung bestanden?",
+        "button.wait": "Bitte warten",
+        "button.done": "Fertig",
+        "button.confirm": "Bestätigen",
+
+        "details.next_inspection": "Nächste HU",
+        "status.valid": "gültig",
+        "status.due": "fällig",
+        "status.expired": "abgelaufen",
+
+        "editor.entities": "TÜV-Entitäten",
+        "editor.no_entity_selected": "Noch keine Entität ausgewählt.",
+        "editor.remove": "Entfernen",
+        "editor.add": "Hinzufügen",
+        "editor.close_picker": "Auswahl schließen",
+        "editor.search": "Suchen",
+        "editor.no_more_entities": "Keine weiteren passenden TÜV-Entitäten gefunden.",
+        "editor.single_entity_hint": "Bei einer Entität wird automatisch die Einzelansicht genutzt.",
+        "editor.layout": "Layout",
+        "editor.layout_auto": "Automatisch",
+        "editor.layout_horizontal": "Nebeneinander bevorzugen",
+        "editor.layout_vertical": "Untereinander",
+        "editor.sort": "Sortierung",
+        "editor.sort_config": "Wie konfiguriert",
+        "editor.sort_name": "Fahrzeugname",
+        "editor.sort_plate": "Kennzeichen",
+        "editor.sort_due_date": "HU-Fälligkeit",
+        "editor.sort_status": "Status",
+        "editor.show_details": "Details anzeigen",
+        "editor.badge_size": "Plakettengröße",
+        "editor.compact_badge_size": "Kompakte Plakettengröße"
+    }
+};
+
+function getTuevCardLanguage(hass) {
+    const language = hass?.locale?.language || hass?.language || "en";
+    return String(language).toLowerCase().startsWith("de") ? "de" : "en";
+}
+
 class TuevCard extends HTMLElement {
     static getConfigElement() {
         return document.createElement("tuev-card-editor");
@@ -23,8 +115,19 @@ class TuevCard extends HTMLElement {
             layout: "auto",
             sort: "config",
             show_details: true,
+            badge_size: 250,
+            compact_badge_size: 175,
             ...(entityId ? { entity: entityId } : {})
         };
+    }
+
+    localize(key) {
+        const language = getTuevCardLanguage(this._hass);
+        return (
+            TUEV_CARD_TRANSLATIONS[language]?.[key] ||
+            TUEV_CARD_TRANSLATIONS.en[key] ||
+            key
+        );
     }
 
     setConfig(config) {
@@ -32,7 +135,7 @@ class TuevCard extends HTMLElement {
         const allowedSorts = ["config", "name", "plate", "due_date", "status"];
 
         if (!config.entity && !config.entities) {
-            throw new Error("Bitte entity oder entities angeben.");
+            throw new Error("Please provide entity or entities.");
         }
 
         const layout = allowedLayouts.includes(config.layout)
@@ -65,7 +168,7 @@ class TuevCard extends HTMLElement {
             this.innerHTML = `
                 <ha-card>
                     <div style="padding:16px;">
-                        Keine TÜV-Entitäten konfiguriert.
+                        ${this.localize("error.no_entities")}
                     </div>
                 </ha-card>
             `;
@@ -237,7 +340,7 @@ class TuevCard extends HTMLElement {
                     border: 1px solid var(--divider-color);
                 ">
                     <div style="font-weight: 600; margin-bottom: 4px;">
-                        Entity nicht gefunden
+                        ${this.localize("error.entity_not_found")}
                     </div>
                     <div style="font-size: 13px; opacity: 0.75;">
                         ${entityId}
@@ -249,26 +352,23 @@ class TuevCard extends HTMLElement {
         const ui = this.getUiState(entityId);
         const attr = entity.attributes;
 
-        const vehicleName = attr.vehicle_name || attr.friendly_name || "Fahrzeug";
+        const vehicleName = attr.vehicle_name || attr.friendly_name || "Vehicle";
         const plate = attr.plate || "";
         const month = Number(attr.month || 1);
         const year = Number(attr.year || new Date().getFullYear());
 
         const status = attr.status || entity.state || "";
-        const dueDate = attr.due_date || "";
         const showDetails = this.config.show_details !== false;
 
         const statusLabel = {
-            valid: "gültig",
-            due: "fällig",
-            expired: "abgelaufen"
+            valid: this.localize("status.valid"),
+            due: this.localize("status.due"),
+            expired: this.localize("status.expired")
         }[status] || status;
 
         const huLabel = month && year
-            ? `HU ${String(month).padStart(2, "0")}/${year}`
-            : dueDate
-                ? `HU ${dueDate}`
-                : "";
+            ? `${this.localize("details.next_inspection")}: ${String(month).padStart(2, "0")}/${year}`
+            : "";
 
         const fallbackRotation = (month % 12) * 30;
         const rotation = Number.isFinite(Number(attr.rotation))
@@ -335,24 +435,24 @@ class TuevCard extends HTMLElement {
             attr.status === "expired";
 
         const overlayTitle = ui.confirming
-            ? "Aktualisiere…"
+            ? this.localize("overlay.updating")
             : showSuccess
-                ? "Aktualisiert"
+                ? this.localize("overlay.updated")
                 : isExpired
-                    ? "TÜV abgelaufen!"
-                    : "TÜV fällig!";
+                    ? this.localize("overlay.expired")
+                    : this.localize("overlay.due");
 
         const overlayText = ui.confirming
-            ? "Neue Plakette wird berechnet."
+            ? this.localize("overlay.updating_text")
             : showSuccess
-                ? "Neue Plakette übernommen."
-                : "Prüfung bestanden?";
+                ? this.localize("overlay.updated_text")
+                : this.localize("overlay.question");
 
         const buttonText = ui.confirming
-            ? "Bitte warten"
+            ? this.localize("button.wait")
             : showSuccess
-                ? "Fertig"
-                : "Bestätigen";
+                ? this.localize("button.done")
+                : this.localize("button.confirm");
 
         const displayBadge = ui.frozenBadge
             ? ui.frozenBadge
@@ -881,6 +981,15 @@ class TuevCardEditor extends HTMLElement {
         this.render();
     }
 
+    localize(key) {
+        const language = getTuevCardLanguage(this._hass);
+        return (
+            TUEV_CARD_TRANSLATIONS[language]?.[key] ||
+            TUEV_CARD_TRANSLATIONS.en[key] ||
+            key
+        );
+    }
+
     getEntityIdsFromConfig() {
         if (!this._config) {
             return [];
@@ -989,7 +1098,7 @@ class TuevCardEditor extends HTMLElement {
                         font-weight: 600;
                         margin-bottom: 8px;
                     ">
-                        TÜV-Entitäten
+                        ${this.localize("editor.entities")}
                     </label>
 
                     <div style="
@@ -1032,7 +1141,7 @@ class TuevCardEditor extends HTMLElement {
                                             <button
                                                 type="button"
                                                 data-remove-entity="${entityId}"
-                                                title="Entfernen"
+                                                title="${this.localize("editor.remove")}"
                                                 style="
                                                     border: none;
                                                     background: transparent;
@@ -1045,7 +1154,7 @@ class TuevCardEditor extends HTMLElement {
                                             >×</button>
                                         </span>
                                     `).join("")
-                                    : `<span style="font-size: 13px; opacity: 0.7;">Noch keine Entität ausgewählt.</span>`
+                                    : `<span style="font-size: 13px; opacity: 0.7;">${this.localize("editor.no_entity_selected")}</span>`
                             }
                         </div>
 
@@ -1068,7 +1177,7 @@ class TuevCardEditor extends HTMLElement {
                                     opacity: ${hasAvailableToAdd ? "1" : "0.6"};
                                 "
                             >
-                                ${this._pickerOpen ? "Auswahl schließen" : "Hinzufügen"}
+                                ${this._pickerOpen ? this.localize("editor.close_picker") : this.localize("editor.add")}
                             </button>
 
                             ${this._pickerOpen ? `
@@ -1083,7 +1192,7 @@ class TuevCardEditor extends HTMLElement {
                                         id="entitySearch"
                                         type="text"
                                         value="${this.escapeHtml(this._searchText)}"
-                                        placeholder="Suchen"
+                                        placeholder="${this.localize("editor.search")}"
                                         style="
                                             width: 100%;
                                             box-sizing: border-box;
@@ -1130,7 +1239,7 @@ class TuevCardEditor extends HTMLElement {
                                                     </button>
                                                 `).join("")
                                                 : `<div style="font-size: 13px; opacity: 0.7; padding: 8px;">
-                                                    Keine weiteren passenden TÜV-Entitäten gefunden.
+                                                    ${this.localize("editor.no_more_entities")}
                                                 </div>`
                                         }
                                     </div>
@@ -1144,7 +1253,7 @@ class TuevCardEditor extends HTMLElement {
                         opacity: 0.75;
                         margin-top: 6px;
                     ">
-                        Bei einer Entität wird automatisch die Einzelansicht genutzt.
+                        ${this.localize("editor.single_entity_hint")}
                     </div>
                 </div>
 
@@ -1154,7 +1263,7 @@ class TuevCardEditor extends HTMLElement {
                         font-weight: 600;
                         margin-bottom: 6px;
                     ">
-                        Layout
+                        ${this.localize("editor.layout")}
                     </label>
 
                     <select
@@ -1169,9 +1278,9 @@ class TuevCardEditor extends HTMLElement {
                             color: var(--primary-text-color);
                         "
                     >
-                        <option value="auto" ${this._config.layout === "auto" ? "selected" : ""}>Automatisch</option>
-                        <option value="horizontal" ${this._config.layout === "horizontal" ? "selected" : ""}>Nebeneinander bevorzugen</option>
-                        <option value="vertical" ${this._config.layout === "vertical" ? "selected" : ""}>Untereinander</option>
+                        <option value="auto" ${this._config.layout === "auto" ? "selected" : ""}>${this.localize("editor.layout_auto")}</option>
+                        <option value="horizontal" ${this._config.layout === "horizontal" ? "selected" : ""}>${this.localize("editor.layout_horizontal")}</option>
+                        <option value="vertical" ${this._config.layout === "vertical" ? "selected" : ""}>${this.localize("editor.layout_vertical")}</option>
                     </select>
                 </div>
 
@@ -1181,7 +1290,7 @@ class TuevCardEditor extends HTMLElement {
                         font-weight: 600;
                         margin-bottom: 6px;
                     ">
-                        Sortierung
+                        ${this.localize("editor.sort")}
                     </label>
 
                     <select
@@ -1196,11 +1305,11 @@ class TuevCardEditor extends HTMLElement {
                             color: var(--primary-text-color);
                         "
                     >
-                        <option value="config" ${this._config.sort === "config" ? "selected" : ""}>Wie konfiguriert</option>
-                        <option value="name" ${this._config.sort === "name" ? "selected" : ""}>Fahrzeugname</option>
-                        <option value="plate" ${this._config.sort === "plate" ? "selected" : ""}>Kennzeichen</option>
-                        <option value="due_date" ${this._config.sort === "due_date" ? "selected" : ""}>HU-Fälligkeit</option>
-                        <option value="status" ${this._config.sort === "status" ? "selected" : ""}>Status</option>
+                        <option value="config" ${this._config.sort === "config" ? "selected" : ""}>${this.localize("editor.sort_config")}</option>
+                        <option value="name" ${this._config.sort === "name" ? "selected" : ""}>${this.localize("editor.sort_name")}</option>
+                        <option value="plate" ${this._config.sort === "plate" ? "selected" : ""}>${this.localize("editor.sort_plate")}</option>
+                        <option value="due_date" ${this._config.sort === "due_date" ? "selected" : ""}>${this.localize("editor.sort_due_date")}</option>
+                        <option value="status" ${this._config.sort === "status" ? "selected" : ""}>${this.localize("editor.sort_status")}</option>
                     </select>
                 </div>
 
@@ -1216,15 +1325,16 @@ class TuevCardEditor extends HTMLElement {
                         type="checkbox"
                         ${this._config.show_details !== false ? "checked" : ""}
                     >
-                    Details anzeigen
+                    ${this.localize("editor.show_details")}
                 </label>
+
                 <div>
                     <label style="
                         display: block;
                         font-weight: 600;
                         margin-bottom: 6px;
                     ">
-                        Plakettengröße
+                        ${this.localize("editor.badge_size")}
                     </label>
 
                     <input
@@ -1252,7 +1362,7 @@ class TuevCardEditor extends HTMLElement {
                         font-weight: 600;
                         margin-bottom: 6px;
                     ">
-                        Kompakte Plakettengröße
+                        ${this.localize("editor.compact_badge_size")}
                     </label>
 
                     <input
@@ -1272,7 +1382,7 @@ class TuevCardEditor extends HTMLElement {
                             color: var(--primary-text-color);
                         "
                     >
-                </div>                
+                </div>
             </div>
         `;
 
@@ -1334,13 +1444,14 @@ class TuevCardEditor extends HTMLElement {
         this.querySelector("#showDetails")?.addEventListener("change", () => {
             this.updateConfig();
         });
+
         this.querySelector("#badgeSize")?.addEventListener("input", () => {
             this.updateConfig();
         });
 
         this.querySelector("#compactBadgeSize")?.addEventListener("input", () => {
             this.updateConfig();
-        });        
+        });
     }
 
     applyEntities() {
