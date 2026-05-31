@@ -1,4 +1,4 @@
-import { localize } from "./translations.js";
+import { localize } from "./translations.js?v=42";
 
 export class TuevCardEditor extends HTMLElement {
     setConfig(config) {
@@ -6,6 +6,7 @@ export class TuevCardEditor extends HTMLElement {
             layout: "auto",
             sort: "config",
             show_details: true,
+            plate_style: "text",
             ...config
         };
 
@@ -352,6 +353,32 @@ export class TuevCardEditor extends HTMLElement {
                     </select>
                 </div>
 
+                <div>
+                    <label style="
+                        display: block;
+                        font-weight: 600;
+                        margin-bottom: 6px;
+                    ">
+                        ${this.localize("editor.plate_style")}
+                    </label>
+
+                    <select
+                        id="plateStyle"
+                        style="
+                            width: 100%;
+                            box-sizing: border-box;
+                            padding: 8px;
+                            border-radius: 6px;
+                            border: 1px solid var(--divider-color);
+                            background: var(--card-background-color);
+                            color: var(--primary-text-color);
+                        "
+                    >
+                        <option value="text" ${this._config.plate_style !== "plate" ? "selected" : ""}>${this.localize("editor.plate_style_text")}</option>
+                        <option value="plate" ${this._config.plate_style === "plate" ? "selected" : ""}>${this.localize("editor.plate_style_plate")}</option>
+                    </select>
+                </div>
+
                 <label style="
                     display: flex;
                     align-items: center;
@@ -465,6 +492,10 @@ export class TuevCardEditor extends HTMLElement {
             this.updateConfig();
         });
 
+        this.querySelector("#plateStyle")?.addEventListener("change", () => {
+            this.updateConfig();
+        });
+
         this.querySelector("#showDetails")?.addEventListener("change", () => {
             this.updateConfig();
         });
@@ -503,6 +534,7 @@ export class TuevCardEditor extends HTMLElement {
     updateConfig() {
         const layout = this.querySelector("#layout")?.value || "auto";
         const sort = this.querySelector("#sort")?.value || "config";
+        const plateStyle = this.querySelector("#plateStyle")?.value || "text";
         const showDetails = this.querySelector("#showDetails")?.checked ?? true;
         const badgeSizeRaw = this.querySelector("#badgeSize")?.value;
 
@@ -510,6 +542,7 @@ export class TuevCardEditor extends HTMLElement {
             ...this._config,
             layout,
             sort,
+            plate_style: plateStyle,
             show_details: showDetails
         };
 

@@ -1,8 +1,9 @@
 // TÜV Card v0.1.0
 
-import { localize } from "./src/translations.js";
-import { renderBadge } from "./src/badge-renderer.js";
-import { TuevCardEditor } from "./src/tuev-card-editor.js";
+import { localize } from "./src/translations.js?v=42";
+import { renderBadge } from "./src/badge-renderer.js?v=42";
+import { renderLicensePlate } from "./src/plate-renderer.js?v=55";
+import { TuevCardEditor } from "./src/tuev-card-editor.js?v=42";
 
 class TuevCard extends HTMLElement {
     static getConfigElement() {
@@ -37,6 +38,7 @@ class TuevCard extends HTMLElement {
     setConfig(config) {
         const allowedLayouts = ["auto", "horizontal", "vertical"];
         const allowedSorts = ["config", "name", "plate", "due_date", "status"];
+        const allowedPlateStyles = ["text", "plate"];
 
         if (!config.entity && !config.entities) {
             throw new Error("Please provide entity or entities.");
@@ -50,8 +52,13 @@ class TuevCard extends HTMLElement {
             ? config.sort
             : "config";
 
+        const plateStyle = allowedPlateStyles.includes(config.plate_style)
+            ? config.plate_style
+            : "text";            
+            
         this.config = {
             show_details: true,
+            plate_style: plateStyle,
             ...config,
             layout,
             sort
@@ -398,16 +405,27 @@ class TuevCard extends HTMLElement {
                         ${vehicleName}
                     </div>
 
-                    <div style="
-                        font-size: ${compact ? "13px" : "15px"};
-                        opacity: 0.75;
-                        letter-spacing: 0.08em;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                    ">
-                        ${plate}
-                    </div>
+                    ${this.config.plate_style === "plate" && plate ? `
+                        <div style="
+                            display: flex;
+                            justify-content: ${compact ? "center" : "flex-start"};
+                            width: 100%;
+                            margin-top: 3px;
+                        ">
+                            ${renderLicensePlate(plate, { compact })}
+                        </div>
+                    ` : `
+                        <div style="
+                            font-size: ${compact ? "13px" : "15px"};
+                            opacity: 0.75;
+                            letter-spacing: 0.08em;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        ">
+                            ${plate}
+                        </div>
+                    `}
                 </div>
 
                 <div style="
