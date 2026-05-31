@@ -1,9 +1,23 @@
 // TÜV Card v0.1.0
 
-import { localize } from "./src/translations.js?v=42";
-import { renderBadge } from "./src/badge-renderer.js?v=42";
-import { renderLicensePlate } from "./src/plate-renderer.js?v=55";
-import { TuevCardEditor } from "./src/tuev-card-editor.js?v=42";
+import { localize } from "./src/translations.js?v=70";
+import { renderBadge } from "./src/badge-renderer.js?v=70";
+import {
+    ensurePlateFont,
+    isPlateFontLoaded,
+    renderLicensePlate
+} from "./src/plate-renderer.js?v=70";
+import { TuevCardEditor } from "./src/tuev-card-editor.js?v=70";
+
+window.customCards = window.customCards || [];
+
+if (!window.customCards.some((card) => card.type === "tuev-card")) {
+    window.customCards.push({
+        type: "tuev-card",
+        name: "TÜV",
+        description: "Display TÜV / HU inspection reminders as inspection stickers."
+    });
+}
 
 class TuevCard extends HTMLElement {
     static getConfigElement() {
@@ -39,6 +53,10 @@ class TuevCard extends HTMLElement {
         const allowedLayouts = ["auto", "horizontal", "vertical"];
         const allowedSorts = ["config", "name", "plate", "due_date", "status"];
         const allowedPlateStyles = ["text", "plate"];
+        const allowedPlateFonts = ["auto", "europlate", "fallback"];
+        const plateFont = allowedPlateFonts.includes(config.plate_font)
+            ? config.plate_font
+            : "auto";
 
         if (!config.entity && !config.entities) {
             throw new Error("Please provide entity or entities.");
@@ -70,6 +88,16 @@ class TuevCard extends HTMLElement {
     set hass(hass) {
         this._hass = hass;
         this._entityUiState = this._entityUiState || {};
+
+        this._plateFontLoaded = isPlateFontLoaded();
+
+        ensurePlateFont(() => {
+            this._plateFontLoaded = true;
+
+            if (this._hass) {
+                this.hass = this._hass;
+            }
+        });
 
         const entityIds = this.getSortedEntityIds(hass);
 
@@ -220,6 +248,20 @@ class TuevCard extends HTMLElement {
             numeric: true,
             sensitivity: "base"
         });
+    }
+
+    getPlateFontProfile() {
+        const plateFont = this.config.plate_font || "auto";
+
+        if (plateFont === "europlate") {
+            return "europlate";
+        }
+
+        if (plateFont === "fallback") {
+            return "fallback";
+        }
+
+        return this._plateFontLoaded ? "europlate" : "fallback";
     }
 
     getUiState(entityId) {
@@ -412,7 +454,10 @@ class TuevCard extends HTMLElement {
                             width: 100%;
                             margin-top: 3px;
                         ">
-                            ${renderLicensePlate(plate, { compact })}
+                            ${renderLicensePlate(plate, {
+                                compact,
+                                fontProfile: this.getPlateFontProfile()
+                            })}
                         </div>
                     ` : `
                         <div style="

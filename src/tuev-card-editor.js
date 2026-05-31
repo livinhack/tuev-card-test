@@ -1,4 +1,4 @@
-import { localize } from "./translations.js?v=42";
+import { localize } from "./translations.js?v=70";
 
 export class TuevCardEditor extends HTMLElement {
     setConfig(config) {
@@ -7,6 +7,7 @@ export class TuevCardEditor extends HTMLElement {
             sort: "config",
             show_details: true,
             plate_style: "text",
+            plate_font: "auto",
             ...config
         };
 
@@ -379,6 +380,33 @@ export class TuevCardEditor extends HTMLElement {
                     </select>
                 </div>
 
+                <div>
+                    <label style="
+                        display: block;
+                        font-weight: 600;
+                        margin-bottom: 6px;
+                    ">
+                        ${this.localize("editor.plate_font")}
+                    </label>
+
+                    <select
+                        id="plateFont"
+                        style="
+                            width: 100%;
+                            box-sizing: border-box;
+                            padding: 8px;
+                            border-radius: 6px;
+                            border: 1px solid var(--divider-color);
+                            background: var(--card-background-color);
+                            color: var(--primary-text-color);
+                        "
+                    >
+                        <option value="auto" ${this._config.plate_font === "auto" || !this._config.plate_font ? "selected" : ""}>${this.localize("editor.plate_font_auto")}</option>
+                        <option value="europlate" ${this._config.plate_font === "europlate" ? "selected" : ""}>${this.localize("editor.plate_font_europlate")}</option>
+                        <option value="fallback" ${this._config.plate_font === "fallback" ? "selected" : ""}>${this.localize("editor.plate_font_fallback")}</option>
+                    </select>
+                </div>
+
                 <label style="
                     display: flex;
                     align-items: center;
@@ -496,6 +524,10 @@ export class TuevCardEditor extends HTMLElement {
             this.updateConfig();
         });
 
+        this.querySelector("#plateFont")?.addEventListener("change", () => {
+            this.updateConfig();
+        });
+
         this.querySelector("#showDetails")?.addEventListener("change", () => {
             this.updateConfig();
         });
@@ -535,6 +567,7 @@ export class TuevCardEditor extends HTMLElement {
         const layout = this.querySelector("#layout")?.value || "auto";
         const sort = this.querySelector("#sort")?.value || "config";
         const plateStyle = this.querySelector("#plateStyle")?.value || "text";
+        const plateFont = this.querySelector("#plateFont")?.value || "auto";
         const showDetails = this.querySelector("#showDetails")?.checked ?? true;
         const badgeSizeRaw = this.querySelector("#badgeSize")?.value;
 
@@ -543,6 +576,7 @@ export class TuevCardEditor extends HTMLElement {
             layout,
             sort,
             plate_style: plateStyle,
+            plate_font: plateFont,
             show_details: showDetails
         };
 

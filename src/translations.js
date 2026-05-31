@@ -42,7 +42,11 @@ export const TUEV_CARD_TRANSLATIONS = {
         "editor.badge_size_hint": "Leave empty for automatic size",
         "editor.plate_style": "License plate display",
         "editor.plate_style_text": "Text",
-        "editor.plate_style_plate": "Rendered plate"
+        "editor.plate_style_plate": "Rendered plate",
+        "editor.plate_font": "License plate font",
+        "editor.plate_font_auto": "Automatic",
+        "editor.plate_font_europlate": "EuroPlate",
+        "editor.plate_font_fallback": "System"
     },
     de: {
         "error.no_entities": "Keine TÜV-Entitäten konfiguriert.",
@@ -87,7 +91,11 @@ export const TUEV_CARD_TRANSLATIONS = {
         "editor.badge_size_hint": "Leer lassen für automatische Größe",
         "editor.plate_style": "Kennzeichenanzeige",
         "editor.plate_style_text": "Text",
-        "editor.plate_style_plate": "Gerendertes Kennzeichen"
+        "editor.plate_style_plate": "Gerendertes Kennzeichen",
+        "editor.plate_font": "Kennzeichenschrift",
+        "editor.plate_font_auto": "Automatisch",
+        "editor.plate_font_europlate": "EuroPlate",
+        "editor.plate_font_fallback": "Bahnschrift"
     }
 };
 

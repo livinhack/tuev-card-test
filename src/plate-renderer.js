@@ -1,4 +1,107 @@
+let plateFontInjected = false;
+let plateFontLoaded = false;
+let plateFontLoading = false;
+
+const PLATE_FONT_PROFILES = {
+    europlate: {
+        fontFamily: '"EuroPlate", sans-serif',
+        letterSpacing: {
+            compact: "0.12px",
+            normal: "0.22px"
+        },
+        textOffsetX: {
+            compact: -4.4,
+            normal: -6.4
+        },
+        charWidth: {
+            space: 0.34,
+            dash: 0.22,
+            digit: 0.43,
+            wide: 0.54,
+            narrow: 0.22,
+            default: 0.40
+        }
+    },
+    fallback: {
+        fontFamily: '"Bahnschrift SemiCondensed", "Bahnschrift Condensed", "Arial Narrow", sans-serif',
+        letterSpacing: {
+            compact: "0.45px",
+            normal: "0.7px"
+        },
+        textOffsetX: {
+            compact: -2.5,
+            normal: -4
+        },
+        charWidth: {
+            space: 0.28,
+            dash: 0.22,
+            digit: 0.52,
+            wide: 0.68,
+            narrow: 0.34,
+            default: 0.56
+        }
+    }
+};
+
+export function ensurePlateFont(onLoaded) {
+    injectPlateFont();
+
+    if (plateFontLoaded || plateFontLoading || !document.fonts?.load) {
+        return plateFontLoaded;
+    }
+
+    plateFontLoading = true;
+
+    document.fonts
+        .load('28px "EuroPlate"')
+        .then(() => {
+            plateFontLoaded = document.fonts.check('28px "EuroPlate"');
+        })
+        .catch(() => {
+            plateFontLoaded = false;
+        })
+        .finally(() => {
+            plateFontLoading = false;
+
+            if (plateFontLoaded && typeof onLoaded === "function") {
+                onLoaded();
+            }
+        });
+
+    return plateFontLoaded;
+}
+
+export function isPlateFontLoaded() {
+    if (document.fonts?.check) {
+        plateFontLoaded = document.fonts.check('28px "EuroPlate"');
+    }
+
+    return plateFontLoaded;
+}
+
+function injectPlateFont() {
+    if (plateFontInjected) {
+        return;
+    }
+
+    plateFontInjected = true;
+
+    const style = document.createElement("style");
+
+    style.textContent = `
+        @font-face {
+            font-family: "EuroPlate";
+            src: url("/local/EuroPlate.ttf") format("truetype");
+            font-display: swap;
+        }
+    `;
+
+    document.head.appendChild(style);
+}
+
 export function renderLicensePlate(plate, options = {}) {
+    injectPlateFont();
+
     const normalizedPlate = normalizePlate(plate);
 
     if (!normalizedPlate) {
@@ -6,31 +109,51 @@ export function renderLicensePlate(plate, options = {}) {
     }
 
     const compact = Boolean(options.compact);
+    const fontProfileName = options.fontProfile === "europlate"
+        ? "europlate"
+        : "fallback";
+    const fontProfile = PLATE_FONT_PROFILES[fontProfileName];
+
     const plainChars = normalizedPlate.replace(/[\s-]/g, "");
     const charCount = plainChars.length;
 
-    const height = compact ? 26 : 31;
+    const height = compact ? 23 : 28;
     const euWidth = compact ? 13 : 16;
-    const fontSize = compact ? 22 : 28;
+    const fontSize = compact ? 23 : 29;
     const radius = compact ? 3 : 4;
 
     const textGapLeft = compact ? 13 : 17;
 
-    // Dynamischer Seitenrand je nach Zeichenmenge
-const textPadLeft = compact
-    ? (charCount <= 4 ? 1 : charCount <= 6 ? 2 : 3)
-    : (charCount <= 4 ? 2 : charCount <= 6 ? 3 : 4);
+    const isEuroPlate = fontProfileName === "europlate";
 
-const textPadRight = compact
-    ? (charCount <= 4 ? 6 : charCount <= 6 ? 8 : 10)
-    : (charCount <= 4 ? 8 : charCount <= 6 ? 10 : 13);
+    const textPadLeft = isEuroPlate
+        ? (
+            compact
+                ? (charCount <= 4 ? 0 : charCount <= 6 ? 1 : 2)
+                : (charCount <= 4 ? 1 : charCount <= 6 ? 2 : 3)
+        )
+        : (
+            compact
+                ? (charCount <= 4 ? 1 : charCount <= 6 ? 2 : 3)
+                : (charCount <= 4 ? 2 : charCount <= 6 ? 3 : 4)
+        );
 
-    // EU-Inhalt leicht nach rechts im blauen Feld
+    const textPadRight = isEuroPlate
+        ? (
+            compact
+                ? (charCount <= 4 ? 5 : charCount <= 6 ? 6 : 8)
+                : (charCount <= 4 ? 7 : charCount <= 6 ? 8 : 10)
+        )
+        : (
+            compact
+                ? (charCount <= 4 ? 10 : charCount <= 6 ? 11 : 12)
+                : (charCount <= 4 ? 13 : charCount <= 6 ? 14 : 15)
+        );
+
     const euContentX = compact ? 7.6 : 9.2;
 
-    const textWidth = estimatePlateTextWidth(normalizedPlate, fontSize);
+    const textWidth = estimatePlateTextWidth(normalizedPlate, fontSize, fontProfile);
 
-    // Dynamische Gesamtbreite statt großem festen Leerraum
     const contentWidth = euWidth + textGapLeft + textPadLeft + textWidth + textPadRight;
     const minWidth = compact ? 74 : 92;
     const maxWidth = compact ? 240 : 320;
@@ -40,10 +163,16 @@ const textPadRight = compact
     const textAreaStartX = euWidth + textGapLeft + textPadLeft;
     const textAreaWidth = width - textAreaStartX - textPadRight;
 
-    // Leichte optische Korrektur nach links
-    const textOffsetX = compact ? -2.5 : -4;
+    const textOffsetX = compact
+        ? fontProfile.textOffsetX.compact
+        : fontProfile.textOffsetX.normal;
+
     const textX = textAreaStartX + textAreaWidth / 2 + textOffsetX;
-    const textY = height * 0.60;
+    const textY = height * (fontProfileName === "europlate" ? 0.50 : 0.60);
+
+    const letterSpacing = compact
+        ? fontProfile.letterSpacing.compact
+        : fontProfile.letterSpacing.normal;
 
     const clipId = `plateClip-${hashString(normalizedPlate)}-${compact ? "c" : "n"}`;
 
@@ -73,17 +202,11 @@ const textPadRight = compact
                 </clipPath>
 
                 <style>
-                    @font-face {
-                        font-family: "EuroPlate";
-                        src: url("/local/EuroPlate.ttf") format("truetype");
-                        font-display: swap;
-                    }
-
                     .tuev-plate-text {
-                        font-family: "EuroPlate", "Bahnschrift SemiCondensed", "Bahnschrift Condensed", "Arial Narrow", sans-serif;
+                        font-family: ${fontProfile.fontFamily};
                         font-size: ${fontSize}px;
                         font-weight: 700;
-                        letter-spacing: ${compact ? "0.45px" : "0.7px"};
+                        letter-spacing: ${letterSpacing};
                     }
                 </style>
             </defs>
@@ -164,26 +287,27 @@ const textPadRight = compact
 function normalizePlate(plate) {
     return String(plate || "")
         .trim()
+        .replace(/[-–—]+/g, " ")
         .replace(/\s+/g, " ")
         .toUpperCase();
 }
 
-function estimatePlateTextWidth(text, fontSize) {
+function estimatePlateTextWidth(text, fontSize, fontProfile) {
     let width = 0;
 
     for (const char of text) {
         if (char === " ") {
-            width += fontSize * 0.28;
+            width += fontSize * fontProfile.charWidth.space;
         } else if (char === "-") {
-            width += fontSize * 0.22;
+            width += fontSize * fontProfile.charWidth.dash;
         } else if (char >= "0" && char <= "9") {
-            width += fontSize * 0.52;
+            width += fontSize * fontProfile.charWidth.digit;
         } else if ("MW".includes(char)) {
-            width += fontSize * 0.68;
+            width += fontSize * fontProfile.charWidth.wide;
         } else if ("IJ".includes(char)) {
-            width += fontSize * 0.34;
+            width += fontSize * fontProfile.charWidth.narrow;
         } else {
-            width += fontSize * 0.56;
+            width += fontSize * fontProfile.charWidth.default;
         }
     }
 
