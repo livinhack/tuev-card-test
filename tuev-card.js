@@ -1,7 +1,8 @@
-console.log("TUEV CARD TEST 31");
+// TÜV Card v0.1.0
+
+// console.log("TUEV CARD TEST 32");
 
 class TuevCard extends HTMLElement {
-
     static getConfigElement() {
         return document.createElement("tuev-card-editor");
     }
@@ -21,9 +22,10 @@ class TuevCard extends HTMLElement {
             type: "custom:tuev-card",
             layout: "auto",
             sort: "config",
+            show_details: true,
             ...(entityId ? { entity: entityId } : {})
         };
-    }    
+    }
 
     setConfig(config) {
         const allowedLayouts = ["auto", "horizontal", "vertical"];
@@ -42,6 +44,7 @@ class TuevCard extends HTMLElement {
             : "config";
 
         this.config = {
+            show_details: true,
             ...config,
             layout,
             sort
@@ -68,7 +71,6 @@ class TuevCard extends HTMLElement {
         }
 
         const isMulti = entityIds.length > 1;
-
         const layout = this.config.layout || "auto";
 
         let gridTemplateColumns;
@@ -249,6 +251,22 @@ class TuevCard extends HTMLElement {
         const plate = attr.plate || "";
         const month = Number(attr.month || 1);
         const year = Number(attr.year || new Date().getFullYear());
+
+        const status = attr.status || entity.state || "";
+        const dueDate = attr.due_date || "";
+        const showDetails = this.config.show_details !== false;
+
+        const statusLabel = {
+            valid: "gültig",
+            due: "fällig",
+            expired: "abgelaufen"
+        }[status] || status;
+
+        const huLabel = month && year
+            ? `HU ${String(month).padStart(2, "0")}/${year}`
+            : dueDate
+                ? `HU ${dueDate}`
+                : "";
 
         const fallbackRotation = (month % 12) * 30;
         const rotation = Number.isFinite(Number(attr.rotation))
@@ -465,6 +483,26 @@ class TuevCard extends HTMLElement {
                         </div>
                     ` : ""}
                 </div>
+
+                ${showDetails ? `
+                    <div style="
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 2px;
+                        font-size: ${compact ? "12px" : "13px"};
+                        line-height: 1.25;
+                        opacity: 0.82;
+                        text-align: center;
+                    ">
+                        <div style="font-weight: 600;">
+                            ${huLabel}
+                        </div>
+                        <div>
+                            ${statusLabel}
+                        </div>
+                    </div>
+                ` : ""}
             </div>
         `;
     }
@@ -826,6 +864,7 @@ class TuevCardEditor extends HTMLElement {
         this._config = {
             layout: "auto",
             sort: "config",
+            show_details: true,
             ...config
         };
 
@@ -1163,6 +1202,21 @@ class TuevCardEditor extends HTMLElement {
                         <option value="status" ${this._config.sort === "status" ? "selected" : ""}>Status</option>
                     </select>
                 </div>
+
+                <label style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                ">
+                    <input
+                        id="showDetails"
+                        type="checkbox"
+                        ${this._config.show_details !== false ? "checked" : ""}
+                    >
+                    Details anzeigen
+                </label>
             </div>
         `;
 
@@ -1220,6 +1274,10 @@ class TuevCardEditor extends HTMLElement {
         this.querySelector("#sort")?.addEventListener("change", () => {
             this.updateConfig();
         });
+
+        this.querySelector("#showDetails")?.addEventListener("change", () => {
+            this.updateConfig();
+        });
     }
 
     applyEntities() {
@@ -1251,11 +1309,13 @@ class TuevCardEditor extends HTMLElement {
     updateConfig() {
         const layout = this.querySelector("#layout")?.value || "auto";
         const sort = this.querySelector("#sort")?.value || "config";
+        const showDetails = this.querySelector("#showDetails")?.checked ?? true;
 
         this._config = {
             ...this._config,
             layout,
-            sort
+            sort,
+            show_details: showDetails
         };
 
         this.fireConfigChanged();
