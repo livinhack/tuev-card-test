@@ -363,6 +363,12 @@ class TuevCard extends HTMLElement {
             expired: this.localize("status.expired")
         }[status] || status;
 
+        const statusColor = {
+            valid: "var(--success-color, #43a047)",
+            due: "var(--warning-color, #ffa000)",
+            expired: "var(--error-color, #db4437)"
+        }[status] || "var(--secondary-text-color)";
+
         const huLabel = month && year
             ? `${this.localize("details.next_inspection")}: ${String(month).padStart(2, "0")}/${year}`
             : "";
@@ -592,8 +598,23 @@ class TuevCard extends HTMLElement {
                         <div style="font-weight: 600;">
                             ${huLabel}
                         </div>
-                        <div>
-                            ${statusLabel}
+                        <div style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 5px;
+                        ">
+                            <span style="
+                                width: 7px;
+                                height: 7px;
+                                border-radius: 50%;
+                                background: ${statusColor};
+                                display: inline-block;
+                                box-shadow: 0 0 5px ${statusColor};
+                                flex: 0 0 auto;
+                            "></span>
+                            <span style="color: inherit;">
+                                ${statusLabel}
+                            </span>
                         </div>
                     </div>
                 ` : ""}
