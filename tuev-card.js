@@ -43,7 +43,7 @@ const TUEV_CARD_TRANSLATIONS = {
         "editor.sort_status": "Status",
         "editor.show_details": "Show details",
         "editor.badge_size": "Sticker size",
-        "editor.compact_badge_size": "Compact sticker size"
+        "editor.badge_size_hint": "Leave empty for automatic size"
     },
     de: {
         "error.no_entities": "Keine TÜV-Entitäten konfiguriert.",
@@ -85,7 +85,7 @@ const TUEV_CARD_TRANSLATIONS = {
         "editor.sort_status": "Status",
         "editor.show_details": "Details anzeigen",
         "editor.badge_size": "Plakettengröße",
-        "editor.compact_badge_size": "Kompakte Plakettengröße"
+        "editor.badge_size_hint": "Leer lassen für automatische Größe"
     }
 };
 
@@ -115,14 +115,13 @@ class TuevCard extends HTMLElement {
             layout: "auto",
             sort: "config",
             show_details: true,
-            badge_size: 250,
-            compact_badge_size: 175,
             ...(entityId ? { entity: entityId } : {})
         };
     }
 
     localize(key) {
         const language = getTuevCardLanguage(this._hass);
+
         return (
             TUEV_CARD_TRANSLATIONS[language]?.[key] ||
             TUEV_CARD_TRANSLATIONS.en[key] ||
@@ -148,8 +147,6 @@ class TuevCard extends HTMLElement {
 
         this.config = {
             show_details: true,
-            badge_size: 250,
-            compact_badge_size: 175,
             ...config,
             layout,
             sort
@@ -462,9 +459,7 @@ class TuevCard extends HTMLElement {
                 blurred
             };
 
-        const badgeSize = compact
-            ? Number(this.config.compact_badge_size || 175)
-            : Number(this.config.badge_size || 250);
+        const badgeSize = Number(this.config.badge_size || 0) || (compact ? 175 : 250);
 
         return `
             <div style="
@@ -964,8 +959,6 @@ class TuevCardEditor extends HTMLElement {
             layout: "auto",
             sort: "config",
             show_details: true,
-            badge_size: 250,
-            compact_badge_size: 175,
             ...config
         };
 
@@ -983,6 +976,7 @@ class TuevCardEditor extends HTMLElement {
 
     localize(key) {
         const language = getTuevCardLanguage(this._hass);
+
         return (
             TUEV_CARD_TRANSLATIONS[language]?.[key] ||
             TUEV_CARD_TRANSLATIONS.en[key] ||
@@ -1084,6 +1078,10 @@ class TuevCardEditor extends HTMLElement {
         const unselectedEntities = this.getUnselectedEntities();
         const hasAvailableToAdd = this.getAvailableTuevEntities()
             .some((entityId) => !selectedEntityIds.includes(entityId));
+
+        const badgeSizeValue = this._config.badge_size === undefined || this._config.badge_size === null
+            ? ""
+            : Number(this._config.badge_size || "");
 
         this.innerHTML = `
             <div style="
@@ -1343,7 +1341,8 @@ class TuevCardEditor extends HTMLElement {
                         min="120"
                         max="360"
                         step="5"
-                        value="${Number(this._config.badge_size || 250)}"
+                        value="${badgeSizeValue}"
+                        placeholder="auto"
                         style="
                             width: 100%;
                             box-sizing: border-box;
@@ -1354,34 +1353,14 @@ class TuevCardEditor extends HTMLElement {
                             color: var(--primary-text-color);
                         "
                     >
-                </div>
 
-                <div>
-                    <label style="
-                        display: block;
-                        font-weight: 600;
-                        margin-bottom: 6px;
+                    <div style="
+                        font-size: 12px;
+                        opacity: 0.75;
+                        margin-top: 6px;
                     ">
-                        ${this.localize("editor.compact_badge_size")}
-                    </label>
-
-                    <input
-                        id="compactBadgeSize"
-                        type="number"
-                        min="100"
-                        max="280"
-                        step="5"
-                        value="${Number(this._config.compact_badge_size || 175)}"
-                        style="
-                            width: 100%;
-                            box-sizing: border-box;
-                            padding: 8px;
-                            border-radius: 6px;
-                            border: 1px solid var(--divider-color);
-                            background: var(--card-background-color);
-                            color: var(--primary-text-color);
-                        "
-                    >
+                        ${this.localize("editor.badge_size_hint")}
+                    </div>
                 </div>
             </div>
         `;
@@ -1448,10 +1427,6 @@ class TuevCardEditor extends HTMLElement {
         this.querySelector("#badgeSize")?.addEventListener("input", () => {
             this.updateConfig();
         });
-
-        this.querySelector("#compactBadgeSize")?.addEventListener("input", () => {
-            this.updateConfig();
-        });
     }
 
     applyEntities() {
@@ -1484,18 +1459,30 @@ class TuevCardEditor extends HTMLElement {
         const layout = this.querySelector("#layout")?.value || "auto";
         const sort = this.querySelector("#sort")?.value || "config";
         const showDetails = this.querySelector("#showDetails")?.checked ?? true;
-        const badgeSize = Number(this.querySelector("#badgeSize")?.value || 250);
-        const compactBadgeSize = Number(this.querySelector("#compactBadgeSize")?.value || 175);
+        const badgeSizeRaw = this.querySelector("#badgeSize")?.value;
 
-        this._config = {
+        const newConfig = {
             ...this._config,
             layout,
             sort,
-            show_details: showDetails,
-            badge_size: badgeSize,
-            compact_badge_size: compactBadgeSize
+            show_details: showDetails
         };
 
+        if (badgeSizeRaw === "" || badgeSizeRaw === undefined || badgeSizeRaw === null) {
+            delete newConfig.badge_size;
+        } else {
+            const badgeSize = Number(badgeSizeRaw);
+
+            if (Number.isFinite(badgeSize) && badgeSize > 0) {
+                newConfig.badge_size = badgeSize;
+            } else {
+                delete newConfig.badge_size;
+            }
+        }
+
+        delete newConfig.compact_badge_size;
+
+        this._config = newConfig;
         this.fireConfigChanged();
     }
 
