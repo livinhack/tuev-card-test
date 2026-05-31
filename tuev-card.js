@@ -45,6 +45,8 @@ class TuevCard extends HTMLElement {
 
         this.config = {
             show_details: true,
+            badge_size: 250,
+            compact_badge_size: 175,
             ...config,
             layout,
             sort
@@ -360,12 +362,9 @@ class TuevCard extends HTMLElement {
                 blurred
             };
 
-        const layout = this.config.layout || "auto";
         const badgeSize = compact
-            ? layout === "horizontal"
-                ? 175
-                : 190
-            : 250;
+            ? Number(this.config.compact_badge_size || 175)
+            : Number(this.config.badge_size || 250);
 
         return `
             <div style="
@@ -865,6 +864,8 @@ class TuevCardEditor extends HTMLElement {
             layout: "auto",
             sort: "config",
             show_details: true,
+            badge_size: 250,
+            compact_badge_size: 175,
             ...config
         };
 
@@ -1217,6 +1218,61 @@ class TuevCardEditor extends HTMLElement {
                     >
                     Details anzeigen
                 </label>
+                <div>
+                    <label style="
+                        display: block;
+                        font-weight: 600;
+                        margin-bottom: 6px;
+                    ">
+                        Plakettengröße
+                    </label>
+
+                    <input
+                        id="badgeSize"
+                        type="number"
+                        min="120"
+                        max="360"
+                        step="5"
+                        value="${Number(this._config.badge_size || 250)}"
+                        style="
+                            width: 100%;
+                            box-sizing: border-box;
+                            padding: 8px;
+                            border-radius: 6px;
+                            border: 1px solid var(--divider-color);
+                            background: var(--card-background-color);
+                            color: var(--primary-text-color);
+                        "
+                    >
+                </div>
+
+                <div>
+                    <label style="
+                        display: block;
+                        font-weight: 600;
+                        margin-bottom: 6px;
+                    ">
+                        Kompakte Plakettengröße
+                    </label>
+
+                    <input
+                        id="compactBadgeSize"
+                        type="number"
+                        min="100"
+                        max="280"
+                        step="5"
+                        value="${Number(this._config.compact_badge_size || 175)}"
+                        style="
+                            width: 100%;
+                            box-sizing: border-box;
+                            padding: 8px;
+                            border-radius: 6px;
+                            border: 1px solid var(--divider-color);
+                            background: var(--card-background-color);
+                            color: var(--primary-text-color);
+                        "
+                    >
+                </div>                
             </div>
         `;
 
@@ -1278,6 +1334,13 @@ class TuevCardEditor extends HTMLElement {
         this.querySelector("#showDetails")?.addEventListener("change", () => {
             this.updateConfig();
         });
+        this.querySelector("#badgeSize")?.addEventListener("input", () => {
+            this.updateConfig();
+        });
+
+        this.querySelector("#compactBadgeSize")?.addEventListener("input", () => {
+            this.updateConfig();
+        });        
     }
 
     applyEntities() {
@@ -1310,12 +1373,16 @@ class TuevCardEditor extends HTMLElement {
         const layout = this.querySelector("#layout")?.value || "auto";
         const sort = this.querySelector("#sort")?.value || "config";
         const showDetails = this.querySelector("#showDetails")?.checked ?? true;
+        const badgeSize = Number(this.querySelector("#badgeSize")?.value || 250);
+        const compactBadgeSize = Number(this.querySelector("#compactBadgeSize")?.value || 175);
 
         this._config = {
             ...this._config,
             layout,
             sort,
-            show_details: showDetails
+            show_details: showDetails,
+            badge_size: badgeSize,
+            compact_badge_size: compactBadgeSize
         };
 
         this.fireConfigChanged();
