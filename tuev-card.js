@@ -1,13 +1,16 @@
 // TÜV Card v0.1.0
 
-import { localize } from "./src/translations.js?v=70";
-import { renderBadge } from "./src/badge-renderer.js?v=70";
+import { localize } from "./src/translations.js?v=20";
+import { renderBadge } from "./src/badge-renderer.js?v=20";
 import {
     ensurePlateFont,
     isPlateFontLoaded,
     renderLicensePlate
-} from "./src/plate-renderer.js?v=70";
-import { TuevCardEditor } from "./src/tuev-card-editor.js?v=70";
+} from "./src/plate-renderer.js?v=20";
+import { TuevCardEditor } from "./src/tuev-card-editor.js?v=20";
+// Debug helper for temporary plate font selection in the visual editor.
+// Enable only while testing.
+// import "./src/debug-plate-font-editor.js?v=20";
 
 window.customCards = window.customCards || [];
 
@@ -38,8 +41,8 @@ class TuevCard extends HTMLElement {
 
         return {
             type: "custom:tuev-card",
-            layout: "auto",
-            sort: "config",
+            columns: "auto",
+            sort: "name",
             show_details: true,
             ...(entityId ? { entity: entityId } : {})
         };
@@ -50,8 +53,8 @@ class TuevCard extends HTMLElement {
     }
 
     setConfig(config) {
-        const allowedLayouts = ["auto", "horizontal", "vertical"];
-        const allowedSorts = ["config", "name", "plate", "due_date", "status"];
+        const allowedSorts = ["name", "plate", "due_date", "status"];
+        const allowedColumns = ["auto", "1", "2", "3", "4"];
         const allowedPlateStyles = ["text", "plate"];
         const allowedPlateFonts = ["auto", "europlate", "fallback"];
         const plateFont = allowedPlateFonts.includes(config.plate_font)
@@ -62,13 +65,17 @@ class TuevCard extends HTMLElement {
             throw new Error("Please provide entity or entities.");
         }
 
-        const layout = allowedLayouts.includes(config.layout)
-            ? config.layout
+        const rawColumns = config.columns === undefined || config.columns === null
+            ? "auto"
+            : String(config.columns);
+
+        const columns = allowedColumns.includes(rawColumns)
+            ? rawColumns
             : "auto";
 
         const sort = allowedSorts.includes(config.sort)
             ? config.sort
-            : "config";
+            : "name";
 
         const plateStyle = allowedPlateStyles.includes(config.plate_style)
             ? config.plate_style
@@ -77,10 +84,13 @@ class TuevCard extends HTMLElement {
         this.config = {
             show_details: true,
             plate_style: plateStyle,
+            plate_font: plateFont,
             ...config,
-            layout,
+            columns,
             sort
         };
+
+        delete this.config.layout;
 
         this._entityUiState = this._entityUiState || {};
     }
@@ -113,17 +123,19 @@ class TuevCard extends HTMLElement {
         }
 
         const isMulti = entityIds.length > 1;
-        const layout = this.config.layout || "auto";
+        const columns = this.config.columns || "auto";
 
         let gridTemplateColumns;
 
-        if (!isMulti || layout === "vertical") {
+        if (!isMulti) {
             gridTemplateColumns = "1fr";
-        } else if (layout === "horizontal") {
-            gridTemplateColumns = "repeat(auto-fit, minmax(170px, 1fr))";
+        } else if (columns === "auto") {
+            gridTemplateColumns = "repeat(auto-fit, minmax(190px, 1fr))";
         } else {
-            gridTemplateColumns = "repeat(auto-fit, minmax(210px, 1fr))";
+            gridTemplateColumns = `repeat(${Number(columns)}, minmax(0, 1fr))`;
         }
+
+        const automaticBadgeSize = this.getAutomaticBadgeSize(isMulti);
 
         this.innerHTML = `
             <ha-card>
@@ -134,7 +146,7 @@ class TuevCard extends HTMLElement {
                     gap: ${isMulti ? "18px" : "12px"};
                     align-items: start;
                 ">
-                    ${entityIds.map((entityId) => this.renderVehicle(hass, entityId, isMulti)).join("")}
+                    ${entityIds.map((entityId) => this.renderVehicle(hass, entityId, isMulti, automaticBadgeSize)).join("")}
                 </div>
             </ha-card>
         `;
@@ -173,11 +185,7 @@ class TuevCard extends HTMLElement {
 
     getSortedEntityIds(hass) {
         const entityIds = this.getEntityIds();
-        const sort = this.config.sort || "config";
-
-        if (sort === "config") {
-            return entityIds;
-        }
+        const sort = this.config.sort || "name";
 
         const statusRank = {
             expired: 0,
@@ -250,6 +258,32 @@ class TuevCard extends HTMLElement {
         });
     }
 
+    getAutomaticBadgeSize(isMulti) {
+        if (!isMulti) {
+            return 250;
+        }
+
+        const columns = this.config.columns || "auto";
+
+        if (columns === "1") {
+            return 220;
+        }
+
+        if (columns === "2") {
+            return 175;
+        }
+
+        if (columns === "3") {
+            return 135;
+        }
+
+        if (columns === "4") {
+            return 105;
+        }
+
+        return 175;
+    }
+
     getPlateFontProfile() {
         const plateFont = this.config.plate_font || "auto";
 
@@ -279,7 +313,7 @@ class TuevCard extends HTMLElement {
         return this._entityUiState[entityId];
     }
 
-    renderVehicle(hass, entityId, compact) {
+    renderVehicle(hass, entityId, compact, automaticBadgeSize) {
         const entity = hass.states[entityId];
 
         if (!entity) {
@@ -419,7 +453,69 @@ class TuevCard extends HTMLElement {
                 blurred
             };
 
-        const badgeSize = Number(this.config.badge_size || 0) || (compact ? 175 : 250);
+        const badgeSize = Number(this.config.badge_size || 0) || automaticBadgeSize;
+        const plateSizeProfile =
+            String(this.config.columns || "auto") === "4"
+                ? "tiny"
+                : compact
+                    ? "compact"
+                    : "normal";
+
+        const plateScale = 1;
+
+        const overlayScale = badgeSize <= 115
+            ? "tiny"
+            : badgeSize <= 140
+                ? "small"
+                : "normal";
+
+        const overlayMinWidth = {
+            tiny: 104,
+            small: 122,
+            normal: compact ? 145 : 170
+        }[overlayScale];
+
+        const overlayMaxWidth = {
+            tiny: 126,
+            small: 150,
+            normal: compact ? 180 : 220
+        }[overlayScale];
+
+        const overlayPadding = {
+            tiny: "7px",
+            small: "8px",
+            normal: compact ? "10px" : "12px"
+        }[overlayScale];
+
+        const overlayGap = {
+            tiny: "5px",
+            small: "6px",
+            normal: compact ? "7px" : "9px"
+        }[overlayScale];
+
+        const overlayTitleSize = {
+            tiny: "11px",
+            small: "12px",
+            normal: compact ? "14px" : "16px"
+        }[overlayScale];
+
+        const overlayTextSize = {
+            tiny: "10px",
+            small: "11px",
+            normal: compact ? "12px" : "13px"
+        }[overlayScale];
+
+        const overlayButtonPadding = {
+            tiny: "5px 9px",
+            small: "6px 10px",
+            normal: compact ? "7px 12px" : "8px 15px"
+        }[overlayScale];
+
+        const overlayButtonFontSize = {
+            tiny: "10px",
+            small: "11px",
+            normal: compact ? "12px" : "13px"
+        }[overlayScale];
 
         return `
             <div style="
@@ -456,7 +552,9 @@ class TuevCard extends HTMLElement {
                         ">
                             ${renderLicensePlate(plate, {
                                 compact,
-                                fontProfile: this.getPlateFontProfile()
+                                fontProfile: this.getPlateFontProfile(),
+                                sizeProfile: plateSizeProfile,
+                                scale: plateScale
                             })}
                         </div>
                     ` : `
@@ -493,9 +591,9 @@ class TuevCard extends HTMLElement {
                                 top: 50%;
                                 transform: translate(-50%, -50%);
                                 z-index: 5;
-                                min-width: ${compact ? "145px" : "170px"};
-                                max-width: ${compact ? "180px" : "220px"};
-                                padding: ${compact ? "10px" : "12px"};
+                                min-width: ${overlayMinWidth}px;
+                                max-width: ${overlayMaxWidth}px;
+                                padding: ${overlayPadding};
                                 border-radius: 16px;
                                 background: rgba(20, 20, 20, 0.62);
                                 border: 1px solid rgba(255, 255, 255, 0.20);
@@ -506,7 +604,7 @@ class TuevCard extends HTMLElement {
                                 text-align: center;
                                 display: flex;
                                 flex-direction: column;
-                                gap: ${compact ? "7px" : "9px"};
+                                gap: ${overlayGap};
                                 align-items: center;
                                 transition:
                                     opacity 0.5s ease,
@@ -514,7 +612,7 @@ class TuevCard extends HTMLElement {
                             "
                         >
                             <div style="
-                                font-size: ${compact ? "14px" : "16px"};
+                                font-size: ${overlayTitleSize};
                                 font-weight: 700;
                                 line-height: 1.15;
                             ">
@@ -522,7 +620,7 @@ class TuevCard extends HTMLElement {
                             </div>
 
                             <div style="
-                                font-size: ${compact ? "12px" : "13px"};
+                                font-size: ${overlayTextSize};
                                 opacity: 0.9;
                                 line-height: 1.2;
                             ">
@@ -535,10 +633,10 @@ class TuevCard extends HTMLElement {
                                 style="
                                     border: none;
                                     border-radius: 999px;
-                                    padding: ${compact ? "7px 12px" : "8px 15px"};
+                                    padding: ${overlayButtonPadding};
                                     background: ${showSuccess ? "var(--success-color, #43a047)" : "var(--primary-color)"};
                                     color: var(--text-primary-color);
-                                    font-size: ${compact ? "12px" : "13px"};
+                                    font-size: ${overlayButtonFontSize};
                                     font-weight: 700;
                                     cursor: ${ui.confirming || showSuccess ? "default" : "pointer"};
                                     white-space: nowrap;

@@ -1,10 +1,10 @@
-import { localize } from "./translations.js?v=70";
+import { localize } from "./translations.js?v=1";
 
 export class TuevCardEditor extends HTMLElement {
     setConfig(config) {
         this._config = {
-            layout: "auto",
-            sort: "config",
+            columns: "auto",
+            sort: "name",
             show_details: true,
             plate_style: "text",
             plate_font: "auto",
@@ -121,10 +121,14 @@ export class TuevCardEditor extends HTMLElement {
         const unselectedEntities = this.getUnselectedEntities();
         const hasAvailableToAdd = this.getAvailableTuevEntities()
             .some((entityId) => !selectedEntityIds.includes(entityId));
-
+        const entityHint = this.getAvailableTuevEntities().length > 0 && !hasAvailableToAdd
+            ? this.localize("editor.all_entities_added")
+            : this.localize("editor.single_entity_hint");
         const badgeSizeValue = this._config.badge_size === undefined || this._config.badge_size === null
-            ? ""
-            : Number(this._config.badge_size || "");
+            ? 0
+            : Number(this._config.badge_size || 0);
+
+        const badgeSliderValue = badgeSizeValue || 250;
 
         this.innerHTML = `
             <div style="
@@ -294,7 +298,7 @@ export class TuevCardEditor extends HTMLElement {
                         opacity: 0.75;
                         margin-top: 6px;
                     ">
-                        ${this.localize("editor.single_entity_hint")}
+                        ${entityHint}
                     </div>
                 </div>
 
@@ -304,11 +308,11 @@ export class TuevCardEditor extends HTMLElement {
                         font-weight: 600;
                         margin-bottom: 6px;
                     ">
-                        ${this.localize("editor.layout")}
+                        ${this.localize("editor.columns")}
                     </label>
 
                     <select
-                        id="layout"
+                        id="columns"
                         style="
                             width: 100%;
                             box-sizing: border-box;
@@ -319,9 +323,11 @@ export class TuevCardEditor extends HTMLElement {
                             color: var(--primary-text-color);
                         "
                     >
-                        <option value="auto" ${this._config.layout === "auto" ? "selected" : ""}>${this.localize("editor.layout_auto")}</option>
-                        <option value="horizontal" ${this._config.layout === "horizontal" ? "selected" : ""}>${this.localize("editor.layout_horizontal")}</option>
-                        <option value="vertical" ${this._config.layout === "vertical" ? "selected" : ""}>${this.localize("editor.layout_vertical")}</option>
+                        <option value="auto" ${this._config.columns === "auto" || !this._config.columns ? "selected" : ""}>${this.localize("editor.columns_auto")}</option>
+                        <option value="1" ${String(this._config.columns) === "1" ? "selected" : ""}>${this.localize("editor.columns_1")}</option>
+                        <option value="2" ${String(this._config.columns) === "2" ? "selected" : ""}>${this.localize("editor.columns_2")}</option>
+                        <option value="3" ${String(this._config.columns) === "3" ? "selected" : ""}>${this.localize("editor.columns_3")}</option>
+                        <option value="4" ${String(this._config.columns) === "4" ? "selected" : ""}>${this.localize("editor.columns_4")}</option>
                     </select>
                 </div>
 
@@ -346,64 +352,10 @@ export class TuevCardEditor extends HTMLElement {
                             color: var(--primary-text-color);
                         "
                     >
-                        <option value="config" ${this._config.sort === "config" ? "selected" : ""}>${this.localize("editor.sort_config")}</option>
-                        <option value="name" ${this._config.sort === "name" ? "selected" : ""}>${this.localize("editor.sort_name")}</option>
+                        <option value="name" ${this._config.sort === "name" || this._config.sort === "config" || !this._config.sort ? "selected" : ""}>${this.localize("editor.sort_name")}</option>
                         <option value="plate" ${this._config.sort === "plate" ? "selected" : ""}>${this.localize("editor.sort_plate")}</option>
                         <option value="due_date" ${this._config.sort === "due_date" ? "selected" : ""}>${this.localize("editor.sort_due_date")}</option>
                         <option value="status" ${this._config.sort === "status" ? "selected" : ""}>${this.localize("editor.sort_status")}</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label style="
-                        display: block;
-                        font-weight: 600;
-                        margin-bottom: 6px;
-                    ">
-                        ${this.localize("editor.plate_style")}
-                    </label>
-
-                    <select
-                        id="plateStyle"
-                        style="
-                            width: 100%;
-                            box-sizing: border-box;
-                            padding: 8px;
-                            border-radius: 6px;
-                            border: 1px solid var(--divider-color);
-                            background: var(--card-background-color);
-                            color: var(--primary-text-color);
-                        "
-                    >
-                        <option value="text" ${this._config.plate_style !== "plate" ? "selected" : ""}>${this.localize("editor.plate_style_text")}</option>
-                        <option value="plate" ${this._config.plate_style === "plate" ? "selected" : ""}>${this.localize("editor.plate_style_plate")}</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label style="
-                        display: block;
-                        font-weight: 600;
-                        margin-bottom: 6px;
-                    ">
-                        ${this.localize("editor.plate_font")}
-                    </label>
-
-                    <select
-                        id="plateFont"
-                        style="
-                            width: 100%;
-                            box-sizing: border-box;
-                            padding: 8px;
-                            border-radius: 6px;
-                            border: 1px solid var(--divider-color);
-                            background: var(--card-background-color);
-                            color: var(--primary-text-color);
-                        "
-                    >
-                        <option value="auto" ${this._config.plate_font === "auto" || !this._config.plate_font ? "selected" : ""}>${this.localize("editor.plate_font_auto")}</option>
-                        <option value="europlate" ${this._config.plate_font === "europlate" ? "selected" : ""}>${this.localize("editor.plate_font_europlate")}</option>
-                        <option value="fallback" ${this._config.plate_font === "fallback" ? "selected" : ""}>${this.localize("editor.plate_font_fallback")}</option>
                     </select>
                 </div>
 
@@ -421,8 +373,26 @@ export class TuevCardEditor extends HTMLElement {
                     >
                     ${this.localize("editor.show_details")}
                 </label>
+                
+                <label style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                ">
+                    <input
+                        id="renderPlate"
+                        type="checkbox"
+                        ${this._config.plate_style === "plate" ? "checked" : ""}
+                    >
+                    ${this.localize("editor.render_plate")}
+                </label>
 
-                <div>
+                <div style="
+                    border-top: 1px solid var(--divider-color);
+                    padding-top: 14px;
+                ">
                     <label style="
                         display: block;
                         font-weight: 600;
@@ -433,30 +403,59 @@ export class TuevCardEditor extends HTMLElement {
 
                     <input
                         id="badgeSize"
-                        type="number"
+                        type="range"
                         min="120"
                         max="360"
                         step="5"
-                        value="${badgeSizeValue}"
-                        placeholder="auto"
+                        value="${badgeSliderValue}"
                         style="
                             width: 100%;
                             box-sizing: border-box;
-                            padding: 8px;
-                            border-radius: 6px;
-                            border: 1px solid var(--divider-color);
-                            background: var(--card-background-color);
-                            color: var(--primary-text-color);
                         "
                     >
 
                     <div style="
-                        font-size: 12px;
-                        opacity: 0.75;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        gap: 10px;
                         margin-top: 6px;
                     ">
-                        ${this.localize("editor.badge_size_hint")}
+                        <div
+                            id="badgeSizeLabel"
+                            style="
+                                font-size: 12px;
+                                opacity: 0.75;
+                            "
+                        >
+                            ${
+                                badgeSizeValue
+                                    ? `${this.localize("editor.badge_size_current_value")}: ${badgeSizeValue}px`
+                                    : this.localize("editor.badge_size_current_auto")
+                            }
+                        </div>
+
+                        <button
+                            id="resetBadgeSize"
+                            type="button"
+                            ${badgeSizeValue ? "" : "disabled"}
+                            style="
+                                border: none;
+                                border-radius: 999px;
+                                padding: 5px 10px;
+                                background: var(--secondary-background-color);
+                                color: var(--primary-text-color);
+                                cursor: ${badgeSizeValue ? "pointer" : "default"};
+                                opacity: ${badgeSizeValue ? "1" : "0.45"};
+                                font-size: 12px;
+                                font-weight: 600;
+                            "
+                        >
+                            ${this.localize("editor.badge_size_reset")}
+                        </button>
                     </div>
+                </div>
+
                 </div>
             </div>
         `;
@@ -512,7 +511,7 @@ export class TuevCardEditor extends HTMLElement {
             });
         });
 
-        this.querySelector("#layout")?.addEventListener("change", () => {
+        this.querySelector("#columns")?.addEventListener("change", () => {
             this.updateConfig();
         });
 
@@ -520,11 +519,7 @@ export class TuevCardEditor extends HTMLElement {
             this.updateConfig();
         });
 
-        this.querySelector("#plateStyle")?.addEventListener("change", () => {
-            this.updateConfig();
-        });
-
-        this.querySelector("#plateFont")?.addEventListener("change", () => {
+        this.querySelector("#renderPlate")?.addEventListener("change", () => {
             this.updateConfig();
         });
 
@@ -533,7 +528,13 @@ export class TuevCardEditor extends HTMLElement {
         });
 
         this.querySelector("#badgeSize")?.addEventListener("input", () => {
-            this.updateConfig();
+            this.updateConfig({ badgeSizeChanged: true });
+        });
+
+        this.querySelector("#resetBadgeSize")?.addEventListener("click", () => {
+            delete this._config.badge_size;
+            this.fireConfigChanged();
+            this.render();
         });
     }
 
@@ -563,40 +564,43 @@ export class TuevCardEditor extends HTMLElement {
         this.fireConfigChanged();
     }
 
-    updateConfig() {
-        const layout = this.querySelector("#layout")?.value || "auto";
-        const sort = this.querySelector("#sort")?.value || "config";
-        const plateStyle = this.querySelector("#plateStyle")?.value || "text";
-        const plateFont = this.querySelector("#plateFont")?.value || "auto";
-        const showDetails = this.querySelector("#showDetails")?.checked ?? true;
-        const badgeSizeRaw = this.querySelector("#badgeSize")?.value;
+updateConfig(options = {}) {
+    const columns = this.querySelector("#columns")?.value || "auto";
+    const sort = this.querySelector("#sort")?.value || "name";
+    const renderPlate = this.querySelector("#renderPlate")?.checked ?? false;
+    const showDetails = this.querySelector("#showDetails")?.checked ?? true;
+    const badgeSizeRaw = this.querySelector("#badgeSize")?.value;
 
-        const newConfig = {
-            ...this._config,
-            layout,
-            sort,
-            plate_style: plateStyle,
-            plate_font: plateFont,
-            show_details: showDetails
-        };
+    const newConfig = {
+        ...this._config,
+        columns,
+        sort,
+        plate_style: renderPlate ? "plate" : "text",
+        plate_font: this._config.plate_font || "auto",
+        show_details: showDetails
+    };
 
-        if (badgeSizeRaw === "" || badgeSizeRaw === undefined || badgeSizeRaw === null) {
-            delete newConfig.badge_size;
+    delete newConfig.layout;
+
+    if (options.badgeSizeChanged) {
+        const badgeSize = Number(badgeSizeRaw);
+
+        if (Number.isFinite(badgeSize) && badgeSize >= 120) {
+            newConfig.badge_size = badgeSize;
         } else {
-            const badgeSize = Number(badgeSizeRaw);
-
-            if (Number.isFinite(badgeSize) && badgeSize > 0) {
-                newConfig.badge_size = badgeSize;
-            } else {
-                delete newConfig.badge_size;
-            }
+            delete newConfig.badge_size;
         }
-
-        delete newConfig.compact_badge_size;
-
-        this._config = newConfig;
-        this.fireConfigChanged();
+    } else if (this._config.badge_size !== undefined && this._config.badge_size !== null) {
+        newConfig.badge_size = this._config.badge_size;
+    } else {
+        delete newConfig.badge_size;
     }
+
+    delete newConfig.compact_badge_size;
+
+    this._config = newConfig;
+    this.fireConfigChanged();
+}
 
     fireConfigChanged() {
         this.dispatchEvent(new CustomEvent("config-changed", {
