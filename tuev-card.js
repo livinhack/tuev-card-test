@@ -1,23 +1,21 @@
 // TÜV Card v0.1.0
 
-import { localize } from "./src/translations.js?v=20";
-import { renderBadge } from "./src/badge-renderer.js?v=20";
+import { localize } from "./src/translations.js?v=a8";
+import { renderBadge } from "./src/badge-renderer.js?v=a8";
 import {
+    checkPlateFontAvailable,
     ensurePlateFont,
     isPlateFontLoaded,
     renderLicensePlate
-} from "./src/plate-renderer.js?v=20";
-import { TuevCardEditor } from "./src/tuev-card-editor.js?v=20";
-// Debug helper for temporary plate font selection in the visual editor.
-// Enable only while testing.
-// import "./src/debug-plate-font-editor.js?v=20";
+} from "./src/plate-renderer.js?v=a8";
+import { TuevCardEditor } from "./src/tuev-card-editor.js?v=a8";
 
 window.customCards = window.customCards || [];
 
 if (!window.customCards.some((card) => card.type === "tuev-card")) {
     window.customCards.push({
         type: "tuev-card",
-        name: "TÜV",
+        name: "TÜV Reminder",
         description: "Display TÜV / HU inspection reminders as inspection stickers."
     });
 }
@@ -93,21 +91,60 @@ class TuevCard extends HTMLElement {
         delete this.config.layout;
 
         this._entityUiState = this._entityUiState || {};
+
+        this._plateFontAvailable = false;
+        this._plateFontLoaded = false;
+        this._plateFontCheckStarted = false;
+
+        this.checkPlateFontAvailability();
     }
 
-    set hass(hass) {
-        this._hass = hass;
-        this._entityUiState = this._entityUiState || {};
+    checkPlateFontAvailability() {
+        if (this._plateFontCheckStarted) {
+            return;
+        }
 
-        this._plateFontLoaded = isPlateFontLoaded();
+        this._plateFontCheckStarted = true;
 
-        ensurePlateFont(() => {
-            this._plateFontLoaded = true;
+        checkPlateFontAvailable().then((available) => {
+            this._plateFontAvailable = available;
+
+            if (!available) {
+                this._plateFontLoaded = false;
+
+                if (this._hass) {
+                    this.hass = this._hass;
+                }
+
+                return;
+            }
+
+            this._plateFontLoaded = isPlateFontLoaded();
+
+            ensurePlateFont(() => {
+                this._plateFontLoaded = true;
+
+                if (this._hass) {
+                    this.hass = this._hass;
+                }
+            });
+
+            if (this._hass) {
+                this.hass = this._hass;
+            }
+        }).catch(() => {
+            this._plateFontAvailable = false;
+            this._plateFontLoaded = false;
 
             if (this._hass) {
                 this.hass = this._hass;
             }
         });
+    }
+
+    set hass(hass) {
+        this._hass = hass;
+        this._entityUiState = this._entityUiState || {};
 
         const entityIds = this.getSortedEntityIds(hass);
 
@@ -286,16 +323,19 @@ class TuevCard extends HTMLElement {
 
     getPlateFontProfile() {
         const plateFont = this.config.plate_font || "auto";
-
-        if (plateFont === "europlate") {
-            return "europlate";
-        }
+        const euroPlateUsable =
+            this._plateFontAvailable === true &&
+            this._plateFontLoaded === true;
 
         if (plateFont === "fallback") {
             return "fallback";
         }
 
-        return this._plateFontLoaded ? "europlate" : "fallback";
+        if (plateFont === "europlate") {
+            return euroPlateUsable ? "europlate" : "fallback";
+        }
+
+        return euroPlateUsable ? "europlate" : "fallback";
     }
 
     getUiState(entityId) {

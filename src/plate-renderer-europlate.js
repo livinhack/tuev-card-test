@@ -1,9 +1,6 @@
 import {
-    escapeHtml,
-    hashString,
-    normalizePlate,
-    renderEuStars
-} from "./plate-renderer-shared.js";
+    renderProfiledLicensePlate
+} from "./plate-renderer-shared.js?v=a8";
 
 const FONT_PROFILE = {
     fontFamily: '"EuroPlate", sans-serif',
@@ -81,76 +78,14 @@ const LAYOUT_PROFILES = {
 };
 
 export function renderEuroPlateLicensePlate(plate, options = {}) {
-    const normalizedPlate = normalizePlate(plate);
-
-    if (!normalizedPlate) {
-        return "";
-    }
-
-    const sizeProfileName = ["normal", "compact", "tiny"].includes(options.sizeProfile)
-        ? options.sizeProfile
-        : Boolean(options.compact)
-            ? "compact"
-            : "normal";
-
-    const layout = LAYOUT_PROFILES[sizeProfileName];
-
-    const scale = Number.isFinite(Number(options.scale))
-        ? Number(options.scale)
-        : 1;
-
-    const plainChars = normalizedPlate.replace(/\s/g, "");
-    const charCount = plainChars.length;
-
-    const textPadLeft = getLeftPadding(charCount, sizeProfileName);
-    const textPadRight = getRightPadding(charCount, sizeProfileName);
-
-    const textWidth = estimatePlateTextWidth(
-        normalizedPlate,
-        layout.fontSize,
-        sizeProfileName
-    );
-
-    const contentWidth =
-        layout.euWidth +
-        layout.textGapLeft +
-        textPadLeft +
-        textWidth +
-        textPadRight;
-
-    const width = Math.max(
-        layout.minWidth,
-        Math.min(layout.maxWidth, contentWidth)
-    );
-
-    const height = layout.height;
-    const displayWidth = Math.round(width * scale);
-    const displayHeight = Math.round(height * scale);
-
-    const textAreaStartX = layout.euWidth + layout.textGapLeft + textPadLeft;
-    const textAreaWidth = width - textAreaStartX - textPadRight;
-
-    const textX =
-        textAreaStartX +
-        textAreaWidth / 2 +
-        FONT_PROFILE.textOffsetX[sizeProfileName];
-
-    const textY = height * FONT_PROFILE.textY[sizeProfileName];
-    const letterSpacing = FONT_PROFILE.letterSpacing[sizeProfileName];
-
-    const clipId = `plateClip-${hashString(normalizedPlate)}-${sizeProfileName}-europlate`;
-
-    return renderPlateSvg({
-        normalizedPlate,
-        width,
-        height,
-        displayWidth,
-        displayHeight,
-        layout,
-        textX,
-        textY,
-        letterSpacing,
-        clipId
+    return renderProfiledLicensePlate({
+        plate,
+        options,
+        fontProfile: FONT_PROFILE,
+        layoutProfiles: LAYOUT_PROFILES,
+        rendererName: "europlate",
+        getLeftPadding,
+        getRightPadding
     });
 }
 
@@ -176,149 +111,4 @@ function getRightPadding(charCount, sizeProfileName) {
     }
 
     return charCount <= 4 ? 7 : charCount <= 6 ? 8 : 10;
-}
-
-function estimatePlateTextWidth(text, fontSize, sizeProfileName) {
-    let width = 0;
-
-    const letterSpacing = Number.parseFloat(
-        FONT_PROFILE.letterSpacing?.[sizeProfileName] || "0"
-    ) || 0;
-
-    for (const char of text) {
-        if (char === " ") {
-            width += fontSize * FONT_PROFILE.charWidth.space;
-        } else if (char >= "0" && char <= "9") {
-            width += fontSize * FONT_PROFILE.charWidth.digit;
-        } else if ("MW".includes(char)) {
-            width += fontSize * FONT_PROFILE.charWidth.wide;
-        } else if ("IJ".includes(char)) {
-            width += fontSize * FONT_PROFILE.charWidth.narrow;
-        } else {
-            width += fontSize * FONT_PROFILE.charWidth.default;
-        }
-    }
-
-    return width + Math.max(0, text.length - 1) * letterSpacing;
-}
-
-function renderPlateSvg({
-    normalizedPlate,
-    width,
-    height,
-    displayWidth,
-    displayHeight,
-    layout,
-    textX,
-    textY,
-    letterSpacing,
-    clipId
-}) {
-    return `
-        <svg
-            viewBox="0 0 ${width} ${height}"
-            width="${displayWidth}"
-            height="${displayHeight}"
-            role="img"
-            aria-label="${escapeHtml(normalizedPlate)}"
-            style="
-                display: block;
-                width: ${displayWidth}px;
-                height: ${displayHeight}px;
-                flex: 0 0 auto;
-            "
-        >
-            <defs>
-                <clipPath id="${clipId}">
-                    <rect
-                        x="1"
-                        y="1"
-                        width="${width - 2}"
-                        height="${height - 2}"
-                        rx="${layout.radius}"
-                        ry="${layout.radius}"
-                    />
-                </clipPath>
-
-                <style>
-                    .tuev-plate-text {
-                        font-family: ${FONT_PROFILE.fontFamily};
-                        font-size: ${layout.fontSize}px;
-                        font-weight: 700;
-                        letter-spacing: ${letterSpacing};
-                    }
-                </style>
-            </defs>
-
-            <g clip-path="url(#${clipId})">
-                <rect
-                    x="1"
-                    y="1"
-                    width="${width - 2}"
-                    height="${height - 2}"
-                    fill="#f7f7f2"
-                />
-
-                <rect
-                    x="1"
-                    y="1"
-                    width="${layout.euWidth}"
-                    height="${height - 2}"
-                    fill="#003399"
-                />
-
-                <rect
-                    x="${layout.euWidth}"
-                    y="1"
-                    width="1"
-                    height="${height - 2}"
-                    fill="#111"
-                    opacity="0.10"
-                />
-
-                ${renderEuStars(
-                    layout.euContentX,
-                    height * layout.starY,
-                    layout.starRadius,
-                    layout.starDotRadius
-                )}
-
-                <text
-                    x="${layout.euContentX}"
-                    y="${height * layout.countryY}"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    font-family="Arial, sans-serif"
-                    font-size="${layout.countryFontSize}"
-                    font-weight="700"
-                    fill="#fff"
-                >
-                    D
-                </text>
-
-                <text
-                    class="tuev-plate-text"
-                    x="${textX}"
-                    y="${textY}"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    fill="#111"
-                >
-                    ${escapeHtml(normalizedPlate)}
-                </text>
-            </g>
-
-            <rect
-                x="1"
-                y="1"
-                width="${width - 2}"
-                height="${height - 2}"
-                rx="${layout.radius}"
-                ry="${layout.radius}"
-                fill="none"
-                stroke="#111"
-                stroke-width="2"
-            />
-        </svg>
-    `;
 }

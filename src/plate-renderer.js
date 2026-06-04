@@ -1,5 +1,5 @@
-import { renderEuroPlateLicensePlate } from "./plate-renderer-europlate.js?v=15";
-import { renderSystemLicensePlate } from "./plate-renderer-system.js?v=15";
+import { renderEuroPlateLicensePlate } from "./plate-renderer-europlate.js?v=a8";
+import { renderSystemLicensePlate } from "./plate-renderer-system.js?v=a8";
 
 let plateFontInjected = false;
 let plateFontLoaded = false;
@@ -69,4 +69,17 @@ export function renderLicensePlate(plate, options = {}) {
     }
 
     return renderSystemLicensePlate(plate, options);
+}
+
+export async function checkPlateFontAvailable() {
+    try {
+        const response = await fetch(`/local/EuroPlate.ttf?v=${Date.now()}`, {
+            method: "GET",
+            cache: "no-store"
+        });
+
+        return response.ok;
+    } catch (error) {
+        return false;
+    }
 }

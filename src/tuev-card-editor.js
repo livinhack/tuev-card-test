@@ -1,4 +1,8 @@
-import { localize } from "./translations.js?v=1";
+import { localize } from "./translations.js?v=a8";
+import {
+    checkPlateFontAvailable,
+    ensurePlateFont
+} from "./plate-renderer.js?v=a8";
 
 export class TuevCardEditor extends HTMLElement {
     setConfig(config) {
@@ -11,10 +15,12 @@ export class TuevCardEditor extends HTMLElement {
             ...config
         };
 
+        this._plateFontAvailable = false;
         this._draftEntityIds = this.getEntityIdsFromConfig();
         this._pickerOpen = false;
         this._searchText = "";
 
+        this.checkPlateFontAvailability();
         this.render();
     }
 
@@ -25,6 +31,21 @@ export class TuevCardEditor extends HTMLElement {
 
     localize(key) {
         return localize(this._hass, key);
+    }
+
+    checkPlateFontAvailability() {
+        checkPlateFontAvailable().then((available) => {
+            this._plateFontAvailable = available;
+
+            if (available) {
+                ensurePlateFont(() => {
+                    this._plateFontAvailable = true;
+                    this.render();
+                });
+            }
+
+            this.render();
+        });
     }
 
     getEntityIdsFromConfig() {
@@ -129,6 +150,9 @@ export class TuevCardEditor extends HTMLElement {
             : Number(this._config.badge_size || 0);
 
         const badgeSliderValue = badgeSizeValue || 250;
+
+        const hasEuroPlateFont = this._plateFontAvailable === true;
+        const useEuroPlateFont = this._config.plate_font !== "fallback";
 
         this.innerHTML = `
             <div style="
@@ -323,7 +347,7 @@ export class TuevCardEditor extends HTMLElement {
                             color: var(--primary-text-color);
                         "
                     >
-                        <option value="auto" ${this._config.columns === "auto" || !this._config.columns ? "selected" : ""}>${this.localize("editor.columns_auto")}</option>
+                        <option value="auto" ${this._config.columns === "auto" || !this._config.columns ? "selected" : ""}>${this.localize("editor.automatic")}</option>
                         <option value="1" ${String(this._config.columns) === "1" ? "selected" : ""}>${this.localize("editor.columns_1")}</option>
                         <option value="2" ${String(this._config.columns) === "2" ? "selected" : ""}>${this.localize("editor.columns_2")}</option>
                         <option value="3" ${String(this._config.columns) === "3" ? "selected" : ""}>${this.localize("editor.columns_3")}</option>
@@ -389,6 +413,23 @@ export class TuevCardEditor extends HTMLElement {
                     ${this.localize("editor.render_plate")}
                 </label>
 
+                ${hasEuroPlateFont ? `
+                    <label style="
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">
+                        <input
+                            id="useEuroPlateFont"
+                            type="checkbox"
+                            ${useEuroPlateFont ? "checked" : ""}
+                        >
+                        ${this.localize("editor.use_europlate_font")}
+                    </label>
+                ` : ""}
+
                 <div style="
                     border-top: 1px solid var(--divider-color);
                     padding-top: 14px;
@@ -431,7 +472,7 @@ export class TuevCardEditor extends HTMLElement {
                             ${
                                 badgeSizeValue
                                     ? `${this.localize("editor.badge_size_current_value")}: ${badgeSizeValue}px`
-                                    : this.localize("editor.badge_size_current_auto")
+                                    : this.localize("editor.automatic")
                             }
                         </div>
 
@@ -454,8 +495,6 @@ export class TuevCardEditor extends HTMLElement {
                             ${this.localize("editor.badge_size_reset")}
                         </button>
                     </div>
-                </div>
-
                 </div>
             </div>
         `;
@@ -523,6 +562,10 @@ export class TuevCardEditor extends HTMLElement {
             this.updateConfig();
         });
 
+        this.querySelector("#useEuroPlateFont")?.addEventListener("change", () => {
+            this.updateConfig();
+        });
+
         this.querySelector("#showDetails")?.addEventListener("change", () => {
             this.updateConfig();
         });
@@ -564,43 +607,51 @@ export class TuevCardEditor extends HTMLElement {
         this.fireConfigChanged();
     }
 
-updateConfig(options = {}) {
-    const columns = this.querySelector("#columns")?.value || "auto";
-    const sort = this.querySelector("#sort")?.value || "name";
-    const renderPlate = this.querySelector("#renderPlate")?.checked ?? false;
-    const showDetails = this.querySelector("#showDetails")?.checked ?? true;
-    const badgeSizeRaw = this.querySelector("#badgeSize")?.value;
+    updateConfig(options = {}) {
+        const columns = this.querySelector("#columns")?.value || "auto";
+        const sort = this.querySelector("#sort")?.value || "name";
+        const renderPlate = this.querySelector("#renderPlate")?.checked ?? false;
+        const showDetails = this.querySelector("#showDetails")?.checked ?? true;
+        const euroPlateCheckbox = this.querySelector("#useEuroPlateFont");
+        const badgeSizeRaw = this.querySelector("#badgeSize")?.value;
 
-    const newConfig = {
-        ...this._config,
-        columns,
-        sort,
-        plate_style: renderPlate ? "plate" : "text",
-        plate_font: this._config.plate_font || "auto",
-        show_details: showDetails
-    };
+        const newConfig = {
+            ...this._config,
+            columns,
+            sort,
+            plate_style: renderPlate ? "plate" : "text",
+            show_details: showDetails
+        };
 
-    delete newConfig.layout;
+        if (euroPlateCheckbox) {
+            newConfig.plate_font = euroPlateCheckbox.checked ? "europlate" : "fallback";
 
-    if (options.badgeSizeChanged) {
-        const badgeSize = Number(badgeSizeRaw);
+            if (newConfig.plate_font === "europlate") {
+                delete newConfig.plate_font;
+            }
+        }
 
-        if (Number.isFinite(badgeSize) && badgeSize >= 120) {
-            newConfig.badge_size = badgeSize;
+        delete newConfig.layout;
+
+        if (options.badgeSizeChanged) {
+            const badgeSize = Number(badgeSizeRaw);
+
+            if (Number.isFinite(badgeSize) && badgeSize >= 120) {
+                newConfig.badge_size = badgeSize;
+            } else {
+                delete newConfig.badge_size;
+            }
+        } else if (this._config.badge_size !== undefined && this._config.badge_size !== null) {
+            newConfig.badge_size = this._config.badge_size;
         } else {
             delete newConfig.badge_size;
         }
-    } else if (this._config.badge_size !== undefined && this._config.badge_size !== null) {
-        newConfig.badge_size = this._config.badge_size;
-    } else {
-        delete newConfig.badge_size;
+
+        delete newConfig.compact_badge_size;
+
+        this._config = newConfig;
+        this.fireConfigChanged();
     }
-
-    delete newConfig.compact_badge_size;
-
-    this._config = newConfig;
-    this.fireConfigChanged();
-}
 
     fireConfigChanged() {
         this.dispatchEvent(new CustomEvent("config-changed", {

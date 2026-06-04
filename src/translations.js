@@ -37,14 +37,14 @@ export const TUEV_CARD_TRANSLATIONS = {
         "editor.badge_size_current_value": "Current",
         "editor.badge_size_reset": "Reset",
         "editor.columns": "Columns",
-        "editor.columns_auto": "Automatic",
+        "editor.automatic": "Automatic",
         "editor.columns_1": "1 column",
         "editor.columns_2": "2 columns",
         "editor.columns_3": "3 columns",
         "editor.columns_4": "4 columns",
         "editor.sort": "Sorting",
-        "editor.all_entities_added": "All available TÜV entities have already been added.",
-        "editor.badge_size_current_auto": "Automatic"
+        "editor.use_europlate_font": "Use EuroPlate font",
+        "editor.all_entities_added": "All available TÜV entities have already been added."
     },
     de: {
         "error.no_entities": "Keine TÜV-Entitäten konfiguriert.",
@@ -84,14 +84,14 @@ export const TUEV_CARD_TRANSLATIONS = {
         "editor.badge_size_current_value": "Aktuell",
         "editor.badge_size_reset": "Zurücksetzen",
         "editor.columns": "Spalten",
-        "editor.columns_auto": "Automatisch",
+        "editor.automatic": "Automatisch",
         "editor.columns_1": "1 Spalte",
         "editor.columns_2": "2 Spalten",
         "editor.columns_3": "3 Spalten",
         "editor.columns_4": "4 Spalten",
         "editor.sort": "Sortierung",
-        "editor.all_entities_added": "Alle verfügbaren TÜV-Entitäten sind bereits hinzugefügt.",
-        "editor.badge_size_current_auto": "Automatisch"
+        "editor.use_europlate_font": "EuroPlate-Schrift verwenden",
+        "editor.all_entities_added": "Alle verfügbaren TÜV-Entitäten sind bereits hinzugefügt."
     }
 };
 
