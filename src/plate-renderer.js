@@ -1,5 +1,5 @@
-import { renderEuroPlateLicensePlate } from "./plate-renderer-europlate.js?v=a8";
-import { renderSystemLicensePlate } from "./plate-renderer-system.js?v=a8";
+import { renderEuroPlateLicensePlate } from "./plate-renderer-europlate.js?v=a14";
+import { renderSystemLicensePlate } from "./plate-renderer-system.js?v=a14";
 
 let plateFontInjected = false;
 let plateFontLoaded = false;

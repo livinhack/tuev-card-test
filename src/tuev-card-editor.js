@@ -1,8 +1,8 @@
-import { localize } from "./translations.js?v=a8";
+import { localize } from "./translations.js?v=a14";
 import {
     checkPlateFontAvailable,
     ensurePlateFont
-} from "./plate-renderer.js?v=a8";
+} from "./plate-renderer.js?v=a14";
 
 export class TuevCardEditor extends HTMLElement {
     setConfig(config) {
@@ -14,6 +14,8 @@ export class TuevCardEditor extends HTMLElement {
             plate_font: "auto",
             ...config
         };
+
+        delete this._config.auto_add_entities;
 
         this._plateFontAvailable = false;
         this._draftEntityIds = this.getEntityIdsFromConfig();
@@ -140,18 +142,27 @@ export class TuevCardEditor extends HTMLElement {
 
         const selectedEntityIds = this._draftEntityIds.filter(Boolean);
         const unselectedEntities = this.getUnselectedEntities();
-        const hasAvailableToAdd = this.getAvailableTuevEntities()
+        const availableTuevEntities = this.getAvailableTuevEntities();
+
+        const hasAvailableToAdd = availableTuevEntities
             .some((entityId) => !selectedEntityIds.includes(entityId));
-        const entityHint = this.getAvailableTuevEntities().length > 0 && !hasAvailableToAdd
+
+        const newEntityCount = availableTuevEntities
+            .filter((entityId) => !selectedEntityIds.includes(entityId))
+            .length;
+
+        const entityHint = availableTuevEntities.length > 0 && !hasAvailableToAdd
             ? this.localize("editor.all_entities_added")
             : this.localize("editor.single_entity_hint");
+
         const badgeSizeValue = this._config.badge_size === undefined || this._config.badge_size === null
             ? 0
             : Number(this._config.badge_size || 0);
 
         const badgeSliderValue = badgeSizeValue || 250;
 
-        const hasEuroPlateFont = this._plateFontAvailable === true;
+        const renderPlate = this._config.plate_style === "plate";
+        const hasEuroPlateFont = renderPlate && this._plateFontAvailable === true;
         const useEuroPlateFont = this._config.plate_font !== "fallback";
 
         this.innerHTML = `
@@ -324,6 +335,35 @@ export class TuevCardEditor extends HTMLElement {
                     ">
                         ${entityHint}
                     </div>
+
+                    <button
+                        id="addAllNewEntities"
+                        type="button"
+                        ${newEntityCount > 0 ? "" : "disabled"}
+                        style="
+                            margin-top: 12px;
+                            border: none;
+                            border-radius: 999px;
+                            padding: 7px 13px;
+                            background: ${newEntityCount > 0 ? "var(--primary-color)" : "var(--disabled-color, #777)"};
+                            color: var(--text-primary-color);
+                            cursor: ${newEntityCount > 0 ? "pointer" : "default"};
+                            font-weight: 600;
+                            opacity: ${newEntityCount > 0 ? "1" : "0.6"};
+                        "
+                    >
+                        ${this.localize("editor.add_all_new_entities")}
+                    </button>
+
+                    ${newEntityCount === 0 ? `
+                        <div style="
+                            font-size: 12px;
+                            opacity: 0.75;
+                            margin-top: 6px;
+                        ">
+                            ${this.localize("editor.no_new_entities")}
+                        </div>
+                    ` : ""}
                 </div>
 
                 <div>
@@ -397,7 +437,7 @@ export class TuevCardEditor extends HTMLElement {
                     >
                     ${this.localize("editor.show_details")}
                 </label>
-                
+
                 <label style="
                     display: flex;
                     align-items: center;
@@ -513,6 +553,10 @@ export class TuevCardEditor extends HTMLElement {
             this.render();
         });
 
+        this.querySelector("#addAllNewEntities")?.addEventListener("click", () => {
+            this.addAllNewEntities();
+        });
+
         this.querySelector("#entitySearch")?.addEventListener("input", (event) => {
             this._searchText = event.target.value || "";
             this.render();
@@ -581,6 +625,28 @@ export class TuevCardEditor extends HTMLElement {
         });
     }
 
+    addAllNewEntities() {
+        const selected = new Set(this._draftEntityIds.filter(Boolean));
+
+        const newEntityIds = this.getAvailableTuevEntities()
+            .filter((entityId) => !selected.has(entityId));
+
+        if (newEntityIds.length === 0) {
+            return;
+        }
+
+        this._draftEntityIds = [...new Set([
+            ...this._draftEntityIds.filter(Boolean),
+            ...newEntityIds
+        ])];
+
+        this._pickerOpen = false;
+        this._searchText = "";
+
+        this.applyEntities();
+        this.render();
+    }
+
     applyEntities() {
         const cleanedEntityIds = [...new Set(
             this._draftEntityIds
@@ -602,6 +668,8 @@ export class TuevCardEditor extends HTMLElement {
             delete newConfig.entity;
             delete newConfig.entities;
         }
+
+        delete newConfig.auto_add_entities;
 
         this._config = newConfig;
         this.fireConfigChanged();
@@ -632,6 +700,7 @@ export class TuevCardEditor extends HTMLElement {
         }
 
         delete newConfig.layout;
+        delete newConfig.auto_add_entities;
 
         if (options.badgeSizeChanged) {
             const badgeSize = Number(badgeSizeRaw);

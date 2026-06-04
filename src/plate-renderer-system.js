@@ -1,6 +1,6 @@
 import {
     renderProfiledLicensePlate
-} from "./plate-renderer-shared.js?v=a8";
+} from "./plate-renderer-shared.js?v=a14";
 
 const FONT_PROFILE = {
     fontFamily: '"Bahnschrift SemiCondensed", "Bahnschrift Condensed", "Arial Narrow", sans-serif',

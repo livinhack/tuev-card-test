@@ -27,6 +27,11 @@ export const TUEV_CARD_TRANSLATIONS = {
         "editor.search": "Search",
         "editor.no_more_entities": "No more matching TÜV entities found.",
         "editor.single_entity_hint": "A single entity automatically uses the single-card view.",
+        "editor.all_entities_added": "All available TÜV entities have already been added.",
+        "editor.add_all_new_entities": "Add new vehicles automatically",
+        "editor.no_new_entities": "No new vehicles found.",
+
+        "editor.automatic": "Automatic",
         "editor.sort_name": "Vehicle name",
         "editor.sort_plate": "License plate",
         "editor.sort_due_date": "Inspection due date",
@@ -34,17 +39,15 @@ export const TUEV_CARD_TRANSLATIONS = {
         "editor.show_details": "Show details",
         "editor.badge_size": "Sticker size",
         "editor.render_plate": "Render license plate graphically",
+        "editor.use_europlate_font": "Use EuroPlate font",
         "editor.badge_size_current_value": "Current",
         "editor.badge_size_reset": "Reset",
         "editor.columns": "Columns",
-        "editor.automatic": "Automatic",
         "editor.columns_1": "1 column",
         "editor.columns_2": "2 columns",
         "editor.columns_3": "3 columns",
         "editor.columns_4": "4 columns",
-        "editor.sort": "Sorting",
-        "editor.use_europlate_font": "Use EuroPlate font",
-        "editor.all_entities_added": "All available TÜV entities have already been added."
+        "editor.sort": "Sorting"
     },
     de: {
         "error.no_entities": "Keine TÜV-Entitäten konfiguriert.",
@@ -74,6 +77,11 @@ export const TUEV_CARD_TRANSLATIONS = {
         "editor.search": "Suchen",
         "editor.no_more_entities": "Keine weiteren passenden TÜV-Entitäten gefunden.",
         "editor.single_entity_hint": "Bei einer Entität wird automatisch die Einzelansicht genutzt.",
+        "editor.all_entities_added": "Alle verfügbaren TÜV-Entitäten sind bereits hinzugefügt.",
+        "editor.add_all_new_entities": "Neue Fahrzeuge automatisch hinzufügen",
+        "editor.no_new_entities": "Keine neuen Fahrzeuge gefunden.",
+
+        "editor.automatic": "Automatisch",
         "editor.sort_name": "Fahrzeugname",
         "editor.sort_plate": "Kennzeichen",
         "editor.sort_due_date": "HU-Fälligkeit",
@@ -81,17 +89,15 @@ export const TUEV_CARD_TRANSLATIONS = {
         "editor.show_details": "Details anzeigen",
         "editor.badge_size": "Plakettengröße",
         "editor.render_plate": "Kennzeichen grafisch darstellen",
+        "editor.use_europlate_font": "EuroPlate-Schrift verwenden",
         "editor.badge_size_current_value": "Aktuell",
         "editor.badge_size_reset": "Zurücksetzen",
         "editor.columns": "Spalten",
-        "editor.automatic": "Automatisch",
         "editor.columns_1": "1 Spalte",
         "editor.columns_2": "2 Spalten",
         "editor.columns_3": "3 Spalten",
         "editor.columns_4": "4 Spalten",
-        "editor.sort": "Sortierung",
-        "editor.use_europlate_font": "EuroPlate-Schrift verwenden",
-        "editor.all_entities_added": "Alle verfügbaren TÜV-Entitäten sind bereits hinzugefügt."
+        "editor.sort": "Sortierung"
     }
 };
 

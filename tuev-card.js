@@ -1,14 +1,14 @@
 // TÜV Card v0.1.0
 
-import { localize } from "./src/translations.js?v=a8";
-import { renderBadge } from "./src/badge-renderer.js?v=a8";
+import { localize } from "./src/translations.js?v=a14";
+import { renderBadge } from "./src/badge-renderer.js?v=a14";
 import {
     checkPlateFontAvailable,
     ensurePlateFont,
     isPlateFontLoaded,
     renderLicensePlate
-} from "./src/plate-renderer.js?v=a8";
-import { TuevCardEditor } from "./src/tuev-card-editor.js?v=a8";
+} from "./src/plate-renderer.js?v=a14";
+import { TuevCardEditor } from "./src/tuev-card-editor.js?v=a14";
 
 window.customCards = window.customCards || [];
 
@@ -55,6 +55,7 @@ class TuevCard extends HTMLElement {
         const allowedColumns = ["auto", "1", "2", "3", "4"];
         const allowedPlateStyles = ["text", "plate"];
         const allowedPlateFonts = ["auto", "europlate", "fallback"];
+
         const plateFont = allowedPlateFonts.includes(config.plate_font)
             ? config.plate_font
             : "auto";
@@ -77,8 +78,8 @@ class TuevCard extends HTMLElement {
 
         const plateStyle = allowedPlateStyles.includes(config.plate_style)
             ? config.plate_style
-            : "text";            
-            
+            : "text";
+
         this.config = {
             show_details: true,
             plate_style: plateStyle,
@@ -89,6 +90,7 @@ class TuevCard extends HTMLElement {
         };
 
         delete this.config.layout;
+        delete this.config.auto_add_entities;
 
         this._entityUiState = this._entityUiState || {};
 
@@ -346,7 +348,7 @@ class TuevCard extends HTMLElement {
                 confirmFinishScheduled: false,
                 frozenBadge: null,
                 crossfadeBadge: null,
-                showSuccessUntil: 0,
+                showSuccessUntil: 0
             };
         }
 
