@@ -22,7 +22,7 @@ The card shows one or more vehicles with TÜV/HU badge, next inspection date, st
 Install the card through HACS. If the resource is not added automatically, add:
 
 ```yaml
-url: /hacsfiles/tuev-card-test/dist/tuev-card.js
+url: /hacsfiles/tuev-card-test/dist/tuev-card-test.js
 type: module
 ```
 
@@ -46,13 +46,13 @@ src/
 For HACS/release installs the bundled file is used:
 
 ```text
-dist/tuev-card.js
+dist/tuev-card-test.js
 ```
 
 Add the Lovelace resource:
 
 ```yaml
-url: /local/community/tuev-card/dist/tuev-card.js
+url: /local/community/tuev-card/dist/tuev-card-test.js
 type: module
 ```
 
@@ -175,7 +175,7 @@ src/translations/   Card/editor translations
 HACS uses the generated bundled file:
 
 ```text
-dist/tuev-card.js
+dist/tuev-card-test.js
 ```
 
 To rebuild the bundle locally:
