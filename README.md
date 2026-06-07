@@ -178,11 +178,26 @@ HACS uses the generated bundled file:
 dist/tuev-card-test.js
 ```
 
-To rebuild the bundle locally:
+To rebuild the HACS bundle locally, either double-click:
+
+```text
+build-tuev-card.bat
+```
+
+or run manually from the project root:
 
 ```bash
-npm run build
+npm.cmd install
+npm.cmd run build
 ```
+
+The generated HACS file is:
+
+```text
+dist/tuev-card-test.js
+```
+
+Commit this generated file together with source changes before updating through HACS.
 
 ---
 

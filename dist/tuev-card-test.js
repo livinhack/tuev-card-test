@@ -1,4 +1,4 @@
-// TÜV Card bundled v0.1.0-a94
+// TÜV Card bundled v0.1.0-a95
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -2751,7 +2751,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- tuev-card.js ----
 const __m_tuev_card_js = (() => {
-// TÜV Card v0.1.0-a94
+// TÜV Card v0.1.0-a95
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
