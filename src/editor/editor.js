@@ -1,22 +1,22 @@
-import { localize } from "../translations/index.js?v=a91";
-import { normalizeCardConfig, removeLegacyCardConfigOptions } from "../card/config.js?v=a91";
-import { getAvailableTuevEntities, getEntityIdsFromConfig, getEntityLabel } from "../card/entities.js?v=a91";
+import { localize } from "../translations/index.js?v=a92";
+import { normalizeCardConfig, removeLegacyCardConfigOptions } from "../card/config.js?v=a92";
+import { getAvailableTuevEntities, getEntityIdsFromConfig, getEntityLabel } from "../card/entities.js?v=a92";
 import {
     checkPlateFontAvailable,
     ensurePlateFont
-} from "../plate/renderer.js?v=a91";
+} from "../plate/renderer.js?v=a92";
 import {
     getColumnLabel,
     getColumnsFromSliderValue,
     getColumnSliderValue
-} from "./columns.js?v=a91";
+} from "./columns.js?v=a92";
 import {
     renderColumnsSection,
     renderEditorStyles,
     renderEntitySection,
     renderOptionsSection,
     renderSortSection
-} from "./render-parts.js?v=a91";
+} from "./render-parts.js?v=a92";
 
 export class TuevCardEditor extends HTMLElement {
     setConfig(config) {

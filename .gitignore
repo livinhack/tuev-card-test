@@ -15,31 +15,26 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Dependencies / build output
+# Dependencies / caches
 node_modules/
-dist/
-build/
 coverage/
+.cache/
+.temp/
+
+# Keep dist/tuev-card.js tracked for HACS installs
+# Do not ignore dist/ in this repository.
 
 # Temporary files
 *.tmp
 *.temp
-.cache/
-.temp/
+*.bak
 
-# Archives / local backups
+# Local archives / backups
 *.zip
 *.tar
 *.tar.gz
-*.bak
 
-# Python cache, falls lokal Tools/Scripts genutzt werden
+# Python cache, if local tools/scripts are used
 __pycache__/
 *.py[cod]
 .pytest_cache/
-
-# Home Assistant local/dev artifacts
-.storage/
-deps/
-tts/
-home-assistant.log*

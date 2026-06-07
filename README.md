@@ -22,7 +22,7 @@ The card shows one or more vehicles with TÜV/HU badge, next inspection date, st
 Install the card through HACS. If the resource is not added automatically, add:
 
 ```yaml
-url: /hacsfiles/tuev-card-test/tuev-card.js
+url: /hacsfiles/tuev-card-test/dist/tuev-card.js
 type: module
 ```
 
@@ -34,7 +34,7 @@ Copy the complete card folder to:
 /config/www/community/tuev-card/
 ```
 
-Required files:
+Required files for manual modular development install:
 
 ```text
 tuev-card.js
@@ -43,10 +43,16 @@ README.md
 src/
 ```
 
+For HACS/release installs the bundled file is used:
+
+```text
+dist/tuev-card.js
+```
+
 Add the Lovelace resource:
 
 ```yaml
-url: /local/community/tuev-card/tuev-card.js
+url: /local/community/tuev-card/dist/tuev-card.js
 type: module
 ```
 
@@ -156,7 +162,7 @@ This keeps the badge rendering consistent across browsers and Home Assistant fro
 
 ## Project structure
 
-The card is split into small frontend modules:
+The development source is split into small frontend modules:
 
 ```text
 src/badge/          TÜV badge rendering
@@ -164,6 +170,18 @@ src/plate/          Graphical license plate rendering and EuroPlate loading
 src/card/           Card config, entity, layout and render helpers
 src/editor/         Visual editor
 src/translations/   Card/editor translations
+```
+
+HACS uses the generated bundled file:
+
+```text
+dist/tuev-card.js
+```
+
+To rebuild the bundle locally:
+
+```bash
+npm run build
 ```
 
 ---

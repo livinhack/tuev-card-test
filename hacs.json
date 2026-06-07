@@ -1,6 +1,6 @@
 {
   "name": "TÜV Card",
-  "filename": "tuev-card.js",
+  "filename": "dist/tuev-card.js",
   "country": "DE",
   "homeassistant": "2024.6.0",
   "render_readme": true
