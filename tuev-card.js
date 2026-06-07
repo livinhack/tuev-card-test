@@ -1,14 +1,29 @@
-// TÜV Card v0.1.0
+// TÜV Card v0.1.0-a91
 
-import { localize } from "./src/translations.js?v=a14";
-import { renderBadge } from "./src/badge-renderer.js?v=a14";
+import { localize } from "./src/translations/index.js?v=a91";
+import { normalizeCardConfig } from "./src/card/config.js?v=a91";
+import { findFirstTuevEntity, getSortedEntityIds } from "./src/card/entities.js?v=a91";
+import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./src/card/layout.js?v=a91";
+import { getSharedPlateLayout } from "./src/card/plate-layout.js?v=a91";
+import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./src/card/ui-state.js?v=a91";
+import {
+    getOverlayStyleOptions,
+    renderBadgeArea,
+    renderBadgeLayer,
+    renderConfirmOverlay,
+    renderCrossfadeLayer,
+    renderMissingEntity,
+    renderVehicleDetails,
+    renderVehicleHeader
+} from "./src/card/render-parts.js?v=a91";
 import {
     checkPlateFontAvailable,
     ensurePlateFont,
+    getLicensePlateMetrics,
     isPlateFontLoaded,
     renderLicensePlate
-} from "./src/plate-renderer.js?v=a14";
-import { TuevCardEditor } from "./src/tuev-card-editor.js?v=a14";
+} from "./src/plate/renderer.js?v=a91";
+import { TuevCardEditor } from "./src/editor/editor.js?v=a91";
 
 window.customCards = window.customCards || [];
 
@@ -21,21 +36,72 @@ if (!window.customCards.some((card) => card.type === "tuev-card")) {
 }
 
 class TuevCard extends HTMLElement {
+    connectedCallback() {
+        this.style.display = "block";
+        this.style.width = "100%";
+
+        if (!this._onWindowResize) {
+            this._onWindowResize = () => this.scheduleWidthRefresh(true);
+            window.addEventListener("resize", this._onWindowResize);
+        }
+
+        if (!this._plateFontRefreshTimer) {
+            this._plateFontRefreshTimer = window.setInterval(() => {
+                if (this.config) {
+                    this.checkPlateFontAvailability(true);
+                }
+            }, 15000);
+        }
+
+        if (this._resizeObserver || typeof ResizeObserver === "undefined") {
+            return;
+        }
+
+        this._resizeObserver = new ResizeObserver((entries) => {
+            const entry = entries[0];
+            const width = Math.round(entry?.contentRect?.width || 0);
+
+            if (!width) {
+                return;
+            }
+
+            if (Math.abs((this._cardWidth || 0) - width) < 4) {
+                return;
+            }
+
+            this._cardWidth = width;
+
+            if (this._hass && this.config) {
+                this.hass = this._hass;
+            }
+        });
+
+        this._resizeObserver.observe(this);
+    }
+
+    disconnectedCallback() {
+        if (this._resizeObserver) {
+            this._resizeObserver.disconnect();
+            this._resizeObserver = null;
+        }
+
+        if (this._onWindowResize) {
+            window.removeEventListener("resize", this._onWindowResize);
+            this._onWindowResize = null;
+        }
+
+        if (this._plateFontRefreshTimer) {
+            window.clearInterval(this._plateFontRefreshTimer);
+            this._plateFontRefreshTimer = null;
+        }
+    }
+
     static getConfigElement() {
         return document.createElement("tuev-card-editor");
     }
 
     static getStubConfig(hass) {
-        const entityId = Object.keys(hass.states).find((entityId) => {
-            const entity = hass.states[entityId];
-
-            return (
-                entityId.startsWith("sensor.") &&
-                entity?.attributes?.month !== undefined &&
-                entity?.attributes?.year !== undefined &&
-                entity?.attributes?.plate !== undefined
-            );
-        });
+        const entityId = findFirstTuevEntity(hass);
 
         return {
             type: "custom:tuev-card",
@@ -51,70 +117,41 @@ class TuevCard extends HTMLElement {
     }
 
     setConfig(config) {
-        const allowedSorts = ["name", "plate", "due_date", "status"];
-        const allowedColumns = ["auto", "1", "2", "3", "4"];
-        const allowedPlateStyles = ["text", "plate"];
-        const allowedPlateFonts = ["auto", "europlate", "fallback"];
-
-        const plateFont = allowedPlateFonts.includes(config.plate_font)
-            ? config.plate_font
-            : "auto";
-
-        if (!config.entity && !config.entities) {
-            throw new Error("Please provide entity or entities.");
-        }
-
-        const rawColumns = config.columns === undefined || config.columns === null
-            ? "auto"
-            : String(config.columns);
-
-        const columns = allowedColumns.includes(rawColumns)
-            ? rawColumns
-            : "auto";
-
-        const sort = allowedSorts.includes(config.sort)
-            ? config.sort
-            : "name";
-
-        const plateStyle = allowedPlateStyles.includes(config.plate_style)
-            ? config.plate_style
-            : "text";
-
-        this.config = {
-            show_details: true,
-            plate_style: plateStyle,
-            plate_font: plateFont,
-            ...config,
-            columns,
-            sort
-        };
-
-        delete this.config.layout;
-        delete this.config.auto_add_entities;
+        this.config = normalizeCardConfig(config);
 
         this._entityUiState = this._entityUiState || {};
 
         this._plateFontAvailable = false;
         this._plateFontLoaded = false;
-        this._plateFontCheckStarted = false;
+        this._plateFontCheckInProgress = false;
+        this._plateFontLastCheckedAt = 0;
 
-        this.checkPlateFontAvailability();
+        this.checkPlateFontAvailability(true);
+        this.scheduleWidthRefresh(true);
     }
 
-    checkPlateFontAvailability() {
-        if (this._plateFontCheckStarted) {
+    checkPlateFontAvailability(force = false) {
+        const now = Date.now();
+
+        if (this._plateFontCheckInProgress) {
             return;
         }
 
-        this._plateFontCheckStarted = true;
+        if (!force && now - (this._plateFontLastCheckedAt || 0) < 10000) {
+            return;
+        }
+
+        this._plateFontCheckInProgress = true;
+        this._plateFontLastCheckedAt = now;
 
         checkPlateFontAvailable().then((available) => {
+            const changed = this._plateFontAvailable !== available;
             this._plateFontAvailable = available;
 
             if (!available) {
                 this._plateFontLoaded = false;
 
-                if (this._hass) {
+                if (changed && this._hass) {
                     this.hass = this._hass;
                 }
 
@@ -131,28 +168,40 @@ class TuevCard extends HTMLElement {
                 }
             });
 
-            if (this._hass) {
+            if (changed && this._hass) {
                 this.hass = this._hass;
             }
         }).catch(() => {
+            const changed = this._plateFontAvailable !== false || this._plateFontLoaded !== false;
             this._plateFontAvailable = false;
             this._plateFontLoaded = false;
 
-            if (this._hass) {
+            if (changed && this._hass) {
                 this.hass = this._hass;
             }
+        }).finally(() => {
+            this._plateFontCheckInProgress = false;
         });
+    }
+
+    isGraphicalPlateAvailable() {
+        return (
+            this.config?.plate_style === "plate" &&
+            this._plateFontAvailable === true &&
+            this._plateFontLoaded === true
+        );
     }
 
     set hass(hass) {
         this._hass = hass;
         this._entityUiState = this._entityUiState || {};
+        this.checkPlateFontAvailability(false);
 
-        const entityIds = this.getSortedEntityIds(hass);
+        const entityIds = getSortedEntityIds(this.config, hass);
 
         if (entityIds.length === 0) {
             this.innerHTML = `
-                <ha-card>
+                <ha-card style="display:block;width:100%;">
                     <div style="padding:16px;">
                         ${this.localize("error.no_entities")}
                     </div>
@@ -162,33 +211,53 @@ class TuevCard extends HTMLElement {
         }
 
         const isMulti = entityIds.length > 1;
-        const columns = this.config.columns || "auto";
+        const layoutContext = this.getLayoutContext(isMulti);
+        const layout = calculateLayoutInfo({
+            cardWidth: layoutContext.layoutWidth,
+            isMulti,
+            requestedColumns: layoutContext.requestedColumns || this.config.columns
+        });
 
-        let gridTemplateColumns;
+        const automaticBadgeSize = calculateAutomaticBadgeSize({
+            isMulti,
+            effectiveColumns: layout.effectiveColumns,
+            tileWidth: layout.tileWidth
+        });
 
-        if (!isMulti) {
-            gridTemplateColumns = "1fr";
-        } else if (columns === "auto") {
-            gridTemplateColumns = "repeat(auto-fit, minmax(190px, 1fr))";
-        } else {
-            gridTemplateColumns = `repeat(${Number(columns)}, minmax(0, 1fr))`;
-        }
+        const sharedPlateLayout = getSharedPlateLayout({
+            entityIds,
+            hass,
+            tileWidth: layout.tileWidth,
+            isGraphicalPlateAvailable: this.isGraphicalPlateAvailable(),
+            getLicensePlateMetrics
+        });
 
-        const automaticBadgeSize = this.getAutomaticBadgeSize(isMulti);
+        const cardContent = `
+            <div style="
+                padding: 16px;
+                display: grid;
+                grid-template-columns: ${layout.gridTemplateColumns};
+                gap: ${layout.gap}px;
+                align-items: start;
+            ">
+                ${entityIds.map((entityId) => this.renderVehicle(
+                    hass,
+                    entityId,
+                    isMulti,
+                    automaticBadgeSize,
+                    layout,
+                    sharedPlateLayout
+                )).join("")}
+            </div>
+        `;
 
         this.innerHTML = `
-            <ha-card>
-                <div style="
-                    padding: 16px;
-                    display: grid;
-                    grid-template-columns: ${gridTemplateColumns};
-                    gap: ${isMulti ? "18px" : "12px"};
-                    align-items: start;
-                ">
-                    ${entityIds.map((entityId) => this.renderVehicle(hass, entityId, isMulti, automaticBadgeSize)).join("")}
-                </div>
+            <ha-card style="display:block;width:100%;overflow:hidden;">
+                ${this.renderPreviewScaledContent(cardContent, layoutContext)}
             </ha-card>
         `;
+
+        this.updatePreviewScaleHeight();
 
         this.querySelectorAll("[data-confirm-entity]").forEach((button) => {
             const entityId = button.getAttribute("data-confirm-entity");
@@ -197,183 +266,334 @@ class TuevCard extends HTMLElement {
                 await this.confirmPassed(entityId);
             });
         });
+
+        this.scheduleWidthRefresh();
     }
 
-    getEntityIds() {
-        const rawEntityIds = [];
+    isEditorPreviewContext() {
+        const previewTagNames = new Set([
+            "HUI-CARD-PREVIEW",
+            "HUI-CARD-ELEMENT-EDITOR",
+            "HUI-CARD-EDITOR",
+            "HUI-DIALOG-EDIT-CARD",
+            "HA-CARD-PREVIEW",
+            "HA-DIALOG"
+        ]);
+        const previewClassNeedles = [
+            "preview",
+            "card-preview",
+            "editor-preview",
+            "edit-card",
+            "card-editor"
+        ];
 
-        if (this.config.entity) {
-            rawEntityIds.push(this.config.entity);
+        let node = this;
+        let depth = 0;
+
+        while (node && depth < 32) {
+            const tagName = String(node.tagName || "").toUpperCase();
+
+            if (previewTagNames.has(tagName)) {
+                return true;
+            }
+
+            const rawClassName = node.className;
+            const className = typeof rawClassName === "string"
+                ? rawClassName.toLowerCase()
+                : String(rawClassName?.baseVal || "").toLowerCase();
+
+            if (
+                className &&
+                previewClassNeedles.some((needle) => className.includes(needle))
+            ) {
+                return true;
+            }
+
+            const root = node.getRootNode?.();
+            node = node.parentElement || node.assignedSlot || root?.host || null;
+            depth += 1;
         }
 
-        if (Array.isArray(this.config.entities)) {
-            this.config.entities.forEach((entry) => {
-                if (typeof entry === "string") {
-                    rawEntityIds.push(entry);
-                    return;
-                }
-
-                if (entry && entry.entity) {
-                    rawEntityIds.push(entry.entity);
-                }
-            });
-        }
-
-        return [...new Set(rawEntityIds.filter(Boolean))];
+        return false;
     }
 
-    getSortedEntityIds(hass) {
-        const entityIds = this.getEntityIds();
-        const sort = this.config.sort || "name";
+    getLayoutContext(isMulti) {
+        const measuredWidth = this.getCardWidth();
+        const requestedColumns = String(this.config?.columns || "auto");
+        const previewContext = this.isEditorPreviewContext();
 
-        const statusRank = {
-            expired: 0,
-            due: 1,
-            valid: 2
-        };
-
-        return [...entityIds].sort((a, b) => {
-            const entityA = hass.states[a];
-            const entityB = hass.states[b];
-
-            if (!entityA && !entityB) {
-                return 0;
-            }
-
-            if (!entityA) {
-                return 1;
-            }
-
-            if (!entityB) {
-                return -1;
-            }
-
-            const attrA = entityA.attributes;
-            const attrB = entityB.attributes;
-
-            if (sort === "name") {
-                return this.compareText(
-                    attrA.vehicle_name || attrA.friendly_name || a,
-                    attrB.vehicle_name || attrB.friendly_name || b
-                );
-            }
-
-            if (sort === "plate") {
-                return this.compareText(
-                    attrA.plate || "",
-                    attrB.plate || ""
-                );
-            }
-
-            if (sort === "due_date") {
-                return this.compareText(
-                    attrA.due_date || "",
-                    attrB.due_date || ""
-                );
-            }
-
-            if (sort === "status") {
-                const rankA = statusRank[entityA.state] ?? statusRank[attrA.status] ?? 99;
-                const rankB = statusRank[entityB.state] ?? statusRank[attrB.status] ?? 99;
-
-                if (rankA !== rankB) {
-                    return rankA - rankB;
-                }
-
-                return this.compareText(
-                    attrA.due_date || "",
-                    attrB.due_date || ""
-                );
-            }
-
-            return 0;
-        });
-    }
-
-    compareText(a, b) {
-        return String(a).localeCompare(String(b), undefined, {
-            numeric: true,
-            sensitivity: "base"
-        });
-    }
-
-    getAutomaticBadgeSize(isMulti) {
-        if (!isMulti) {
-            return 250;
-        }
-
-        const columns = this.config.columns || "auto";
-
-        if (columns === "1") {
-            return 220;
-        }
-
-        if (columns === "2") {
-            return 175;
-        }
-
-        if (columns === "3") {
-            return 135;
-        }
-
-        if (columns === "4") {
-            return 105;
-        }
-
-        return 175;
-    }
-
-    getPlateFontProfile() {
-        const plateFont = this.config.plate_font || "auto";
-        const euroPlateUsable =
-            this._plateFontAvailable === true &&
-            this._plateFontLoaded === true;
-
-        if (plateFont === "fallback") {
-            return "fallback";
-        }
-
-        if (plateFont === "europlate") {
-            return euroPlateUsable ? "europlate" : "fallback";
-        }
-
-        return euroPlateUsable ? "europlate" : "fallback";
-    }
-
-    getUiState(entityId) {
-        if (!this._entityUiState[entityId]) {
-            this._entityUiState[entityId] = {
-                confirming: false,
-                confirmStartedAt: 0,
-                confirmFinishScheduled: false,
-                frozenBadge: null,
-                crossfadeBadge: null,
-                showSuccessUntil: 0
+        if (!isMulti || !previewContext) {
+            return {
+                measuredWidth,
+                layoutWidth: measuredWidth,
+                requestedColumns,
+                previewScaled: false,
+                scale: 1
             };
         }
 
-        return this._entityUiState[entityId];
+        const previewSimulation = this.getPreviewSimulation(requestedColumns, measuredWidth);
+
+        if (!previewSimulation?.width) {
+            return {
+                measuredWidth,
+                layoutWidth: measuredWidth,
+                requestedColumns,
+                previewScaled: false,
+                scale: 1
+            };
+        }
+
+        const simulatedWidth = previewSimulation.width;
+        const visiblePreviewWidth = this.getPreviewVisibleWidth() || measuredWidth;
+        const scale = Math.min(1, Math.max(0.05, visiblePreviewWidth / simulatedWidth));
+
+        if (scale >= 0.995 && measuredWidth >= simulatedWidth - 4) {
+            return {
+                measuredWidth,
+                layoutWidth: measuredWidth,
+                requestedColumns: previewSimulation.requestedColumns || requestedColumns,
+                previewScaled: false,
+                scale: 1
+            };
+        }
+
+        return {
+            measuredWidth,
+            layoutWidth: simulatedWidth,
+            requestedColumns: previewSimulation.requestedColumns || requestedColumns,
+            previewScaled: true,
+            scale
+        };
     }
 
-    renderVehicle(hass, entityId, compact, automaticBadgeSize) {
+    getPreviewSimulation(requestedColumns, measuredWidth) {
+        if (requestedColumns === "4") {
+            return {
+                width: 720,
+                requestedColumns: "4"
+            };
+        }
+
+        if (requestedColumns !== "auto") {
+            return null;
+        }
+
+        // Conservative editor preview: the native Home Assistant preview does
+        // not reliably expose whether the edited card will later live in a
+        // panel, section or grid view. To avoid misleading panel-style previews
+        // in section/grid dashboards, auto is shown as the same stable four
+        // column preview as the manual "4" setting. The real dashboard still
+        // uses the actual available width and can render more columns.
+        return {
+            width: 720,
+            requestedColumns: "4"
+        };
+    }
+
+    getPreviewVisibleWidth() {
+        const candidates = [];
+        const addCandidate = (element) => {
+            if (!element?.getBoundingClientRect) {
+                return;
+            }
+
+            const rect = element.getBoundingClientRect();
+            const width = Math.round(rect.width || 0);
+
+            if (width > 0) {
+                candidates.push(width);
+            }
+        };
+
+        addCandidate(this);
+        addCandidate(this.querySelector("ha-card"));
+        addCandidate(this.parentElement);
+
+        if (candidates.length === 0) {
+            return 0;
+        }
+
+        // For scaled editor previews the visible card element is the relevant
+        // limit. Parent containers can be wider than the clipped preview pane,
+        // so using the maximum here would make the scaled preview too large.
+        return Math.min(...candidates);
+    }
+
+    renderPreviewScaledContent(content, layoutContext) {
+        if (!layoutContext.previewScaled) {
+            return content;
+        }
+
+        const height = this._previewScaledHeight
+            ? `${this._previewScaledHeight}px`
+            : "auto";
+
+        return `
+            <div
+                data-preview-scale-outer
+                style="
+                    height: ${height};
+                    overflow: hidden;
+                    width: 100%;
+                "
+            >
+                <div
+                    data-preview-scale-inner
+                    style="
+                        width: ${layoutContext.layoutWidth}px;
+                        transform: scale(${layoutContext.scale});
+                        transform-origin: top left;
+                    "
+                >
+                    ${content}
+                </div>
+            </div>
+        `;
+    }
+
+    updatePreviewScaleHeight() {
+        const outer = this.querySelector("[data-preview-scale-outer]");
+        const inner = this.querySelector("[data-preview-scale-inner]");
+
+        if (!outer || !inner) {
+            this._previewScaledHeight = 0;
+            return;
+        }
+
+        window.requestAnimationFrame(() => {
+            const rect = inner.getBoundingClientRect();
+            const height = Math.ceil(rect.height || 0);
+
+            if (!height) {
+                return;
+            }
+
+            if (Math.abs((this._previewScaledHeight || 0) - height) < 2) {
+                outer.style.height = `${height}px`;
+                return;
+            }
+
+            this._previewScaledHeight = height;
+            outer.style.height = `${height}px`;
+        });
+    }
+
+    getCardWidth() {
+        const getWidth = (element) => {
+            if (!element?.getBoundingClientRect) {
+                return 0;
+            }
+
+            return Math.round(element.getBoundingClientRect().width || 0);
+        };
+
+        const ownWidth = getWidth(this);
+        const cardWidth = getWidth(this.querySelector("ha-card"));
+        const storedWidth = this._cardWidth > 0 ? Math.round(this._cardWidth) : 0;
+        const previewContext = this.isEditorPreviewContext();
+
+        // In the real dashboard the custom element's own box is the only safe
+        // source of truth. Parent containers can be wider than the card itself
+        // in tile/section layouts; using them would make plate scaling think it
+        // has more horizontal room than the tile actually provides.
+        if (!previewContext) {
+            return ownWidth || cardWidth || storedWidth || 0;
+        }
+
+        const candidates = [ownWidth, cardWidth, storedWidth].filter((width) => width > 0);
+
+        let parent = this.parentElement;
+        let depth = 0;
+
+        while (parent && depth < 3) {
+            const width = getWidth(parent);
+
+            if (width > 0) {
+                candidates.push(width);
+            }
+
+            parent = parent.parentElement;
+            depth += 1;
+        }
+
+        if (candidates.length === 0) {
+            return 0;
+        }
+
+        // In HA's editor preview the custom element can initially report too
+        // small a width. There we still allow nearby preview/container widths,
+        // because the result is scaled visually and not used by the real card.
+        return Math.max(...candidates);
+    }
+
+    refreshMeasuredWidth(forceRender = false) {
+        const width = Math.round(this.getCardWidth());
+
+        if (!width) {
+            return false;
+        }
+
+        const changed = Math.abs((this._cardWidth || 0) - width) >= 4;
+
+        if (changed || forceRender) {
+            this._cardWidth = width;
+
+            if (this._hass && this.config) {
+                this.hass = this._hass;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    scheduleWidthRefresh(force = false) {
+        if (this._widthRefreshScheduled && !force) {
+            return;
+        }
+
+        this._widthRefreshScheduled = true;
+
+        const scheduleFrame = (delay, isLast = false) => {
+            window.setTimeout(() => {
+                window.requestAnimationFrame(() => {
+                    this.refreshMeasuredWidth(false);
+
+                    if (isLast) {
+                        this._widthRefreshScheduled = false;
+                    }
+                });
+            }, delay);
+        };
+
+        // A mix of animation frames and delayed checks catches HA editor
+        // preview changes, section reflows and the final dashboard layout
+        // after leaving edit mode without changing the actual layout rules.
+        window.requestAnimationFrame(() => {
+            this.refreshMeasuredWidth(force);
+
+            window.requestAnimationFrame(() => {
+                this.refreshMeasuredWidth(false);
+            });
+        });
+
+        const delays = [80, 180, 360, 750, 1500, 3000];
+        delays.forEach((delay, index) => {
+            scheduleFrame(delay, index === delays.length - 1);
+        });
+    }
+
+    getUiState(entityId) {
+        return getEntityUiState(this._entityUiState, entityId);
+    }
+
+    renderVehicle(hass, entityId, compact, automaticBadgeSize, layout, sharedPlateLayout) {
         const entity = hass.states[entityId];
 
         if (!entity) {
-            return `
-                <div style="
-                    padding: 12px;
-                    border-radius: 12px;
-                    background: var(--card-background-color);
-                    border: 1px solid var(--divider-color);
-                ">
-                    <div style="font-weight: 600; margin-bottom: 4px;">
-                        ${this.localize("error.entity_not_found")}
-                    </div>
-                    <div style="font-size: 13px; opacity: 0.75;">
-                        ${entityId}
-                    </div>
-                </div>
-            `;
+            return renderMissingEntity(entityId, (key) => this.localize(key));
         }
 
         const ui = this.getUiState(entityId);
@@ -383,7 +603,6 @@ class TuevCard extends HTMLElement {
         const plate = attr.plate || "";
         const month = Number(attr.month || 1);
         const year = Number(attr.year || new Date().getFullYear());
-
         const status = attr.status || entity.state || "";
         const showDetails = this.config.show_details !== false;
 
@@ -409,7 +628,6 @@ class TuevCard extends HTMLElement {
             : fallbackRotation;
 
         const blurred = Boolean(attr.blurred);
-
         const pending =
             entity.state === "due" ||
             entity.state === "expired" ||
@@ -417,55 +635,16 @@ class TuevCard extends HTMLElement {
             attr.status === "expired" ||
             blurred;
 
-        const MIN_CONFIRM_MS = 700;
-        const SUCCESS_MS = 800;
-        const CROSSFADE_MS = 800;
-
-        if (!pending && ui.confirming && !ui.confirmFinishScheduled) {
-            ui.confirmFinishScheduled = true;
-
-            const elapsed = Date.now() - (ui.confirmStartedAt || 0);
-            const remaining = Math.max(0, MIN_CONFIRM_MS - elapsed);
-
-            window.setTimeout(() => {
-                ui.confirming = false;
-                ui.confirmFinishScheduled = false;
-                ui.showSuccessUntil = Date.now() + SUCCESS_MS;
-
-                ui.crossfadeBadge = {
-                    from: ui.frozenBadge,
-                    to: {
-                        year,
-                        rotation,
-                        blurred: false
-                    },
-                    startedAt: Date.now(),
-                    duration: CROSSFADE_MS
-                };
-
-                ui.frozenBadge = null;
-
-                if (this._hass) {
-                    this.hass = this._hass;
-                }
-
-                window.setTimeout(() => {
-                    ui.showSuccessUntil = 0;
-                    ui.crossfadeBadge = null;
-
-                    if (this._hass) {
-                        this.hass = this._hass;
-                    }
-                }, Math.max(SUCCESS_MS, CROSSFADE_MS));
-            }, remaining);
-        }
+        this.updateConfirmationUiState({
+            ui,
+            pending,
+            year,
+            rotation
+        });
 
         const showSuccess = Date.now() < (ui.showSuccessUntil || 0);
         const showConfirmOverlay = pending || ui.confirming || showSuccess;
-
-        const isExpired =
-            entity.state === "expired" ||
-            attr.status === "expired";
+        const isExpired = entity.state === "expired" || attr.status === "expired";
 
         const overlayTitle = ui.confirming
             ? this.localize("overlay.updating")
@@ -489,75 +668,49 @@ class TuevCard extends HTMLElement {
 
         const displayBadge = ui.frozenBadge
             ? ui.frozenBadge
-            : {
-                year,
-                rotation,
-                blurred
-            };
+            : { year, rotation, blurred };
+        const badgeSize = automaticBadgeSize;
+        const plateLayout = sharedPlateLayout;
+        const overlayStyle = getOverlayStyleOptions({ badgeSize, compact });
 
-        const badgeSize = Number(this.config.badge_size || 0) || automaticBadgeSize;
-        const plateSizeProfile =
-            String(this.config.columns || "auto") === "4"
-                ? "tiny"
-                : compact
-                    ? "compact"
-                    : "normal";
+        const header = renderVehicleHeader({
+            compact,
+            vehicleName,
+            plate,
+            plateLayout,
+            renderPlate: () => renderLicensePlate(plate, {
+                compact,
+                maxWidth: plateLayout.maxWidth,
+                scale: plateLayout.scale
+            })
+        });
 
-        const plateScale = 1;
+        const overlay = showConfirmOverlay
+            ? renderConfirmOverlay({
+                entityId,
+                ui,
+                showSuccess,
+                overlayTitle,
+                overlayText,
+                buttonText,
+                style: overlayStyle
+            })
+            : "";
 
-        const overlayScale = badgeSize <= 115
-            ? "tiny"
-            : badgeSize <= 140
-                ? "small"
-                : "normal";
+        const badgeArea = renderBadgeArea({
+            badgeSize,
+            badgeLayer: renderBadgeLayer(displayBadge, badgeSize),
+            crossfadeLayer: ui.crossfadeBadge ? renderCrossfadeLayer(ui.crossfadeBadge, badgeSize) : "",
+            overlay
+        });
 
-        const overlayMinWidth = {
-            tiny: 104,
-            small: 122,
-            normal: compact ? 145 : 170
-        }[overlayScale];
-
-        const overlayMaxWidth = {
-            tiny: 126,
-            small: 150,
-            normal: compact ? 180 : 220
-        }[overlayScale];
-
-        const overlayPadding = {
-            tiny: "7px",
-            small: "8px",
-            normal: compact ? "10px" : "12px"
-        }[overlayScale];
-
-        const overlayGap = {
-            tiny: "5px",
-            small: "6px",
-            normal: compact ? "7px" : "9px"
-        }[overlayScale];
-
-        const overlayTitleSize = {
-            tiny: "11px",
-            small: "12px",
-            normal: compact ? "14px" : "16px"
-        }[overlayScale];
-
-        const overlayTextSize = {
-            tiny: "10px",
-            small: "11px",
-            normal: compact ? "12px" : "13px"
-        }[overlayScale];
-
-        const overlayButtonPadding = {
-            tiny: "5px 9px",
-            small: "6px 10px",
-            normal: compact ? "7px 12px" : "8px 15px"
-        }[overlayScale];
-
-        const overlayButtonFontSize = {
-            tiny: "10px",
-            small: "11px",
-            normal: compact ? "12px" : "13px"
-        }[overlayScale];
+        const details = renderVehicleDetails({
+            showDetails,
+            compact,
+            huLabel,
+            statusColor,
+            statusLabel
+        });
 
         return `
             <div style="
@@ -567,167 +720,52 @@ class TuevCard extends HTMLElement {
                 align-items: center;
                 min-width: 0;
             ">
-                <div style="
-                    width: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-                    text-align: ${compact ? "center" : "left"};
-                ">
-                    <div style="
-                        font-size: ${compact ? "18px" : "22px"};
-                        font-weight: 600;
-                        line-height: 1.2;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                    ">
-                        ${vehicleName}
-                    </div>
-
-                    ${this.config.plate_style === "plate" && plate ? `
-                        <div style="
-                            display: flex;
-                            justify-content: ${compact ? "center" : "flex-start"};
-                            width: 100%;
-                            margin-top: 3px;
-                        ">
-                            ${renderLicensePlate(plate, {
-                                compact,
-                                fontProfile: this.getPlateFontProfile(),
-                                sizeProfile: plateSizeProfile,
-                                scale: plateScale
-                            })}
-                        </div>
-                    ` : `
-                        <div style="
-                            font-size: ${compact ? "13px" : "15px"};
-                            opacity: 0.75;
-                            letter-spacing: 0.08em;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
-                        ">
-                            ${plate}
-                        </div>
-                    `}
-                </div>
-
-                <div style="
-                    position: relative;
-                    width: ${badgeSize}px;
-                    height: ${badgeSize}px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                ">
-                    ${this.renderBadgeLayer(displayBadge, badgeSize)}
-
-                    ${ui.crossfadeBadge ? this.renderCrossfadeLayer(ui.crossfadeBadge, badgeSize) : ""}
-
-                    ${showConfirmOverlay ? `
-                        <div
-                            style="
-                                position: absolute;
-                                left: 50%;
-                                top: 50%;
-                                transform: translate(-50%, -50%);
-                                z-index: 5;
-                                min-width: ${overlayMinWidth}px;
-                                max-width: ${overlayMaxWidth}px;
-                                padding: ${overlayPadding};
-                                border-radius: 16px;
-                                background: rgba(20, 20, 20, 0.62);
-                                border: 1px solid rgba(255, 255, 255, 0.20);
-                                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38);
-                                backdrop-filter: blur(6px);
-                                -webkit-backdrop-filter: blur(6px);
-                                color: white;
-                                text-align: center;
-                                display: flex;
-                                flex-direction: column;
-                                gap: ${overlayGap};
-                                align-items: center;
-                                transition:
-                                    opacity 0.5s ease,
-                                    transform 0.3s ease;
-                            "
-                        >
-                            <div style="
-                                font-size: ${overlayTitleSize};
-                                font-weight: 700;
-                                line-height: 1.15;
-                            ">
-                                ${overlayTitle}
-                            </div>
-
-                            <div style="
-                                font-size: ${overlayTextSize};
-                                opacity: 0.9;
-                                line-height: 1.2;
-                            ">
-                                ${overlayText}
-                            </div>
-
-                            <button
-                                data-confirm-entity="${entityId}"
-                                ${ui.confirming || showSuccess ? "disabled" : ""}
-                                style="
-                                    border: none;
-                                    border-radius: 999px;
-                                    padding: ${overlayButtonPadding};
-                                    background: ${showSuccess ? "var(--success-color, #43a047)" : "var(--primary-color)"};
-                                    color: var(--text-primary-color);
-                                    font-size: ${overlayButtonFontSize};
-                                    font-weight: 700;
-                                    cursor: ${ui.confirming || showSuccess ? "default" : "pointer"};
-                                    white-space: nowrap;
-                                    opacity: ${ui.confirming ? "0.75" : "1"};
-                                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.30);
-                                "
-                            >
-                                ${buttonText}
-                            </button>
-                        </div>
-                    ` : ""}
-                </div>
-
-                ${showDetails ? `
-                    <div style="
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 2px;
-                        font-size: ${compact ? "12px" : "13px"};
-                        line-height: 1.25;
-                        opacity: 0.82;
-                        text-align: center;
-                    ">
-                        <div style="font-weight: 600;">
-                            ${huLabel}
-                        </div>
-                        <div style="
-                            display: inline-flex;
-                            align-items: center;
-                            gap: 5px;
-                        ">
-                            <span style="
-                                width: 7px;
-                                height: 7px;
-                                border-radius: 50%;
-                                background: ${statusColor};
-                                display: inline-block;
-                                box-shadow: 0 0 5px ${statusColor};
-                                flex: 0 0 auto;
-                            "></span>
-                            <span style="color: inherit;">
-                                ${statusLabel}
-                            </span>
-                        </div>
-                    </div>
-                ` : ""}
+                ${header}
+                ${badgeArea}
+                ${details}
             </div>
         `;
+    }
+
+    updateConfirmationUiState({ ui, pending, year, rotation }) {
+        if (!pending && ui.confirming && !ui.confirmFinishScheduled) {
+            ui.confirmFinishScheduled = true;
+
+            const elapsed = Date.now() - (ui.confirmStartedAt || 0);
+            const remaining = Math.max(0, CONFIRM_TIMING.minConfirmMs - elapsed);
+
+            window.setTimeout(() => {
+                ui.confirming = false;
+                ui.confirmFinishScheduled = false;
+                ui.showSuccessUntil = Date.now() + CONFIRM_TIMING.successMs;
+
+                ui.crossfadeBadge = {
+                    from: ui.frozenBadge,
+                    to: {
+                        year,
+                        rotation,
+                        blurred: false
+                    },
+                    startedAt: Date.now(),
+                    duration: CONFIRM_TIMING.crossfadeMs
+                };
+
+                ui.frozenBadge = null;
+
+                if (this._hass) {
+                    this.hass = this._hass;
+                }
+
+                window.setTimeout(() => {
+                    ui.showSuccessUntil = 0;
+                    ui.crossfadeBadge = null;
+
+                    if (this._hass) {
+                        this.hass = this._hass;
+                    }
+                }, Math.max(CONFIRM_TIMING.successMs, CONFIRM_TIMING.crossfadeMs));
+            }, remaining);
+        }
     }
 
     async confirmPassed(entityId) {
@@ -752,16 +790,10 @@ class TuevCard extends HTMLElement {
             return;
         }
 
-        ui.confirming = true;
-        ui.confirmFinishScheduled = false;
-        ui.confirmStartedAt = Date.now();
-        ui.crossfadeBadge = null;
-
-        ui.frozenBadge = {
+        startEntityConfirmation(ui, {
             year,
-            rotation,
-            blurred: true
-        };
+            rotation
+        });
 
         this.hass = this._hass;
 
@@ -772,84 +804,12 @@ class TuevCard extends HTMLElement {
         } catch (error) {
             console.error("TÜV confirmation failed", error);
 
-            ui.confirming = false;
-            ui.confirmFinishScheduled = false;
-            ui.frozenBadge = null;
-            ui.crossfadeBadge = null;
+            resetEntityUiStateAfterError(ui);
 
             if (this._hass) {
                 this.hass = this._hass;
             }
         }
-    }
-
-    renderBadgeLayer(badge, size) {
-        return `
-            <div style="
-                position: absolute;
-                inset: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                opacity: 1;
-                z-index: 1;
-            ">
-                ${renderBadge(badge.year, badge.rotation, badge.blurred, size)}
-            </div>
-        `;
-    }
-
-    renderCrossfadeLayer(crossfade, size) {
-        if (!crossfade.from) {
-            return "";
-        }
-
-        return `
-            <div style="
-                position: absolute;
-                inset: 0;
-                z-index: 2;
-                pointer-events: none;
-            ">
-                <div
-                    style="
-                        position: absolute;
-                        inset: 0;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        animation: tuevFadeOut ${crossfade.duration}ms ease forwards;
-                    "
-                >
-                    ${renderBadge(crossfade.from.year, crossfade.from.rotation, crossfade.from.blurred, size)}
-                </div>
-
-                <div
-                    style="
-                        position: absolute;
-                        inset: 0;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        animation: tuevFadeIn ${crossfade.duration}ms ease forwards;
-                    "
-                >
-                    ${renderBadge(crossfade.to.year, crossfade.to.rotation, crossfade.to.blurred, size)}
-                </div>
-
-                <style>
-                    @keyframes tuevFadeOut {
-                        from { opacity: 1; transform: scale(1); }
-                        to { opacity: 0; transform: scale(0.985); }
-                    }
-
-                    @keyframes tuevFadeIn {
-                        from { opacity: 0; transform: scale(1.015); }
-                        to { opacity: 1; transform: scale(1); }
-                    }
-                </style>
-            </div>
-        `;
     }
 
     getCardSize() {
