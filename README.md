@@ -1,12 +1,28 @@
 # TÜV Card
 
+## English
+
 Home Assistant Lovelace card for vehicles tracked by the **TÜV Reminder** integration.
 
-The card shows one or more vehicles with TÜV/HU badge, next inspection date, status, and optionally a graphical German-style license plate.
+The card displays one or more vehicles with TÜV/HU badge, next inspection date, status, optional graphical German-style license plates, sorting, and optional groups.
 
 ---
 
-## Requirements
+### Features
+
+- Display one or multiple TÜV Reminder vehicles
+- TÜV/HU badge rendering without external badge fonts
+- Optional graphical license plates
+- Optional `EuroPlate.ttf` support
+- Visual editor with localized UI
+- Column limit: `auto`, `1`, `2`, `3`, or `4`
+- Sorting by name, plate, due date, or status
+- Optional vehicle groups with individual colors and sorting
+- Floating editor panels for display options, group colors, and manual-sort confirmation
+
+---
+
+### Requirements
 
 - Home Assistant
 - TÜV Reminder sensor entities
@@ -15,52 +31,52 @@ The card shows one or more vehicles with TÜV/HU badge, next inspection date, st
 
 ---
 
-## Installation
+### Installation
 
-### HACS
+#### HACS
 
-Install the card through HACS. If the resource is not added automatically, add:
+Install the card through HACS.
+
+If the Lovelace resource is not added automatically, add:
 
 ```yaml
 url: /hacsfiles/tuev-card-test/dist/tuev-card-test.js
 type: module
 ```
 
-### Manual installation
+#### Manual installation
 
 Copy the complete card folder to:
 
 ```text
-/config/www/community/tuev-card/
+/config/www/community/tuev-card-test/
 ```
 
-Required files for manual modular development install:
+For modular local testing, use:
 
 ```text
 tuev-card.js
-hacs.json
-README.md
 src/
-```
-
-For HACS/release installs the bundled file is used:
-
-```text
-dist/tuev-card-test.js
 ```
 
 Add the Lovelace resource:
 
 ```yaml
-url: /local/community/tuev-card/dist/tuev-card-test.js
+url: /local/community/tuev-card-test/tuev-card.js
 type: module
 ```
 
-Reload the dashboard after changing frontend files.
+For release/HACS installs, the bundled file is used:
+
+```text
+dist/tuev-card-test.js
+```
+
+After changing frontend files, reload the dashboard and clear the browser cache if needed.
 
 ---
 
-## Add the card
+### Add the card
 
 Use the Home Assistant card picker and select:
 
@@ -88,66 +104,67 @@ entities:
   - sensor.mondeo_tuv
 ```
 
----
-
-### Grouped vehicles
-
-Groups are optional. Existing cards without `groups` continue to work unchanged.
+Grouped vehicles:
 
 ```yaml
 type: custom:tuev-card
 columns: auto
 groups:
-  - title: Privat
+  - title: Private
     color: "#42a5f5"
     entities:
       - sensor.focus_rs_tuv
       - sensor.mondeo_tuv
-  - title: Firma
+  - title: Company
+    color: "#66bb6a"
     entities:
       - sensor.transit_tuv
 entities:
   - sensor.unassigned_trailer_tuv
 ```
 
+---
 
-## Visual editor
+### Visual editor
 
 The visual editor supports:
 
 - selecting TÜV entities
 - adding all new TÜV vehicles at once
-- column mode
-- sorting
+- column limit
+- sorting for ungrouped vehicles and groups
 - showing or hiding details
-- graphical license plates when `EuroPlate.ttf` is available
-- optional vehicle groups with freely named section headings
+- graphical license plates when available
+- optional vehicle groups with freely named headings
+- group colors
+- manual group ordering
 
-The native Home Assistant preview may be narrower than the final dashboard card. Manual `4` and `auto` are therefore shown conservatively in the editor preview. The final dashboard always uses the real available card width.
+The native Home Assistant editor preview may be narrower than the final dashboard card. Manual `4` and `auto` are therefore shown conservatively in the editor preview. The final dashboard uses the real available card width.
 
 ---
 
-## Options
+### Options
 
 | Option | Default | Description |
 | --- | --- | --- |
 | `entity` | optional | Single TÜV Reminder sensor |
-| `entities` | optional | List of TÜV Reminder sensors |
-| `groups` | optional | Freely named vehicle groups with their own entity lists, optional `color` and optional per-group sorting |
-| `columns` | `auto` | `auto`, `1`, `2`, `3`, or `4` |
-| `sort` | `name` | `name`, `plate`, `due_date`, or `status` |
+| `entities` | optional | List of ungrouped TÜV Reminder sensors |
+| `groups` | optional | Vehicle groups with title, entity list, optional color, and optional sorting |
+| `columns` | `auto` | `auto`, `1`, `2`, `3`, or `4`; treated as a maximum/limit |
+| `sort` | `name` | Ungrouped sorting: `name`, `plate`, `due_date`, or `status` |
+| `sort_direction` | `asc` | Ungrouped sort direction: `asc` or `desc` |
 | `show_details` | `true` | Show next HU and status |
 | `plate_style` | `text` | `text` or `plate` |
 
-Optional groups can be used to divide one card into headings such as `Privat`, `Firma`, `Autos`, `Motorräder`, or `Anhänger`. Each group can optionally define a `color` and its own sorting mode. The color is used for the editor accent and dashboard heading line. Vehicles without a group remain in the normal ungrouped section.
+Optional groups can be used to divide one card into sections such as `Private`, `Company`, `Cars`, `Motorcycles`, or `Trailers`. Each group can optionally define a `color`, `sort`, and `sort_direction`. Vehicles without a group remain in the ungrouped section.
 
-`columns: auto` uses as many readable columns as fit, capped at 16. Manual values `1` to `4` act as maximums and may be reduced automatically if the available width is too small.
+`columns: auto` uses as many readable columns as fit. Manual values `1` to `4` act as maximums and may be reduced automatically if the available width is too small.
 
 ---
 
-## Graphical license plates
+### Graphical license plates
 
-Graphical license plates require a user-provided `EuroPlate.ttf`.
+Graphical license plates can use a user-provided `EuroPlate.ttf`.
 
 Place the file here:
 
@@ -169,11 +186,11 @@ plate_style: plate
 
 If the font is missing, the visual editor hides the graphical license plate option and the card falls back to plain text plates.
 
-`EuroPlate.ttf` is not included and should only be redistributed if its own license allows it.
+`EuroPlate.ttf` is not included. Users must provide their own file and are responsible for complying with that font's license.
 
 ---
 
-## TÜV badge rendering
+### TÜV badge rendering
 
 The TÜV badge does not need external fonts. Month digits and the center year are rendered from bundled SVG digit path data in:
 
@@ -181,19 +198,17 @@ The TÜV badge does not need external fonts. Month digits and the center year ar
 src/badge/digits.js
 ```
 
-This keeps the badge rendering consistent across browsers and Home Assistant frontends.
+This keeps badge rendering consistent across browsers and Home Assistant frontends.
 
 ---
 
-## Project structure
-
-The development source is split into small frontend modules:
+### Project structure
 
 ```text
 src/badge/          TÜV badge rendering
 src/plate/          Graphical license plate rendering and EuroPlate loading
-src/card/           Card config, entity, layout and render helpers
-src/editor/         Visual editor
+src/card/           Card config, entity, layout, group, and render helpers
+src/editor/         Visual editor, editor styles, buttons, and floating panels
 src/translations/   Card/editor translations
 ```
 
@@ -214,19 +229,14 @@ or run manually from the project root:
 ```bash
 npm.cmd install
 npm.cmd run build
+npm.cmd run check
 ```
 
-The generated HACS file is:
-
-```text
-dist/tuev-card-test.js
-```
-
-Commit this generated file together with source changes before updating through HACS.
+Commit the generated file together with source changes before updating through HACS.
 
 ---
 
-## Troubleshooting
+### Troubleshooting
 
 If the card does not appear, check the Lovelace resource URL and clear the browser cache.
 
@@ -236,7 +246,7 @@ If graphical license plates are not available, check that `/local/EuroPlate.ttf`
 
 ---
 
-## License
+### License
 
 The card source code is licensed under **AGPL-3.0-or-later**.
 
@@ -248,3 +258,264 @@ LICENSES/
 ```
 
 `EuroPlate.ttf` is not included. Users must provide their own file and are responsible for complying with that font's license.
+
+---
+
+## Deutsch
+
+Home-Assistant-Lovelace-Card für Fahrzeuge aus der **TÜV Reminder** Integration.
+
+Die Card zeigt ein oder mehrere Fahrzeuge mit TÜV/HU-Plakette, nächstem Prüftermin, Status, optional grafischem deutschem Kennzeichen, Sortierung und optionalen Gruppen.
+
+---
+
+### Funktionen
+
+- Anzeige von einem oder mehreren TÜV Reminder Fahrzeugen
+- TÜV/HU-Plaketten-Rendering ohne externe Plaketten-Schriftarten
+- Optionale grafische Kennzeichen
+- Optionale Unterstützung für `EuroPlate.ttf`
+- Visueller Editor mit lokalisierter Oberfläche
+- Spaltenbegrenzung: `auto`, `1`, `2`, `3` oder `4`
+- Sortierung nach Name, Kennzeichen, HU-Datum oder Status
+- Optionale Fahrzeuggruppen mit eigenen Farben und eigener Sortierung
+- Schwebende Editor-Menüs für Darstellung, Gruppenfarben und Bestätigung beim Verwerfen manueller Sortierung
+
+---
+
+### Voraussetzungen
+
+- Home Assistant
+- TÜV Reminder Sensor-Entitäten
+- HACS oder manuell eingerichtete Lovelace-Ressource
+- Optional: `EuroPlate.ttf` für grafische Kennzeichen
+
+---
+
+### Installation
+
+#### HACS
+
+Installiere die Card über HACS.
+
+Falls die Lovelace-Ressource nicht automatisch hinzugefügt wird, füge sie manuell hinzu:
+
+```yaml
+url: /hacsfiles/tuev-card-test/dist/tuev-card-test.js
+type: module
+```
+
+#### Manuelle Installation
+
+Kopiere den vollständigen Card-Ordner nach:
+
+```text
+/config/www/community/tuev-card-test/
+```
+
+Für lokale modulare Tests reichen:
+
+```text
+tuev-card.js
+src/
+```
+
+Füge die Lovelace-Ressource hinzu:
+
+```yaml
+url: /local/community/tuev-card-test/tuev-card.js
+type: module
+```
+
+Für Release-/HACS-Installationen wird die gebündelte Datei verwendet:
+
+```text
+dist/tuev-card-test.js
+```
+
+Nach Änderungen an Frontend-Dateien das Dashboard neu laden und bei Bedarf den Browser-Cache leeren.
+
+---
+
+### Card hinzufügen
+
+Im Home-Assistant-Kartenpicker auswählen:
+
+```text
+TÜV Reminder
+```
+
+Oder manuell hinzufügen:
+
+```yaml
+type: custom:tuev-card
+entity: sensor.your_vehicle_tuv
+```
+
+Mehrere Fahrzeuge:
+
+```yaml
+type: custom:tuev-card
+columns: auto
+sort: name
+show_details: true
+entities:
+  - sensor.focus_rs_tuv
+  - sensor.focus_st_tuv
+  - sensor.mondeo_tuv
+```
+
+Gruppierte Fahrzeuge:
+
+```yaml
+type: custom:tuev-card
+columns: auto
+groups:
+  - title: Privat
+    color: "#42a5f5"
+    entities:
+      - sensor.focus_rs_tuv
+      - sensor.mondeo_tuv
+  - title: Firma
+    color: "#66bb6a"
+    entities:
+      - sensor.transit_tuv
+entities:
+  - sensor.unassigned_trailer_tuv
+```
+
+---
+
+### Visueller Editor
+
+Der visuelle Editor unterstützt:
+
+- Auswahl von TÜV-Entitäten
+- einmaliges Hinzufügen aller neuen TÜV-Fahrzeuge
+- Spaltenbegrenzung
+- Sortierung für ungruppierte Fahrzeuge und Gruppen
+- Ein-/Ausblenden von Details
+- grafische Kennzeichen, wenn verfügbar
+- optionale Fahrzeuggruppen mit frei benennbaren Überschriften
+- Gruppenfarben
+- manuelle Gruppensortierung
+
+Die native Home-Assistant-Editor-Vorschau kann schmaler sein als die endgültige Dashboard-Card. Manuell `4` und `auto` werden in der Editor-Vorschau deshalb konservativ dargestellt. Im Dashboard nutzt die Card die tatsächlich verfügbare Breite.
+
+---
+
+### Optionen
+
+| Option | Standard | Beschreibung |
+| --- | --- | --- |
+| `entity` | optional | Einzelner TÜV Reminder Sensor |
+| `entities` | optional | Liste ungruppierter TÜV Reminder Sensoren |
+| `groups` | optional | Fahrzeuggruppen mit Titel, Entitätenliste, optionaler Farbe und optionaler Sortierung |
+| `columns` | `auto` | `auto`, `1`, `2`, `3` oder `4`; wird als Maximum/Begrenzung behandelt |
+| `sort` | `name` | Sortierung ungruppierter Fahrzeuge: `name`, `plate`, `due_date` oder `status` |
+| `sort_direction` | `asc` | Sortierrichtung ungruppierter Fahrzeuge: `asc` oder `desc` |
+| `show_details` | `true` | Nächste HU und Status anzeigen |
+| `plate_style` | `text` | `text` oder `plate` |
+
+Optionale Gruppen können verwendet werden, um eine Card in Bereiche wie `Privat`, `Firma`, `Autos`, `Motorräder` oder `Anhänger` zu unterteilen. Jede Gruppe kann optional `color`, `sort` und `sort_direction` definieren. Fahrzeuge ohne Gruppe bleiben im ungruppierten Bereich.
+
+`columns: auto` nutzt so viele lesbare Spalten, wie in die verfügbare Breite passen. Manuelle Werte von `1` bis `4` wirken als Maximum und können automatisch reduziert werden, wenn die verfügbare Breite zu klein ist.
+
+---
+
+### Grafische Kennzeichen
+
+Grafische Kennzeichen können eine vom Nutzer bereitgestellte `EuroPlate.ttf` verwenden.
+
+Lege die Datei hier ab:
+
+```text
+/config/www/EuroPlate.ttf
+```
+
+Home Assistant stellt sie dann bereit unter:
+
+```text
+/local/EuroPlate.ttf
+```
+
+Danach grafische Kennzeichen aktivieren:
+
+```yaml
+plate_style: plate
+```
+
+Wenn die Schrift fehlt, blendet der visuelle Editor die Option für grafische Kennzeichen aus und die Card fällt auf reine Textkennzeichen zurück.
+
+`EuroPlate.ttf` ist nicht enthalten. Nutzer müssen die Datei selbst bereitstellen und sind selbst für die Einhaltung der jeweiligen Schriftlizenz verantwortlich.
+
+---
+
+### TÜV-Plaketten-Rendering
+
+Die TÜV-Plakette benötigt keine externen Schriftarten. Monatsziffern und die Jahreszahl in der Mitte werden aus gebündelten SVG-Ziffernpfaden gerendert in:
+
+```text
+src/badge/digits.js
+```
+
+Dadurch bleibt die Plakettendarstellung über Browser und Home-Assistant-Frontends hinweg konsistenter.
+
+---
+
+### Projektstruktur
+
+```text
+src/badge/          TÜV-Plaketten-Rendering
+src/plate/          Grafisches Kennzeichen-Rendering und EuroPlate-Laden
+src/card/           Card-Konfiguration, Entitäten, Layout, Gruppen und Render-Helfer
+src/editor/         Visueller Editor, Editor-Styles, Buttons und Floating Panels
+src/translations/   Card-/Editor-Übersetzungen
+```
+
+HACS verwendet die erzeugte Bundle-Datei:
+
+```text
+dist/tuev-card-test.js
+```
+
+Zum lokalen Neubauen des HACS-Bundles entweder doppelklicken:
+
+```text
+build-tuev-card.bat
+```
+
+oder im Projektverzeichnis ausführen:
+
+```bash
+npm.cmd install
+npm.cmd run build
+npm.cmd run check
+```
+
+Die erzeugte Datei sollte zusammen mit den Quelländerungen committed werden, bevor über HACS aktualisiert wird.
+
+---
+
+### Fehlerbehebung
+
+Wenn die Card nicht erscheint, prüfe die Lovelace-Ressourcen-URL und leere den Browser-Cache.
+
+Wenn keine Fahrzeuge angezeigt werden, prüfe, ob deine TÜV Reminder Sensoren die erwarteten Fahrzeugattribute wie Monat, Jahr, Kennzeichen und Status liefern.
+
+Wenn grafische Kennzeichen nicht verfügbar sind, prüfe, ob `/local/EuroPlate.ttf` im Browser geöffnet werden kann.
+
+---
+
+### Lizenz
+
+Der Quellcode der Card ist unter **AGPL-3.0-or-later** lizenziert.
+
+Zusätzliche Hinweise zu Artwork/Daten stehen in:
+
+```text
+NOTICE.md
+LICENSES/
+```
+
+`EuroPlate.ttf` ist nicht enthalten. Nutzer müssen eine eigene Datei bereitstellen und sind selbst für die Einhaltung der jeweiligen Schriftlizenz verantwortlich.
