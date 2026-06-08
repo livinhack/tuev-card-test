@@ -1,18 +1,24 @@
+import { normalizeGroups } from "./groups.js?v=b24";
+
 export const ALLOWED_SORTS = ["name", "plate", "due_date", "status"];
 export const ALLOWED_COLUMNS = ["auto", "1", "2", "3", "4"];
 export const ALLOWED_PLATE_STYLES = ["text", "plate"];
+export const ALLOWED_SORT_DIRECTIONS = ["asc", "desc"];
 
 export const DEFAULT_CARD_CONFIG = {
     columns: "auto",
     sort: "name",
     show_details: true,
-    plate_style: "text"
+    plate_style: "text",
+    sort_direction: "asc"
 };
 
 export function normalizeCardConfig(config = {}, options = {}) {
     const { requireEntity = true } = options;
 
-    if (requireEntity && !config.entity && !config.entities) {
+    const normalizedGroups = normalizeGroups(config.groups);
+
+    if (requireEntity && !config.entity && !config.entities && normalizedGroups.length === 0) {
         throw new Error("Please provide entity or entities.");
     }
 
@@ -32,13 +38,24 @@ export function normalizeCardConfig(config = {}, options = {}) {
         ? config.plate_style
         : DEFAULT_CARD_CONFIG.plate_style;
 
+    const sortDirection = ALLOWED_SORT_DIRECTIONS.includes(config.sort_direction)
+        ? config.sort_direction
+        : DEFAULT_CARD_CONFIG.sort_direction;
+
     const normalizedConfig = {
         ...DEFAULT_CARD_CONFIG,
         ...config,
         columns,
         sort,
+        sort_direction: sortDirection,
         plate_style: plateStyle
     };
+
+    if (normalizedGroups.length > 0) {
+        normalizedConfig.groups = normalizedGroups;
+    } else {
+        delete normalizedConfig.groups;
+    }
 
     removeLegacyCardConfigOptions(normalizedConfig);
 

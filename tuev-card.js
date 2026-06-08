@@ -1,11 +1,12 @@
-// TÜV Card v0.1.0-a95
+// TÜV Card v0.1.0-b24
 
-import { localize } from "./src/translations/index.js?v=a95";
-import { normalizeCardConfig } from "./src/card/config.js?v=a95";
-import { findFirstTuevEntity, getSortedEntityIds } from "./src/card/entities.js?v=a95";
-import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./src/card/layout.js?v=a95";
-import { getSharedPlateLayout } from "./src/card/plate-layout.js?v=a95";
-import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./src/card/ui-state.js?v=a95";
+import { localize } from "./src/translations/index.js?v=b24";
+import { normalizeCardConfig } from "./src/card/config.js?v=b24";
+import { findFirstTuevEntity } from "./src/card/entities.js?v=b24";
+import { getAllEntityIdsFromConfig, getEntitySections } from "./src/card/groups.js?v=b24";
+import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./src/card/layout.js?v=b24";
+import { getSharedPlateLayout } from "./src/card/plate-layout.js?v=b24";
+import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./src/card/ui-state.js?v=b24";
 import {
     getOverlayStyleOptions,
     renderBadgeArea,
@@ -15,15 +16,15 @@ import {
     renderMissingEntity,
     renderVehicleDetails,
     renderVehicleHeader
-} from "./src/card/render-parts.js?v=a95";
+} from "./src/card/render-parts.js?v=b24";
 import {
     checkPlateFontAvailable,
     ensurePlateFont,
     getLicensePlateMetrics,
     isPlateFontLoaded,
     renderLicensePlate
-} from "./src/plate/renderer.js?v=a95";
-import { TuevCardEditor } from "./src/editor/editor.js?v=a95";
+} from "./src/plate/renderer.js?v=b24";
+import { TuevCardEditor } from "./src/editor/editor.js?v=b24";
 
 window.customCards = window.customCards || [];
 
@@ -197,9 +198,11 @@ class TuevCard extends HTMLElement {
         this._entityUiState = this._entityUiState || {};
         this.checkPlateFontAvailability(false);
 
-        const entityIds = getSortedEntityIds(this.config, hass);
+        const sections = getEntitySections(this.config, hass);
+        const allEntityIds = getAllEntityIdsFromConfig(this.config)
+            .filter((entityId) => hass.states[entityId]);
 
-        if (entityIds.length === 0) {
+        if (allEntityIds.length === 0) {
             this.innerHTML = `
                 <ha-card style="display:block;width:100%;">
                     <div style="padding:16px;">
@@ -210,46 +213,9 @@ class TuevCard extends HTMLElement {
             return;
         }
 
-        const isMulti = entityIds.length > 1;
+        const isMulti = allEntityIds.length > 1;
         const layoutContext = this.getLayoutContext(isMulti);
-        const layout = calculateLayoutInfo({
-            cardWidth: layoutContext.layoutWidth,
-            isMulti,
-            requestedColumns: layoutContext.requestedColumns || this.config.columns
-        });
-
-        const automaticBadgeSize = calculateAutomaticBadgeSize({
-            isMulti,
-            effectiveColumns: layout.effectiveColumns,
-            tileWidth: layout.tileWidth
-        });
-
-        const sharedPlateLayout = getSharedPlateLayout({
-            entityIds,
-            hass,
-            tileWidth: layout.tileWidth,
-            isGraphicalPlateAvailable: this.isGraphicalPlateAvailable(),
-            getLicensePlateMetrics
-        });
-
-        const cardContent = `
-            <div style="
-                padding: 16px;
-                display: grid;
-                grid-template-columns: ${layout.gridTemplateColumns};
-                gap: ${layout.gap}px;
-                align-items: start;
-            ">
-                ${entityIds.map((entityId) => this.renderVehicle(
-                    hass,
-                    entityId,
-                    isMulti,
-                    automaticBadgeSize,
-                    layout,
-                    sharedPlateLayout
-                )).join("")}
-            </div>
-        `;
+        const cardContent = this.renderSections(hass, sections, layoutContext);
 
         this.innerHTML = `
             <ha-card style="display:block;width:100%;overflow:hidden;">
@@ -587,6 +553,149 @@ class TuevCard extends HTMLElement {
 
     getUiState(entityId) {
         return getEntityUiState(this._entityUiState, entityId);
+    }
+
+    renderSections(hass, sections, layoutContext) {
+        const renderSection = (section) => {
+            const entityIds = section.entityIds.filter((entityId) => hass.states[entityId]);
+
+            if (entityIds.length === 0) {
+                return "";
+            }
+
+            const sectionIsMulti = entityIds.length > 1;
+            const layout = calculateLayoutInfo({
+                cardWidth: layoutContext.layoutWidth,
+                isMulti: sectionIsMulti,
+                requestedColumns: layoutContext.requestedColumns || this.config.columns
+            });
+            const automaticBadgeSize = calculateAutomaticBadgeSize({
+                isMulti: sectionIsMulti,
+                effectiveColumns: layout.effectiveColumns,
+                tileWidth: layout.tileWidth
+            });
+            const sharedPlateLayout = getSharedPlateLayout({
+                entityIds,
+                hass,
+                tileWidth: layout.tileWidth,
+                isGraphicalPlateAvailable: this.isGraphicalPlateAvailable(),
+                getLicensePlateMetrics
+            });
+            const grid = `
+                <div style="
+                    display: grid;
+                    grid-template-columns: ${layout.gridTemplateColumns};
+                    gap: ${layout.gap}px;
+                    align-items: start;
+                ">
+                    ${entityIds.map((entityId) => this.renderVehicle(
+                        hass,
+                        entityId,
+                        sectionIsMulti,
+                        automaticBadgeSize,
+                        layout,
+                        sharedPlateLayout
+                    )).join("")}
+                </div>
+            `;
+
+            if (!section.title) {
+                if (section.id === "ungrouped" && sections.some((candidate) => candidate.title)) {
+                    return `
+                        <section style="min-width:0;">
+                            <div style="
+                                height: 1px;
+                                background: var(--divider-color);
+                                opacity: 0.75;
+                                margin: 0 0 16px;
+                            "></div>
+                            ${grid}
+                        </section>
+                    `;
+                }
+
+                return grid;
+            }
+
+            const headingColor = section.color || "var(--divider-color)";
+            const sectionCountLabel = entityIds.length === 1
+                ? this.localize("editor.vehicle_count_one")
+                : `${entityIds.length} ${this.localize("editor.vehicle_count_many")}`;
+
+            return `
+                <section style="min-width:0;">
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        margin: 0 0 12px;
+                        min-width: 0;
+                    ">
+                        <div style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 8px;
+                            min-width: 0;
+                            padding: 5px 9px;
+                            border-radius: 999px;
+                            border: 1px solid color-mix(in srgb, ${headingColor} 34%, transparent);
+                            background: color-mix(in srgb, ${headingColor} 12%, transparent);
+                            color: ${headingColor};
+                            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08) inset;
+                        ">
+                            <span style="
+                                width: 7px;
+                                height: 7px;
+                                border-radius: 50%;
+                                background: ${headingColor};
+                                box-shadow: 0 0 8px ${headingColor};
+                                flex: 0 0 auto;
+                            "></span>
+                            <span style="
+                                font-size: 16px;
+                                font-weight: 700;
+                                line-height: 1.2;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                min-width: 0;
+                            ">
+                                ${section.title}
+                            </span>
+                            <span style="
+                                font-size: 11px;
+                                font-weight: 600;
+                                opacity: 0.78;
+                                white-space: nowrap;
+                            ">
+                                ${sectionCountLabel}
+                            </span>
+                        </div>
+                        <div style="
+                            height: 1px;
+                            background: linear-gradient(90deg, ${headingColor}, transparent);
+                            flex: 1 1 auto;
+                            opacity: 0.75;
+                            min-width: 28px;
+                        "></div>
+                    </div>
+                    ${grid}
+                </section>
+            `;
+        };
+
+        const hasHeadings = sections.some((section) => section.title);
+
+        return `
+            <div style="
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: ${hasHeadings ? 22 : 0}px;
+            ">
+                ${sections.map(renderSection).join("")}
+            </div>
+        `;
     }
 
     renderVehicle(hass, entityId, compact, automaticBadgeSize, layout, sharedPlateLayout) {

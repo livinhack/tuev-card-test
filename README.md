@@ -90,6 +90,27 @@ entities:
 
 ---
 
+### Grouped vehicles
+
+Groups are optional. Existing cards without `groups` continue to work unchanged.
+
+```yaml
+type: custom:tuev-card
+columns: auto
+groups:
+  - title: Privat
+    color: "#42a5f5"
+    entities:
+      - sensor.focus_rs_tuv
+      - sensor.mondeo_tuv
+  - title: Firma
+    entities:
+      - sensor.transit_tuv
+entities:
+  - sensor.unassigned_trailer_tuv
+```
+
+
 ## Visual editor
 
 The visual editor supports:
@@ -100,6 +121,7 @@ The visual editor supports:
 - sorting
 - showing or hiding details
 - graphical license plates when `EuroPlate.ttf` is available
+- optional vehicle groups with freely named section headings
 
 The native Home Assistant preview may be narrower than the final dashboard card. Manual `4` and `auto` are therefore shown conservatively in the editor preview. The final dashboard always uses the real available card width.
 
@@ -111,10 +133,13 @@ The native Home Assistant preview may be narrower than the final dashboard card.
 | --- | --- | --- |
 | `entity` | optional | Single TÜV Reminder sensor |
 | `entities` | optional | List of TÜV Reminder sensors |
+| `groups` | optional | Freely named vehicle groups with their own entity lists, optional `color` and optional per-group sorting |
 | `columns` | `auto` | `auto`, `1`, `2`, `3`, or `4` |
 | `sort` | `name` | `name`, `plate`, `due_date`, or `status` |
 | `show_details` | `true` | Show next HU and status |
 | `plate_style` | `text` | `text` or `plate` |
+
+Optional groups can be used to divide one card into headings such as `Privat`, `Firma`, `Autos`, `Motorräder`, or `Anhänger`. Each group can optionally define a `color` and its own sorting mode. The color is used for the editor accent and dashboard heading line. Vehicles without a group remain in the normal ungrouped section.
 
 `columns: auto` uses as many readable columns as fit, capped at 16. Manual values `1` to `4` act as maximums and may be reduced automatically if the available width is too small.
 

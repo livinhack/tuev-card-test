@@ -75,17 +75,14 @@ export function getVehicleName(entity, fallback = "Vehicle") {
     return entity?.attributes?.vehicle_name || entity?.attributes?.friendly_name || fallback;
 }
 
-export function getSortedEntityIds(config, hass) {
-    const entityIds = getEntityIdsFromConfig(config);
-    const sort = config?.sort || "name";
-
+export function sortEntityIds(entityIds, sort, hass) {
     const statusRank = {
         expired: 0,
         due: 1,
         valid: 2
     };
 
-    return [...entityIds].sort((a, b) => {
+    return [...new Set((entityIds || []).filter(Boolean))].sort((a, b) => {
         const entityA = hass.states[a];
         const entityB = hass.states[b];
 
@@ -132,4 +129,13 @@ export function getSortedEntityIds(config, hass) {
 
         return 0;
     });
+}
+
+
+export function getSortedEntityIds(config, hass) {
+    return sortEntityIds(
+        getEntityIdsFromConfig(config),
+        config?.sort || "name",
+        hass
+    );
 }

@@ -1,4 +1,4 @@
-// TÜV Card bundled v0.1.0-a95
+// TÜV Card bundled v0.1.0-b24
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -32,6 +32,7 @@ const en = {
         "editor.no_more_entities": "No more matching TÜV entities found.",
         "editor.single_entity_hint": "A single entity automatically uses the single-card view.",
         "editor.all_entities_added": "All available TÜV entities have already been added.",
+        "editor.release_ungrouped_entities": "Release ungrouped",
         "editor.add_all_new_entities": "Add all",
         "editor.no_new_entities": "No new vehicles found.",
 
@@ -42,7 +43,10 @@ const en = {
         "editor.sort_status": "Status",
         "editor.show_details": "Show details",
         "editor.render_plate": "Render license plate graphically",
-        "editor.columns": "Maximum columns",
+        "editor.display_options": "Display options",
+    "editor.display_badge": "Display",
+        "editor.options": "Options",
+        "editor.columns": "Column limit",
         "editor.columns_current": "Current",
         "editor.columns_fill": "Fill",
         "editor.columns_1": "1 column",
@@ -53,6 +57,32 @@ const en = {
         "editor.columns_2_short": "2",
         "editor.columns_3_short": "3",
         "editor.columns_4_short": "4",
+        "editor.groups": "Groups",
+        "editor.groups_hint": "Groups are optional. Vehicles without a group remain in the normal section.",
+        "editor.add_group": "Add group",
+        "editor.group_color": "Group color",
+        "editor.group_title": "Group name",
+        "editor.vehicle_count_one": "1 vehicle",
+        "editor.vehicle_count_many": "vehicles",
+        "editor.new_group_title": "New group",
+        "editor.ungrouped_entities": "No group",
+        "editor.remove_group": "Remove group",
+        "editor.move_group_up": "Move up",
+        "editor.move_group_down": "Move down",
+        "editor.add_to_group": "Add to group",
+        "editor.remove_from_group": "Remove from group",
+        "editor.move_vehicle_up": "Move vehicle up",
+        "editor.move_vehicle_down": "Move vehicle down",
+        "editor.group_sort": "Group sorting",
+        "editor.sort_name_short": "Name",
+        "editor.sort_plate_short": "Plate",
+        "editor.sort_due_date_short": "Due",
+        "editor.sort_status_short": "Status",
+        "editor.sort_manual_short": "Manual",
+        "editor.sort_direction": "Ascending/descending",
+        "editor.discard_manual_sort": "Discard manual sorting?",
+        "editor.cancel": "Cancel",
+        "editor.yes": "Yes",
         "editor.sort": "Sorting"
 };
 
@@ -91,6 +121,7 @@ const de = {
         "editor.no_more_entities": "Keine weiteren passenden TÜV-Entitäten gefunden.",
         "editor.single_entity_hint": "Bei einer Entität wird automatisch die Einzelansicht genutzt.",
         "editor.all_entities_added": "Alle verfügbaren TÜV-Entitäten sind bereits hinzugefügt.",
+        "editor.release_ungrouped_entities": "Ungruppierte freigeben",
         "editor.add_all_new_entities": "Alle hinzufügen",
         "editor.no_new_entities": "Keine neuen Fahrzeuge gefunden.",
 
@@ -101,7 +132,10 @@ const de = {
         "editor.sort_status": "Status",
         "editor.show_details": "Details anzeigen",
         "editor.render_plate": "Kennzeichen grafisch darstellen",
-        "editor.columns": "Maximale Spalten",
+        "editor.display_options": "Darstellungsoptionen",
+    "editor.display_badge": "Darstellung",
+        "editor.options": "Optionen",
+        "editor.columns": "Spaltenbegrenzung",
         "editor.columns_current": "Aktuell",
         "editor.columns_fill": "Ausfüllen",
         "editor.columns_1": "1 Spalte",
@@ -112,6 +146,32 @@ const de = {
         "editor.columns_2_short": "2",
         "editor.columns_3_short": "3",
         "editor.columns_4_short": "4",
+        "editor.groups": "Gruppen",
+        "editor.groups_hint": "Gruppen sind optional. Fahrzeuge ohne Gruppe bleiben im normalen Bereich.",
+        "editor.add_group": "Gruppe hinzufügen",
+        "editor.group_color": "Gruppenfarbe",
+        "editor.group_title": "Gruppenname",
+        "editor.vehicle_count_one": "1 Fahrzeug",
+        "editor.vehicle_count_many": "Fahrzeuge",
+        "editor.new_group_title": "Neue Gruppe",
+        "editor.ungrouped_entities": "Ohne Gruppe",
+        "editor.remove_group": "Gruppe entfernen",
+        "editor.move_group_up": "Nach oben",
+        "editor.move_group_down": "Nach unten",
+        "editor.add_to_group": "Zur Gruppe hinzufügen",
+        "editor.remove_from_group": "Aus Gruppe lösen",
+        "editor.move_vehicle_up": "Fahrzeug nach oben",
+        "editor.move_vehicle_down": "Fahrzeug nach unten",
+        "editor.group_sort": "Gruppensortierung",
+        "editor.sort_name_short": "Name",
+        "editor.sort_plate_short": "Kennzeichen",
+        "editor.sort_due_date_short": "HU",
+        "editor.sort_status_short": "Status",
+        "editor.sort_manual_short": "Manuell",
+        "editor.sort_direction": "Aufsteigend/absteigend",
+        "editor.discard_manual_sort": "Manuelle Sortierung verwerfen?",
+        "editor.cancel": "Abbrechen",
+        "editor.yes": "Ja",
         "editor.sort": "Sortierung"
 };
 
@@ -142,69 +202,6 @@ function localize(hass, key) {
 }
 
 return { TUEV_CARD_TRANSLATIONS: TUEV_CARD_TRANSLATIONS, getTuevCardLanguage: getTuevCardLanguage, localize: localize };
-
-})();
-
-// ---- src/card/config.js ----
-const __m_src_card_config_js = (() => {
-const ALLOWED_SORTS = ["name", "plate", "due_date", "status"];
-const ALLOWED_COLUMNS = ["auto", "1", "2", "3", "4"];
-const ALLOWED_PLATE_STYLES = ["text", "plate"];
-
-const DEFAULT_CARD_CONFIG = {
-    columns: "auto",
-    sort: "name",
-    show_details: true,
-    plate_style: "text"
-};
-
-function normalizeCardConfig(config = {}, options = {}) {
-    const { requireEntity = true } = options;
-
-    if (requireEntity && !config.entity && !config.entities) {
-        throw new Error("Please provide entity or entities.");
-    }
-
-    const rawColumns = config.columns === undefined || config.columns === null
-        ? DEFAULT_CARD_CONFIG.columns
-        : String(config.columns);
-
-    const columns = ALLOWED_COLUMNS.includes(rawColumns)
-        ? rawColumns
-        : DEFAULT_CARD_CONFIG.columns;
-
-    const sort = ALLOWED_SORTS.includes(config.sort)
-        ? config.sort
-        : DEFAULT_CARD_CONFIG.sort;
-
-    const plateStyle = ALLOWED_PLATE_STYLES.includes(config.plate_style)
-        ? config.plate_style
-        : DEFAULT_CARD_CONFIG.plate_style;
-
-    const normalizedConfig = {
-        ...DEFAULT_CARD_CONFIG,
-        ...config,
-        columns,
-        sort,
-        plate_style: plateStyle
-    };
-
-    removeLegacyCardConfigOptions(normalizedConfig);
-
-    return normalizedConfig;
-}
-
-function removeLegacyCardConfigOptions(config) {
-    delete config.layout;
-    delete config.auto_add_entities;
-    delete config.plate_font;
-    delete config.badge_size;
-    delete config.compact_badge_size;
-
-    return config;
-}
-
-return { ALLOWED_SORTS: ALLOWED_SORTS, ALLOWED_COLUMNS: ALLOWED_COLUMNS, ALLOWED_PLATE_STYLES: ALLOWED_PLATE_STYLES, DEFAULT_CARD_CONFIG: DEFAULT_CARD_CONFIG, normalizeCardConfig: normalizeCardConfig, removeLegacyCardConfigOptions: removeLegacyCardConfigOptions };
 
 })();
 
@@ -287,17 +284,14 @@ function getVehicleName(entity, fallback = "Vehicle") {
     return entity?.attributes?.vehicle_name || entity?.attributes?.friendly_name || fallback;
 }
 
-function getSortedEntityIds(config, hass) {
-    const entityIds = getEntityIdsFromConfig(config);
-    const sort = config?.sort || "name";
-
+function sortEntityIds(entityIds, sort, hass) {
     const statusRank = {
         expired: 0,
         due: 1,
         valid: 2
     };
 
-    return [...entityIds].sort((a, b) => {
+    return [...new Set((entityIds || []).filter(Boolean))].sort((a, b) => {
         const entityA = hass.states[a];
         const entityB = hass.states[b];
 
@@ -346,7 +340,291 @@ function getSortedEntityIds(config, hass) {
     });
 }
 
-return { compareText: compareText, getEntityIdsFromConfig: getEntityIdsFromConfig, isTuevSensorEntity: isTuevSensorEntity, findFirstTuevEntity: findFirstTuevEntity, getAvailableTuevEntities: getAvailableTuevEntities, getEntityLabel: getEntityLabel, getVehicleName: getVehicleName, getSortedEntityIds: getSortedEntityIds };
+
+function getSortedEntityIds(config, hass) {
+    return sortEntityIds(
+        getEntityIdsFromConfig(config),
+        config?.sort || "name",
+        hass
+    );
+}
+
+return { compareText: compareText, getEntityIdsFromConfig: getEntityIdsFromConfig, isTuevSensorEntity: isTuevSensorEntity, findFirstTuevEntity: findFirstTuevEntity, getAvailableTuevEntities: getAvailableTuevEntities, getEntityLabel: getEntityLabel, getVehicleName: getVehicleName, sortEntityIds: sortEntityIds, getSortedEntityIds: getSortedEntityIds };
+
+})();
+
+// ---- src/card/groups.js ----
+const __m_src_card_groups_js = (() => {
+const { getEntityIdsFromConfig, sortEntityIds } = __m_src_card_entities_js;
+
+const GROUP_SORTS = ["name", "plate", "due_date", "status", "manual"];
+const GROUP_SORT_DIRECTIONS = ["asc", "desc"];
+
+const GROUP_ACCENT_COLORS = [
+    "#42a5f5",
+    "#66bb6a",
+    "#ffa726",
+    "#ab47bc",
+    "#26c6da",
+    "#ef5350",
+    "#8d6e63"
+];
+
+function normalizeGroupSort(sort) {
+    return GROUP_SORTS.includes(sort) ? sort : "manual";
+}
+
+function normalizeGroupSortDirection(direction) {
+    return GROUP_SORT_DIRECTIONS.includes(direction) ? direction : "asc";
+}
+
+function normalizeGroupColor(color) {
+    const cleaned = String(color || "").trim();
+
+    return GROUP_ACCENT_COLORS.includes(cleaned)
+        ? cleaned
+        : "";
+}
+
+function getGroupAccentColor(group, index = 0) {
+    return normalizeGroupColor(group?.color) || GROUP_ACCENT_COLORS[index % GROUP_ACCENT_COLORS.length];
+}
+
+function normalizeEntityList(entities = []) {
+    if (!Array.isArray(entities)) {
+        return [];
+    }
+
+    const result = [];
+    const seen = new Set();
+
+    entities.forEach((entry) => {
+        const entityId = typeof entry === "string"
+            ? entry
+            : entry?.entity;
+        const cleaned = String(entityId || "").trim();
+
+        if (!cleaned || seen.has(cleaned)) {
+            return;
+        }
+
+        seen.add(cleaned);
+        result.push(cleaned);
+    });
+
+    return result;
+}
+
+function createFallbackGroupId(index) {
+    return `group-${index + 1}`;
+}
+
+function normalizeGroups(groups = []) {
+    if (!Array.isArray(groups)) {
+        return [];
+    }
+
+    const usedIds = new Set();
+
+    return groups.map((group, index) => {
+        const rawId = String(group?.id || "").trim() || createFallbackGroupId(index);
+        let id = rawId;
+        let duplicateIndex = 2;
+
+        while (usedIds.has(id)) {
+            id = `${rawId}-${duplicateIndex}`;
+            duplicateIndex += 1;
+        }
+
+        usedIds.add(id);
+
+        const title = String(group?.title || "").trim();
+        const entities = normalizeEntityList(group?.entities || []);
+        const color = normalizeGroupColor(group?.color);
+        const sort = normalizeGroupSort(group?.sort);
+        const sortDirection = normalizeGroupSortDirection(group?.sort_direction);
+
+        return {
+            id,
+            title,
+            ...(color ? { color } : {}),
+            ...(sort !== "manual" ? { sort } : {}),
+            ...(sort !== "manual" && sortDirection !== "asc" ? { sort_direction: sortDirection } : {}),
+            entities
+        };
+    }).filter((group) => group.title || group.entities.length > 0);
+}
+
+function getGroupedEntityIdsFromConfig(config = {}) {
+    return normalizeGroups(config.groups)
+        .flatMap((group) => group.entities);
+}
+
+function getUngroupedEntityIdsFromConfig(config = {}) {
+    const grouped = new Set(getGroupedEntityIdsFromConfig(config));
+
+    return getEntityIdsFromConfig(config)
+        .filter((entityId) => !grouped.has(entityId));
+}
+
+function getAllEntityIdsFromConfig(config = {}) {
+    return [...new Set([
+        ...getUngroupedEntityIdsFromConfig(config),
+        ...getGroupedEntityIdsFromConfig(config)
+    ])];
+}
+
+function sortGroupEntityIds(group, hass) {
+    const sort = normalizeGroupSort(group?.sort);
+    const direction = normalizeGroupSortDirection(group?.sort_direction);
+    const entityIds = [...new Set((group?.entities || []).filter(Boolean))];
+
+    if (sort === "manual") {
+        return entityIds;
+    }
+
+    const sorted = sortEntityIds(entityIds, sort, hass);
+
+    return direction === "desc"
+        ? sorted.reverse()
+        : sorted;
+}
+
+function getEntitySections(config = {}, hass) {
+    const groups = normalizeGroups(config.groups);
+    const ungrouped = getUngroupedEntityIdsFromConfig(config);
+    const sort = config?.sort || "name";
+    const direction = normalizeGroupSortDirection(config?.sort_direction);
+
+    if (groups.length === 0) {
+        const sortedEntityIds = sortEntityIds(getEntityIdsFromConfig(config), sort, hass);
+        const entityIds = direction === "desc" ? sortedEntityIds.reverse() : sortedEntityIds;
+
+        return entityIds.length > 0
+            ? [{ id: "default", title: "", entityIds, grouped: false }]
+            : [];
+    }
+
+    const sections = groups.map((group, index) => ({
+        id: group.id,
+        title: group.title,
+        color: getGroupAccentColor(group, index),
+        entityIds: sortGroupEntityIds(group, hass),
+        grouped: true
+    })).filter((section) => section.entityIds.length > 0);
+
+    if (ungrouped.length > 0) {
+        sections.push({
+            id: "ungrouped",
+            title: "",
+            entityIds: direction === "desc"
+                ? sortEntityIds(ungrouped, sort, hass).reverse()
+                : sortEntityIds(ungrouped, sort, hass),
+            grouped: false
+        });
+    }
+
+    return sections;
+}
+
+function getNewGroupTitle(localize) {
+    return localize ? localize("editor.new_group_title") : "New group";
+}
+
+function createGroup(title) {
+    return {
+        id: `group-${Date.now().toString(36)}-${Math.floor(Math.random() * 1000).toString(36)}`,
+        title: String(title || "").trim() || "New group",
+        color: "",
+        entities: []
+    };
+}
+
+function getGroupLabel(group, fallback) {
+    return String(group?.title || "").trim() || fallback || group?.id || "Group";
+}
+
+return { GROUP_SORTS: GROUP_SORTS, GROUP_SORT_DIRECTIONS: GROUP_SORT_DIRECTIONS, GROUP_ACCENT_COLORS: GROUP_ACCENT_COLORS, normalizeGroupSort: normalizeGroupSort, normalizeGroupSortDirection: normalizeGroupSortDirection, normalizeGroupColor: normalizeGroupColor, getGroupAccentColor: getGroupAccentColor, normalizeGroups: normalizeGroups, getGroupedEntityIdsFromConfig: getGroupedEntityIdsFromConfig, getUngroupedEntityIdsFromConfig: getUngroupedEntityIdsFromConfig, getAllEntityIdsFromConfig: getAllEntityIdsFromConfig, sortGroupEntityIds: sortGroupEntityIds, getEntitySections: getEntitySections, getNewGroupTitle: getNewGroupTitle, createGroup: createGroup, getGroupLabel: getGroupLabel };
+
+})();
+
+// ---- src/card/config.js ----
+const __m_src_card_config_js = (() => {
+const { normalizeGroups } = __m_src_card_groups_js;
+
+const ALLOWED_SORTS = ["name", "plate", "due_date", "status"];
+const ALLOWED_COLUMNS = ["auto", "1", "2", "3", "4"];
+const ALLOWED_PLATE_STYLES = ["text", "plate"];
+const ALLOWED_SORT_DIRECTIONS = ["asc", "desc"];
+
+const DEFAULT_CARD_CONFIG = {
+    columns: "auto",
+    sort: "name",
+    show_details: true,
+    plate_style: "text",
+    sort_direction: "asc"
+};
+
+function normalizeCardConfig(config = {}, options = {}) {
+    const { requireEntity = true } = options;
+
+    const normalizedGroups = normalizeGroups(config.groups);
+
+    if (requireEntity && !config.entity && !config.entities && normalizedGroups.length === 0) {
+        throw new Error("Please provide entity or entities.");
+    }
+
+    const rawColumns = config.columns === undefined || config.columns === null
+        ? DEFAULT_CARD_CONFIG.columns
+        : String(config.columns);
+
+    const columns = ALLOWED_COLUMNS.includes(rawColumns)
+        ? rawColumns
+        : DEFAULT_CARD_CONFIG.columns;
+
+    const sort = ALLOWED_SORTS.includes(config.sort)
+        ? config.sort
+        : DEFAULT_CARD_CONFIG.sort;
+
+    const plateStyle = ALLOWED_PLATE_STYLES.includes(config.plate_style)
+        ? config.plate_style
+        : DEFAULT_CARD_CONFIG.plate_style;
+
+    const sortDirection = ALLOWED_SORT_DIRECTIONS.includes(config.sort_direction)
+        ? config.sort_direction
+        : DEFAULT_CARD_CONFIG.sort_direction;
+
+    const normalizedConfig = {
+        ...DEFAULT_CARD_CONFIG,
+        ...config,
+        columns,
+        sort,
+        sort_direction: sortDirection,
+        plate_style: plateStyle
+    };
+
+    if (normalizedGroups.length > 0) {
+        normalizedConfig.groups = normalizedGroups;
+    } else {
+        delete normalizedConfig.groups;
+    }
+
+    removeLegacyCardConfigOptions(normalizedConfig);
+
+    return normalizedConfig;
+}
+
+function removeLegacyCardConfigOptions(config) {
+    delete config.layout;
+    delete config.auto_add_entities;
+    delete config.plate_font;
+    delete config.badge_size;
+    delete config.compact_badge_size;
+
+    return config;
+}
+
+return { ALLOWED_SORTS: ALLOWED_SORTS, ALLOWED_COLUMNS: ALLOWED_COLUMNS, ALLOWED_PLATE_STYLES: ALLOWED_PLATE_STYLES, ALLOWED_SORT_DIRECTIONS: ALLOWED_SORT_DIRECTIONS, DEFAULT_CARD_CONFIG: DEFAULT_CARD_CONFIG, normalizeCardConfig: normalizeCardConfig, removeLegacyCardConfigOptions: removeLegacyCardConfigOptions };
 
 })();
 
@@ -2018,88 +2296,59 @@ return { getColumnSliderValue: getColumnSliderValue, getColumnsFromSliderValue: 
 
 })();
 
-// ---- src/editor/render-parts.js ----
-const __m_src_editor_render_parts_js = (() => {
-function renderButton({ id, disabled, text, active = true }) {
+// ---- src/editor/buttons.js ----
+const __m_src_editor_buttons_js = (() => {
+function renderButton({ id, disabled, text, active = true, extraAttributes = "" }) {
     const enabled = !disabled;
+    const activeClass = active ? "" : " is-inactive";
 
     return `
         <button
             id="${id}"
+            class="tuev-editor-pill-button${activeClass}"
             type="button"
+            ${extraAttributes}
             ${enabled ? "" : "disabled"}
-            style="
-                border: 1px solid var(--divider-color);
-                border-radius: 999px;
-                padding: 7px 13px;
-                background: ${enabled && active ? "var(--secondary-background-color)" : "var(--disabled-color, #777)"};
-                color: ${enabled && active ? "var(--primary-text-color)" : "var(--text-primary-color)"};
-                cursor: ${enabled && active ? "pointer" : "default"};
-                font-weight: 600;
-                opacity: ${enabled && active ? "1" : "0.6"};
-            "
         >
             ${text}
         </button>
     `;
 }
 
-function renderEditorStyles() {
-    return `
-        <style>
-            .tuev-editor-checkbox-row {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 12px 24px;
-                align-items: center;
-            }
+return { renderButton: renderButton };
 
-            .tuev-editor-checkbox-row label {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                min-width: 190px;
-                margin: 0;
-                font-weight: 600;
-                cursor: pointer;
-                white-space: nowrap;
-            }
+})();
 
-            .tuev-editor-checkbox-row input {
-                flex: 0 0 auto;
-            }
-        </style>
-    `;
-}
-
+// ---- src/editor/render-parts.js ----
+const __m_src_editor_render_parts_js = (() => {
+const { getGroupAccentColor } = __m_src_card_groups_js;
+const { renderButton } = __m_src_editor_buttons_js;
 function renderEntitySection({
     selectedEntityIds,
     unselectedEntities,
     hasAvailableToAdd,
     newEntityCount,
     entityHint,
+    hasUngroupedToRelease,
     pickerOpen,
     searchText,
+    sort,
+    sortDirection,
     localize,
     getEntityLabel,
     escapeHtml
 }) {
     return `
         <div>
-            <label style="
-                display: block;
-                font-weight: 600;
-                margin-bottom: 8px;
-            ">
-                ${localize("editor.entities")}
-            </label>
+            <div class="tuev-editor-entity-card">
+                <div class="tuev-editor-entity-header">
+                    <div class="tuev-editor-entity-title">
+                        <span>${localize("editor.entities")}</span>
+                        <span class="tuev-editor-entity-count">${formatGroupEntityCount(selectedEntityIds.length, localize)}</span>
+                    </div>
+                    ${renderUngroupedSortControls({ sort, sortDirection, localize })}
+                </div>
 
-            <div style="
-                border: 1px solid var(--divider-color);
-                border-radius: 8px;
-                overflow: hidden;
-                background: var(--card-background-color);
-            ">
                 <div style="
                     display: flex;
                     flex-wrap: wrap;
@@ -2107,7 +2356,7 @@ function renderEntitySection({
                     align-items: center;
                     min-height: 44px;
                     padding: 10px;
-                    background: rgba(0, 0, 0, 0.10);
+                    background: rgba(0, 0, 0, 0.06);
                 ">
                     ${renderSelectedEntityChips({
                         selectedEntityIds,
@@ -2136,6 +2385,12 @@ function renderEntitySection({
                             id: "addAllNewEntities",
                             disabled: newEntityCount <= 0,
                             text: localize("editor.add_all_new_entities")
+                        })}
+
+                        ${renderButton({
+                            id: "releaseUngroupedEntities",
+                            disabled: !hasUngroupedToRelease,
+                            text: localize("editor.release_ungrouped_entities")
                         })}
                     </div>
 
@@ -2170,6 +2425,38 @@ function renderEntitySection({
     `;
 }
 
+function renderUngroupedSortControls({ sort, sortDirection, localize }) {
+    const activeSort = sort === "config" || !sort ? "name" : sort;
+    const direction = sortDirection === "desc" ? "desc" : "asc";
+    const sortOptions = [
+        ["name", localize("editor.sort_name_short"), "A"],
+        ["plate", localize("editor.sort_plate_short"), "▭"],
+        ["due_date", localize("editor.sort_due_date_short"), "◷"],
+        ["status", localize("editor.sort_status_short"), "●"]
+    ];
+
+    return `
+        <div class="tuev-editor-ungrouped-sort-row" aria-label="${localize("editor.sort")}">
+            ${sortOptions.map(([value, label, icon]) => `
+                <button
+                    class="tuev-editor-sort-chip"
+                    type="button"
+                    data-ungrouped-sort="${value}"
+                    aria-pressed="${activeSort === value ? "true" : "false"}"
+                    aria-label="${localize("editor.sort")}: ${label}"
+                    title="${localize("editor.sort")}: ${label}"
+                >${icon}</button>
+            `).join("")}
+            <button
+                class="tuev-editor-sort-direction"
+                type="button"
+                data-ungrouped-sort-direction="true"
+                title="${localize("editor.sort_direction")}" 
+            >${direction === "desc" ? "↓" : "↑"}</button>
+        </div>
+    `;
+}
+
 function renderSelectedEntityChips({ selectedEntityIds, localize, getEntityLabel }) {
     if (!selectedEntityIds.length) {
         return `<span style="font-size: 13px; opacity: 0.7;">${localize("editor.no_entity_selected")}</span>`;
@@ -2196,18 +2483,10 @@ function renderSelectedEntityChips({ selectedEntityIds, localize, getEntityLabel
                 ${getEntityLabel(entityId)}
             </span>
             <button
+                class="tuev-editor-chip-remove"
                 type="button"
                 data-remove-entity="${entityId}"
                 title="${localize("editor.remove")}"
-                style="
-                    border: none;
-                    background: transparent;
-                    color: var(--primary-text-color);
-                    cursor: pointer;
-                    font-size: 15px;
-                    line-height: 1;
-                    padding: 0 2px;
-                "
             >×</button>
         </span>
     `).join("");
@@ -2291,123 +2570,1209 @@ function renderEntityPickerList({ unselectedEntities, localize, getEntityLabel }
     `).join("");
 }
 
-function renderColumnsSection({ showColumnSetting, columnSliderValue, columnLabel, localize }) {
-    if (!showColumnSetting) {
-        return "";
-    }
+function renderDisplayOptionsSection({
+    displayOptionsOpen,
+    localize
+}) {
+    return `
+        <div class="tuev-editor-display-menu ${displayOptionsOpen ? "is-open" : ""}">
+            <button
+                id="toggleDisplayOptions"
+                class="tuev-editor-display-badge tuev-editor-pill-button"
+                type="button"
+                title="${localize("editor.display_options")}"
+                aria-label="${localize("editor.display_options")}"
+            >${localize("editor.display_badge")}</button>
+        </div>
+    `;
+}
 
+function renderGroupsSection({
+    groups,
+    pickerOpenKey,
+    unselectedEntities,
+    searchText,
+    pendingGroupSort,
+    openGroupColorId,
+    localize,
+    getEntityLabel,
+    escapeHtml
+}) {
     return `
         <div>
-            <label style="
-                display: block;
-                font-weight: 600;
-                margin-bottom: 6px;
+            <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                margin-bottom: 8px;
             ">
-                ${localize("editor.columns")}
-            </label>
+                <label style="font-weight: 600;">
+                    ${localize("editor.groups")}
+                </label>
+                ${renderButton({
+                    id: "addGroup",
+                    disabled: false,
+                    text: localize("editor.add_group")
+                })}
+            </div>
 
+            <div style="
+                font-size: 12px;
+                opacity: 0.75;
+                margin-bottom: 8px;
+            ">
+                ${localize("editor.groups_hint")}
+            </div>
+
+            <div class="tuev-editor-groups-list">
+                ${groups.map((group, index) => renderGroupEditor({
+                    group,
+                    index,
+                    groupCount: groups.length,
+                    pickerOpenKey,
+                    unselectedEntities,
+                    searchText,
+                    pendingGroupSort,
+                    openGroupColorId,
+                    localize,
+                    getEntityLabel,
+                    escapeHtml
+                })).join("")}
+            </div>
+        </div>
+    `;
+}
+
+
+function formatGroupEntityCount(count, localize) {
+    if (count === 1) {
+        return localize("editor.vehicle_count_one");
+    }
+
+    return `${count} ${localize("editor.vehicle_count_many")}`;
+}
+
+function renderGroupEditor({
+    group,
+    index,
+    groupCount,
+    pickerOpenKey,
+    unselectedEntities,
+    searchText,
+    pendingGroupSort,
+    openGroupColorId,
+    localize,
+    getEntityLabel,
+    escapeHtml
+}) {
+    const isPickerOpen = pickerOpenKey === group.id;
+
+    const accentColor = getGroupAccentColor(group, index);
+    const entityCount = (group.entities || []).length;
+    const isColorOpen = openGroupColorId === group.id;
+
+    return `
+        <div class="tuev-editor-group-card" style="--tuev-group-accent: ${accentColor};">
+            <div class="tuev-editor-group-header">
+                <input
+                    class="tuev-editor-group-title"
+                    type="text"
+                    data-group-title="${group.id}"
+                    value="${escapeHtml(group.title)}"
+                    placeholder="${localize("editor.group_title")}"
+                >
+
+                ${renderGroupSortControls({ group, pendingGroupSort, localize })}
+
+                <div class="tuev-editor-group-actions">
+                    <button class="tuev-editor-icon-button" type="button" data-group-up="${group.id}" ${index === 0 ? "disabled" : ""} title="${localize("editor.move_group_up")}">↑</button>
+                    <button class="tuev-editor-icon-button" type="button" data-group-down="${group.id}" ${index >= groupCount - 1 ? "disabled" : ""} title="${localize("editor.move_group_down")}">↓</button>
+                    <button class="tuev-editor-icon-button" type="button" data-remove-group="${group.id}" title="${localize("editor.remove_group")}">×</button>
+                </div>
+
+                <div class="tuev-editor-group-meta">
+                    <span class="tuev-editor-color-toggle-wrap">
+                        <button
+                            class="tuev-editor-color-toggle"
+                            type="button"
+                            data-group-color-toggle="${group.id}"
+                            title="${localize("editor.group_color")}"
+                            aria-label="${localize("editor.group_color")}"
+                        ></button>
+                    </span>
+                    <span>${formatGroupEntityCount(entityCount, localize)}</span>
+                </div>
+            </div>
+            <div class="tuev-editor-group-entities">
+                ${renderGroupEntityChips({
+                    group,
+                    localize,
+                    getEntityLabel
+                })}
+            </div>
+
+            <div class="tuev-editor-group-footer">
+                <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+                    <button
+                        class="tuev-editor-pill-button"
+                        type="button"
+                        data-toggle-group-picker="${group.id}"
+                        ${unselectedEntities.length === 0 ? "disabled" : ""}
+                    >
+                        ${isPickerOpen ? localize("editor.close_picker") : localize("editor.add_to_group")}
+                    </button>
+                </div>
+
+                ${isPickerOpen ? renderGroupEntityPicker({
+                    group,
+                    unselectedEntities,
+                    searchText,
+                    pendingGroupSort,
+                    localize,
+                    getEntityLabel,
+                    escapeHtml
+                }) : ""}
+            </div>
+        </div>
+    `;
+}
+
+function renderGroupSortControls({ group, pendingGroupSort, localize }) {
+    const sort = group.sort || "manual";
+    const direction = group.sort_direction || "asc";
+    const pendingSort = pendingGroupSort?.groupId === group.id ? pendingGroupSort.sort : "";
+    const sortOptions = [
+        ["name", localize("editor.sort_name_short"), "A"],
+        ["plate", localize("editor.sort_plate_short"), "▭"],
+        ["due_date", localize("editor.sort_due_date_short"), "◷"],
+        ["status", localize("editor.sort_status_short"), "●"],
+        ["manual", localize("editor.sort_manual_short"), "↕"]
+    ];
+
+    return `
+        <div class="tuev-editor-group-sort-row" aria-label="${localize("editor.group_sort")}">
+            ${sortOptions.map(([value, label, icon]) => `
+                <button
+                    class="tuev-editor-sort-chip"
+                    type="button"
+                    data-group-id="${group.id}"
+                    data-group-sort="${value}"
+                    aria-pressed="${sort === value ? "true" : "false"}"
+                    aria-label="${localize("editor.group_sort")}: ${label}"
+                    title="${localize("editor.group_sort")}: ${label}"
+                >${icon}</button>
+            `).join("")}
+            <button
+                class="tuev-editor-sort-direction"
+                type="button"
+                data-group-sort-direction="${group.id}"
+                ${sort === "manual" ? "disabled" : ""}
+                title="${localize("editor.sort_direction")}"
+            >${direction === "desc" ? "↓" : "↑"}</button>
+        </div>
+    `;
+}
+
+function renderGroupEntityChips({ group, localize, getEntityLabel }) {
+    if (!group.entities.length) {
+        return `<span style="font-size: 13px; opacity: 0.7;">${localize("editor.no_entity_selected")}</span>`;
+    }
+
+    const isManual = (group.sort || "manual") === "manual";
+
+    return group.entities.map((entityId) => `
+        <span
+            class="tuev-editor-chip"
+            data-group-entity-chip="${entityId}"
+            data-group-id="${group.id}"
+            data-entity-id="${entityId}"
+            draggable="${isManual ? "true" : "false"}"
+            title="${isManual ? localize("editor.sort_manual_short") : ""}"
+        >
+            <span class="tuev-editor-chip-label">
+                ${getEntityLabel(entityId)}
+            </span>
+            <button
+                class="tuev-editor-chip-remove"
+                type="button"
+                data-remove-group-entity="${entityId}"
+                data-group-id="${group.id}"
+                title="${localize("editor.remove_from_group")}"
+            >×</button>
+        </span>
+    `).join("");
+}
+
+function renderGroupEntityPicker({ group, unselectedEntities, searchText, localize, getEntityLabel, escapeHtml }) {
+    return `
+        <div style="
+            margin-top: 10px;
+            border: 1px solid var(--divider-color);
+            border-radius: 8px;
+            padding: 10px;
+            background: var(--card-background-color);
+        ">
             <input
-                id="columns"
-                type="range"
-                min="1"
-                max="5"
-                step="1"
-                value="${columnSliderValue}"
+                data-group-search="${group.id}"
+                type="text"
+                value="${escapeHtml(searchText)}"
+                placeholder="${localize("editor.search")}"
                 style="
                     width: 100%;
                     box-sizing: border-box;
+                    padding: 8px 10px;
+                    border-radius: 6px;
+                    border: 1px solid var(--divider-color);
+                    background: var(--secondary-background-color);
+                    color: var(--primary-text-color);
+                    margin-bottom: 8px;
                 "
             >
 
             <div style="
                 display: flex;
-                justify-content: space-between;
+                flex-direction: column;
+                max-height: 220px;
+                overflow-y: auto;
+            ">
+                ${unselectedEntities.length ? unselectedEntities.map((entityId) => `
+                    <button
+                        type="button"
+                        data-add-group-entity="${entityId}"
+                        data-group-id="${group.id}"
+                        style="
+                            text-align: left;
+                            border: none;
+                            background: transparent;
+                            color: var(--primary-text-color);
+                            cursor: pointer;
+                            padding: 9px 8px;
+                            border-radius: 6px;
+                            font-size: 14px;
+                        "
+                        onmouseover="this.style.background='var(--secondary-background-color)'"
+                        onmouseout="this.style.background='transparent'"
+                    >
+                        <div style="font-weight: 600;">
+                            ${getEntityLabel(entityId)}
+                        </div>
+                        <div style="font-size: 12px; opacity: 0.65;">
+                            ${entityId}
+                        </div>
+                    </button>
+                `).join("") : `
+                    <div style="font-size: 13px; opacity: 0.7; padding: 8px;">
+                        ${localize("editor.no_more_entities")}
+                    </div>
+                `}
+            </div>
+        </div>
+    `;
+}
+
+return { renderEntitySection: renderEntitySection, renderDisplayOptionsSection: renderDisplayOptionsSection, renderGroupsSection: renderGroupsSection };
+
+})();
+
+// ---- src/editor/styles.js ----
+const __m_src_editor_styles_js = (() => {
+function renderEditorStyles() {
+    return `
+        <style>
+            .tuev-editor-root {
+                position: relative;
+            }
+
+            .tuev-editor-pill-button {
+                border: 1px solid var(--divider-color);
+                border-radius: 999px;
+                padding: 7px 13px;
+                background: var(--secondary-background-color);
+                color: var(--primary-text-color);
+                cursor: pointer;
+                font-weight: 700;
+                line-height: 1;
+                opacity: 1;
+                transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, opacity 120ms ease, transform 120ms ease;
+            }
+
+            .tuev-editor-pill-button:not(:disabled):hover,
+            .tuev-editor-pill-button:not(:disabled):focus-visible {
+                border-color: var(--primary-color);
+                background: color-mix(in srgb, var(--primary-color) 18%, var(--secondary-background-color));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 16%, transparent) inset;
+            }
+
+            .tuev-editor-pill-button:not(:disabled):active {
+                transform: translateY(1px);
+            }
+
+            .tuev-editor-pill-button:disabled,
+            .tuev-editor-pill-button.is-inactive {
+                cursor: default;
+                opacity: 0.55;
+                background: color-mix(in srgb, var(--disabled-color, #777) 18%, var(--secondary-background-color));
+                color: var(--secondary-text-color, var(--primary-text-color));
+            }
+
+            .tuev-editor-display-menu {
+                position: relative;
+                display: inline-flex;
                 align-items: center;
-                gap: 10px;
-                margin-top: 6px;
+                width: max-content;
+                margin: 0 0 -6px 0;
+            }
+
+            .tuev-editor-display-badge {
+                border: 1px solid var(--divider-color);
+                border-radius: 999px;
+                padding: 7px 13px;
+                background: var(--secondary-background-color);
+                color: var(--primary-text-color);
+                cursor: pointer;
+                font-weight: 800;
+                line-height: 1;
+            }
+
+            .tuev-editor-display-menu.is-open .tuev-editor-display-badge,
+            .tuev-editor-display-badge:hover,
+            .tuev-editor-display-badge:focus-visible {
+                border-color: var(--primary-color);
+                background: color-mix(in srgb, var(--primary-color) 20%, var(--secondary-background-color));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 18%, transparent) inset;
+            }
+
+            .tuev-editor-display-popover {
+                left: 0;
+                top: calc(100% + 10px);
+                width: max-content;
+                max-width: min(360px, calc(100vw - 48px));
+                box-sizing: border-box;
+                align-items: stretch;
+                flex-direction: column;
+                z-index: 20;
+                --tuev-group-accent: var(--primary-color);
+                display: none;
+            }
+
+            .tuev-editor-display-menu.is-open .tuev-editor-display-popover {
+                display: flex;
+            }
+
+            .tuev-editor-display-popover-title {
+                font-weight: 800;
+                font-size: 13px;
+                margin-bottom: 2px;
+            }
+
+            .tuev-editor-display-chip-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .tuev-editor-display-chip {
+                border: 1px solid var(--divider-color);
+                border-radius: 999px;
+                min-width: 34px;
+                height: 34px;
+                padding: 0 12px;
+                background: var(--secondary-background-color);
+                color: var(--primary-text-color);
+                cursor: pointer;
+                font-weight: 800;
+            }
+
+            .tuev-editor-display-chip:not([aria-pressed="true"]):hover,
+            .tuev-editor-display-chip:not([aria-pressed="true"]):focus-visible {
+                border-color: var(--primary-color);
+                background: color-mix(in srgb, var(--primary-color) 18%, var(--secondary-background-color));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 16%, transparent) inset;
+            }
+
+            .tuev-editor-display-chip[aria-pressed="true"] {
+                border-color: var(--primary-color);
+                background: color-mix(in srgb, var(--primary-color) 28%, var(--secondary-background-color));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 20%, transparent) inset;
+            }
+
+            .tuev-editor-display-options {
+                display: flex;
+                flex-direction: column;
+                gap: 9px;
+                padding-top: 4px;
+            }
+
+            .tuev-editor-display-options label {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            .tuev-editor-display-options input {
+                flex: 0 0 auto;
+            }
+
+            .tuev-editor-groups-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .tuev-editor-group-card {
+                position: relative;
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 42%, var(--divider-color));
+                border-left: 6px solid var(--tuev-group-accent, var(--primary-color));
+                border-radius: 14px;
+                overflow: hidden;
+                background: linear-gradient(
+                    135deg,
+                    color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 13%, var(--card-background-color)) 0%,
+                    var(--card-background-color) 46%
+                );
+                box-shadow:
+                    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+                    0 10px 22px rgba(0, 0, 0, 0.16);
+            }
+
+            .tuev-editor-group-header {
+                position: relative;
+                display: grid;
+                grid-template-columns: minmax(140px, 1fr) auto;
+                grid-template-rows: auto auto;
+                gap: 8px 10px;
+                align-items: center;
+                padding: 13px 13px 11px 16px;
+                background: color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 10%, rgba(0, 0, 0, 0.18));
+                border-bottom: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 28%, var(--divider-color));
+            }
+
+            .tuev-editor-color-toggle-wrap {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                flex: 0 0 auto;
+            }
+
+            .tuev-editor-color-toggle {
+                width: 21px;
+                height: 21px;
+                border-radius: 999px;
+                border: 2px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 72%, var(--primary-text-color));
+                background: var(--tuev-group-accent, var(--primary-color));
+                cursor: pointer;
+                padding: 0;
+                box-shadow:
+                    0 0 0 1px rgba(0, 0, 0, 0.32) inset,
+                    0 0 12px color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 55%, transparent);
+            }
+
+            .tuev-editor-floating-panel {
+                position: absolute;
+                z-index: 5;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 9px;
+                padding: 11px 12px;
+                border-radius: 15px;
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 42%, var(--divider-color));
+                background:
+                    radial-gradient(circle at 28% 25%, color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 22%, transparent), transparent 54%),
+                    color-mix(in srgb, var(--card-background-color) 84%, rgba(0, 0, 0, 0.78));
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 0 18px color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 16%, transparent);
+                backdrop-filter: blur(10px);
+            }
+
+            .tuev-editor-display-popover {
+                display: none;
+            }
+
+            .tuev-editor-display-menu.is-open .tuev-editor-display-popover {
+                display: flex;
+            }
+
+            .tuev-editor-color-popover {
+                left: 0;
+                top: calc(100% + 10px);
+                width: max-content;
+                max-width: 260px;
+            }
+
+            .tuev-editor-group-title {
+                grid-column: 1;
+                grid-row: 1;
+                width: 100%;
+                box-sizing: border-box;
+                padding: 9px 11px;
+                border-radius: 9px;
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 34%, var(--divider-color));
+                background: color-mix(in srgb, var(--secondary-background-color) 88%, var(--tuev-group-accent, var(--primary-color)));
+                color: var(--primary-text-color);
+                font-weight: 700;
+            }
+
+            .tuev-editor-group-meta {
+                grid-column: 1;
+                grid-row: 2;
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                width: max-content;
+                min-height: 22px;
+                padding: 3px 9px 3px 5px;
+                border-radius: 999px;
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 32%, transparent);
+                background: color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 14%, transparent);
+                color: var(--secondary-text-color, var(--primary-text-color));
                 font-size: 12px;
-                opacity: 0.75;
-            ">
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4</span>
-                <span>${localize("editor.columns_fill")}</span>
-            </div>
+                opacity: 0.95;
+            }
 
-            <div
-                id="columnsLabel"
-                style="
-                    font-size: 12px;
-                    opacity: 0.75;
-                    margin-top: 6px;
-                "
-            >
-                ${localize("editor.columns_current")}: ${columnLabel}
-            </div>
-        </div>
-    `;
-}
+            .tuev-editor-color-button {
+                width: 24px;
+                height: 24px;
+                border-radius: 999px;
+                border: 2px solid color-mix(in srgb, var(--tuev-color-option) 65%, var(--divider-color));
+                background: var(--tuev-color-option);
+                cursor: pointer;
+                padding: 0;
+                box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.28) inset;
+            }
 
-function renderSortSection({ sort, localize }) {
-    return `
-        <div>
-            <label style="
-                display: block;
+            .tuev-editor-color-button[aria-pressed="true"] {
+                border-color: var(--primary-text-color);
+                box-shadow:
+                    0 0 0 2px var(--tuev-color-option),
+                    0 0 12px color-mix(in srgb, var(--tuev-color-option) 65%, transparent);
+            }
+
+            .tuev-editor-group-actions {
+                grid-column: 2;
+                grid-row: 1;
+                display: flex;
+                gap: 6px;
+                flex-wrap: nowrap;
+                justify-content: flex-end;
+            }
+
+            .tuev-editor-icon-button {
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 24%, var(--divider-color));
+                border-radius: 999px;
+                min-width: 32px;
+                height: 32px;
+                background: color-mix(in srgb, var(--secondary-background-color) 90%, var(--tuev-group-accent, var(--primary-color)));
+                color: var(--primary-text-color);
+                cursor: pointer;
+                font-weight: 800;
+                line-height: 1;
+            }
+
+            .tuev-editor-icon-button:disabled {
+                cursor: default;
+                opacity: 0.45;
+            }
+
+            .tuev-editor-group-sort-row {
+                position: relative;
+                grid-column: 2;
+                grid-row: 2;
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 6px;
+                margin-top: 0;
+            }
+
+
+            .tuev-editor-entity-card {
+                border: 1px solid var(--divider-color);
+                border-radius: 14px;
+                overflow: hidden;
+                background: var(--card-background-color);
+                box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+            }
+
+            .tuev-editor-entity-header {
+                display: grid;
+                grid-template-columns: minmax(140px, 1fr) auto;
+                gap: 8px 10px;
+                align-items: center;
+                padding: 12px 13px;
+                background: rgba(0, 0, 0, 0.10);
+                border-bottom: 1px solid var(--divider-color);
+            }
+
+            .tuev-editor-entity-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                min-width: 0;
+                font-weight: 700;
+            }
+
+            .tuev-editor-entity-count {
+                display: inline-flex;
+                align-items: center;
+                min-height: 22px;
+                padding: 3px 9px;
+                border-radius: 999px;
+                border: 1px solid var(--divider-color);
+                background: var(--secondary-background-color);
+                color: var(--secondary-text-color, var(--primary-text-color));
+                font-size: 12px;
                 font-weight: 600;
-                margin-bottom: 6px;
-            ">
-                ${localize("editor.sort")}
-            </label>
+            }
 
-            <select
-                id="sort"
-                style="
-                    width: 100%;
-                    box-sizing: border-box;
-                    padding: 8px;
-                    border-radius: 6px;
-                    border: 1px solid var(--divider-color);
-                    background: var(--card-background-color);
-                    color: var(--primary-text-color);
-                "
-            >
-                <option value="name" ${sort === "name" || sort === "config" || !sort ? "selected" : ""}>${localize("editor.sort_name")}</option>
-                <option value="plate" ${sort === "plate" ? "selected" : ""}>${localize("editor.sort_plate")}</option>
-                <option value="due_date" ${sort === "due_date" ? "selected" : ""}>${localize("editor.sort_due_date")}</option>
-                <option value="status" ${sort === "status" ? "selected" : ""}>${localize("editor.sort_status")}</option>
-            </select>
+            .tuev-editor-ungrouped-sort-row {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 6px;
+            }
+
+            .tuev-editor-ungrouped-sort-row .tuev-editor-sort-chip,
+            .tuev-editor-ungrouped-sort-row .tuev-editor-sort-direction {
+                border-color: var(--divider-color);
+                background: var(--secondary-background-color);
+            }
+
+            .tuev-editor-ungrouped-sort-row .tuev-editor-sort-chip[aria-pressed="true"] {
+                border-color: var(--primary-color);
+                background: color-mix(in srgb, var(--primary-color) 24%, var(--secondary-background-color));
+            }
+
+            .tuev-editor-sort-chip {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 26%, var(--divider-color));
+                border-radius: 999px;
+                padding: 0;
+                background: color-mix(in srgb, var(--secondary-background-color) 92%, var(--tuev-group-accent, var(--primary-color)));
+                color: var(--primary-text-color);
+                cursor: pointer;
+                font-size: 15px;
+                font-weight: 800;
+                line-height: 1;
+                opacity: 0.82;
+            }
+
+            .tuev-editor-sort-chip[aria-pressed="true"] {
+                background: color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 36%, var(--secondary-background-color));
+                border-color: var(--tuev-group-accent, var(--primary-color));
+                opacity: 1;
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 24%, transparent) inset;
+            }
+
+            .tuev-editor-sort-direction {
+                min-width: 32px;
+                width: 32px;
+                height: 32px;
+                border-radius: 999px;
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 30%, var(--divider-color));
+                background: color-mix(in srgb, var(--secondary-background-color) 88%, var(--tuev-group-accent, var(--primary-color)));
+                color: var(--primary-text-color);
+                cursor: pointer;
+                font-weight: 800;
+                line-height: 1;
+            }
+
+            .tuev-editor-sort-direction:disabled {
+                cursor: default;
+                opacity: 0.38;
+            }
+
+            .tuev-editor-sort-confirm {
+                right: 0;
+                top: calc(100% + 10px);
+                min-width: 250px;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: 800;
+            }
+
+            .tuev-editor-sort-confirm-message {
+                flex-basis: 100%;
+                text-align: center;
+            }
+
+            .tuev-editor-sort-confirm button {
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 34%, var(--divider-color));
+                border-radius: 999px;
+                background: color-mix(in srgb, var(--secondary-background-color) 88%, var(--tuev-group-accent, var(--primary-color)));
+                color: var(--primary-text-color);
+                cursor: pointer;
+                font-weight: 800;
+                padding: 6px 13px;
+            }
+
+            .tuev-editor-chip[draggable="true"] {
+                cursor: grab;
+            }
+
+            .tuev-editor-chip[draggable="true"]:active,
+            .tuev-editor-chip.is-dragging {
+                cursor: grabbing;
+                opacity: 0.68;
+            }
+
+            .tuev-editor-group-entities {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: center;
+                min-height: 42px;
+                padding: 13px 13px 13px 16px;
+            }
+
+            .tuev-editor-group-footer {
+                padding: 11px 13px 13px 16px;
+                border-top: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 18%, var(--divider-color));
+                background: rgba(0, 0, 0, 0.06);
+            }
+
+            .tuev-editor-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                border-radius: 999px;
+                padding: 6px 10px;
+                background: color-mix(in srgb, var(--secondary-background-color) 92%, var(--tuev-group-accent, var(--primary-color)));
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 26%, var(--divider-color));
+                font-size: 13px;
+                max-width: 100%;
+            }
+
+            .tuev-editor-chip-label {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 260px;
+            }
+
+            .tuev-editor-chip-actions {
+                display: inline-flex;
+                align-items: center;
+                gap: 2px;
+            }
+
+            .tuev-editor-chip-action,
+            .tuev-editor-chip-remove {
+                border: none;
+                background: transparent;
+                color: var(--primary-text-color);
+                cursor: pointer;
+                font-size: 15px;
+                line-height: 1;
+                padding: 0 2px;
+            }
+
+            .tuev-editor-chip-action:disabled {
+                cursor: default;
+                opacity: 0.35;
+            }
+
+            .tuev-editor-chip-remove {
+                font-size: 15px;
+            }
+
+
+            .tuev-editor-color-toggle,
+            .tuev-editor-color-button,
+            .tuev-editor-icon-button,
+            .tuev-editor-sort-chip,
+            .tuev-editor-sort-direction,
+            .tuev-editor-sort-confirm button,
+            .tuev-editor-chip-remove,
+            .tuev-editor-chip-action {
+                transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, opacity 120ms ease, transform 120ms ease;
+            }
+
+            .tuev-editor-color-toggle:hover,
+            .tuev-editor-color-toggle:focus-visible {
+                border-color: var(--primary-text-color);
+                box-shadow:
+                    0 0 0 1px rgba(0, 0, 0, 0.32) inset,
+                    0 0 0 3px color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 22%, transparent),
+                    0 0 14px color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 65%, transparent);
+            }
+
+            .tuev-editor-color-button:hover,
+            .tuev-editor-color-button:focus-visible {
+                border-color: var(--primary-text-color);
+                box-shadow:
+                    0 0 0 1px rgba(0, 0, 0, 0.28) inset,
+                    0 0 0 3px color-mix(in srgb, var(--tuev-color-option) 22%, transparent);
+            }
+
+            .tuev-editor-color-button[aria-pressed="true"]:hover,
+            .tuev-editor-color-button[aria-pressed="true"]:focus-visible {
+                box-shadow:
+                    0 0 0 2px var(--tuev-color-option),
+                    0 0 0 4px color-mix(in srgb, var(--tuev-color-option) 18%, transparent),
+                    0 0 13px color-mix(in srgb, var(--tuev-color-option) 70%, transparent);
+            }
+
+            .tuev-editor-icon-button:not(:disabled):hover,
+            .tuev-editor-icon-button:not(:disabled):focus-visible,
+            .tuev-editor-sort-chip:not([aria-pressed="true"]):hover,
+            .tuev-editor-sort-chip:not([aria-pressed="true"]):focus-visible,
+            .tuev-editor-sort-direction:not(:disabled):hover,
+            .tuev-editor-sort-direction:not(:disabled):focus-visible,
+            .tuev-editor-sort-confirm button:hover,
+            .tuev-editor-sort-confirm button:focus-visible {
+                border-color: var(--tuev-group-accent, var(--primary-color));
+                background: color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 22%, var(--secondary-background-color));
+                opacity: 1;
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 18%, transparent) inset;
+            }
+
+            .tuev-editor-ungrouped-sort-row .tuev-editor-sort-chip:not([aria-pressed="true"]):hover,
+            .tuev-editor-ungrouped-sort-row .tuev-editor-sort-chip:not([aria-pressed="true"]):focus-visible,
+            .tuev-editor-ungrouped-sort-row .tuev-editor-sort-direction:not(:disabled):hover,
+            .tuev-editor-ungrouped-sort-row .tuev-editor-sort-direction:not(:disabled):focus-visible {
+                border-color: var(--primary-color);
+                background: color-mix(in srgb, var(--primary-color) 18%, var(--secondary-background-color));
+                box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 16%, transparent) inset;
+            }
+
+            .tuev-editor-icon-button:not(:disabled):active,
+            .tuev-editor-sort-chip:not(:disabled):active,
+            .tuev-editor-sort-direction:not(:disabled):active,
+            .tuev-editor-sort-confirm button:active {
+                transform: translateY(1px);
+            }
+
+            .tuev-editor-chip-remove:hover,
+            .tuev-editor-chip-remove:focus-visible,
+            .tuev-editor-chip-action:not(:disabled):hover,
+            .tuev-editor-chip-action:not(:disabled):focus-visible {
+                border-radius: 999px;
+                background: color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 20%, transparent);
+                opacity: 1;
+            }
+
+
+            @media (max-width: 620px) {
+                .tuev-editor-group-header {
+                    grid-template-columns: minmax(0, 1fr) auto;
+                }
+
+                .tuev-editor-group-sort-row {
+                    grid-column: 1 / -1;
+                    grid-row: 3;
+                    justify-content: flex-start;
+                    flex-wrap: wrap;
+                }
+
+                .tuev-editor-entity-header {
+                    grid-template-columns: minmax(0, 1fr);
+                }
+
+                .tuev-editor-ungrouped-sort-row {
+                    justify-content: flex-start;
+                    flex-wrap: wrap;
+                }
+
+                .tuev-editor-group-actions {
+                    grid-column: 2;
+                    grid-row: 1;
+                    justify-content: flex-end;
+                }
+
+                .tuev-editor-group-meta {
+                    grid-column: 1;
+                }
+            }
+
+            @media (max-width: 420px) {
+                .tuev-editor-group-header {
+                    grid-template-columns: minmax(0, 1fr);
+                }
+
+                .tuev-editor-group-actions {
+                    grid-column: 1;
+                    grid-row: 3;
+                    justify-content: flex-start;
+                }
+
+                .tuev-editor-group-sort-row {
+                    grid-column: 1;
+                    grid-row: 4;
+                }
+            }
+        </style>
+    `;
+}
+
+return { renderEditorStyles: renderEditorStyles };
+
+})();
+
+// ---- src/editor/floating-panels.js ----
+const __m_src_editor_floating_panels_js = (() => {
+const { GROUP_ACCENT_COLORS, getGroupAccentColor } = __m_src_card_groups_js;
+
+function clampPanelPosition(anchor = {}, width = 360) {
+    const margin = 8;
+    const containerWidth = Math.max(0, Number(anchor.containerWidth || 0));
+    const maxLeft = containerWidth > 0
+        ? Math.max(margin, containerWidth - width - margin)
+        : Number(anchor.left ?? margin);
+
+    return {
+        left: Math.max(margin, Math.min(Number(anchor.left ?? margin), maxLeft)),
+        top: Math.max(margin, Number(anchor.top ?? margin))
+    };
+}
+
+function clampPanelRightPosition(anchor = {}) {
+    const margin = 8;
+    const containerWidth = Math.max(0, Number(anchor.containerWidth || 0));
+    const right = Math.max(margin, Number(anchor.right ?? margin));
+
+    if (!containerWidth) {
+        return { right, top: Math.max(margin, Number(anchor.top ?? margin)) };
+    }
+
+    return {
+        right: Math.min(right, Math.max(margin, containerWidth - margin)),
+        top: Math.max(margin, Number(anchor.top ?? margin))
+    };
+}
+
+function renderFloatingPanelStyles() {
+    return `
+        <style>
+            .tuev-editor-floating-layer {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 0;
+                overflow: visible;
+                pointer-events: none;
+                z-index: 1000;
+            }
+
+            .tuev-editor-floating-layer .tuev-editor-floating-panel {
+                pointer-events: auto;
+                position: absolute;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 9px;
+                padding: 11px 12px;
+                border-radius: 15px;
+                border: 1px solid color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 42%, var(--divider-color));
+                background:
+                    radial-gradient(circle at 28% 25%, color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 22%, transparent), transparent 54%),
+                    color-mix(in srgb, var(--card-background-color) 84%, rgba(0, 0, 0, 0.78));
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 0 18px color-mix(in srgb, var(--tuev-group-accent, var(--primary-color)) 16%, transparent);
+                backdrop-filter: blur(10px);
+            }
+
+            .tuev-editor-floating-layer .tuev-editor-display-popover {
+                width: max-content;
+                max-width: min(360px, calc(100vw - 48px));
+                box-sizing: border-box;
+                align-items: stretch;
+                flex-direction: column;
+                --tuev-group-accent: var(--primary-color);
+            }
+
+            .tuev-editor-floating-layer .tuev-editor-color-popover {
+                width: max-content;
+                max-width: 260px;
+            }
+
+            .tuev-editor-floating-layer .tuev-editor-sort-confirm {
+                width: max-content;
+                max-width: min(320px, calc(100vw - 48px));
+            }
+        </style>
+    `;
+}
+
+function renderEditorFloatingPanels({
+    displayOptionsOpen,
+    displayAnchor,
+    showColumnSetting,
+    columns,
+    config,
+    canRenderPlate,
+    openGroupColorId,
+    colorAnchor,
+    groups,
+    pendingGroupSort,
+    sortConfirmAnchor,
+    localize
+}) {
+    const panels = [];
+
+    if (displayOptionsOpen) {
+        panels.push(renderDisplayOptionsPopover({
+            anchor: displayAnchor,
+            showColumnSetting,
+            columns,
+            config,
+            canRenderPlate,
+            localize
+        }));
+    }
+
+    if (openGroupColorId) {
+        const group = (groups || []).find((candidate) => candidate.id === openGroupColorId);
+        if (group) {
+            panels.push(renderColorPopover({
+                group,
+                groups,
+                anchor: colorAnchor,
+                localize
+            }));
+        }
+    }
+
+    if (pendingGroupSort?.groupId) {
+        const group = (groups || []).find((candidate) => candidate.id === pendingGroupSort.groupId);
+        if (group) {
+            panels.push(renderSortConfirmPopover({
+                group,
+                anchor: sortConfirmAnchor,
+                localize
+            }));
+        }
+    }
+
+    if (!panels.length) {
+        return "";
+    }
+
+    return `
+        ${renderFloatingPanelStyles()}
+        <div class="tuev-editor-floating-layer">
+            ${panels.join("")}
         </div>
     `;
 }
 
-function renderOptionsSection({ config, canRenderPlate, localize }) {
-    return `
-        <div class="tuev-editor-checkbox-row">
-            <label>
-                <input
-                    id="showDetails"
-                    type="checkbox"
-                    ${config.show_details !== false ? "checked" : ""}
-                >
-                ${localize("editor.show_details")}
-            </label>
+function renderDisplayOptionsPopover({ anchor, showColumnSetting, columns, config, canRenderPlate, localize }) {
+    const currentColumns = String(columns || "auto");
+    const width = 360;
+    const position = clampPanelPosition(anchor, width);
 
-            ${canRenderPlate ? `
+    return `
+        <div
+            class="tuev-editor-floating-panel tuev-editor-display-popover"
+            style="left: ${position.left}px; top: ${position.top}px;"
+        >
+            ${showColumnSetting ? `
+                <div class="tuev-editor-display-popover-title">${localize("editor.columns")}</div>
+                <div class="tuev-editor-display-chip-row">
+                    ${renderDisplayColumnChip("1", currentColumns, localize("editor.columns_1_short"), localize)}
+                    ${renderDisplayColumnChip("2", currentColumns, localize("editor.columns_2_short"), localize)}
+                    ${renderDisplayColumnChip("3", currentColumns, localize("editor.columns_3_short"), localize)}
+                    ${renderDisplayColumnChip("4", currentColumns, localize("editor.columns_4_short"), localize)}
+                    ${renderDisplayColumnChip("auto", currentColumns, localize("editor.columns_fill"), localize)}
+                </div>
+            ` : ""}
+
+            <div class="tuev-editor-display-options">
                 <label>
                     <input
-                        id="renderPlate"
+                        id="showDetails"
                         type="checkbox"
-                        ${config.plate_style === "plate" ? "checked" : ""}
+                        ${config.show_details !== false ? "checked" : ""}
                     >
-                    ${localize("editor.render_plate")}
+                    ${localize("editor.show_details")}
                 </label>
-            ` : ""}
+
+                ${canRenderPlate ? `
+                    <label>
+                        <input
+                            id="renderPlate"
+                            type="checkbox"
+                            ${config.plate_style === "plate" ? "checked" : ""}
+                        >
+                        ${localize("editor.render_plate")}
+                    </label>
+                ` : ""}
+            </div>
         </div>
     `;
 }
 
-return { renderEditorStyles: renderEditorStyles, renderEntitySection: renderEntitySection, renderColumnsSection: renderColumnsSection, renderSortSection: renderSortSection, renderOptionsSection: renderOptionsSection };
+function renderDisplayColumnChip(value, currentColumns, label, localize) {
+    return `
+        <button
+            class="tuev-editor-display-chip"
+            type="button"
+            data-display-columns="${value}"
+            aria-pressed="${currentColumns === value ? "true" : "false"}"
+            title="${localize("editor.columns")}: ${label}"
+        >${label}</button>
+    `;
+}
+
+function renderColorPopover({ group, groups, anchor, localize }) {
+    const groupIndex = groups.findIndex((candidate) => candidate.id === group.id);
+    const accentColor = getGroupAccentColor(group, groupIndex);
+    const width = 260;
+    const position = clampPanelPosition(anchor, width);
+
+    return `
+        <div
+            class="tuev-editor-floating-panel tuev-editor-color-popover"
+            style="left: ${position.left}px; top: ${position.top}px; --tuev-group-accent: ${accentColor};"
+            aria-label="${localize("editor.group_color")}"
+        >
+            ${GROUP_ACCENT_COLORS.map((color) => `
+                <button
+                    class="tuev-editor-color-button"
+                    type="button"
+                    data-group-color="${group.id}"
+                    data-color="${color}"
+                    style="--tuev-color-option: ${color};"
+                    aria-pressed="${color === accentColor ? "true" : "false"}"
+                    title="${localize("editor.group_color")}"
+                ></button>
+            `).join("")}
+        </div>
+    `;
+}
+
+function renderSortConfirmPopover({ group, anchor, localize }) {
+    const position = anchor?.right != null
+        ? clampPanelRightPosition(anchor)
+        : clampPanelPosition(anchor, 320);
+    const accentColor = getGroupAccentColor(group, 0);
+    const horizontalStyle = anchor?.right != null
+        ? `right: ${position.right}px;`
+        : `left: ${position.left}px;`;
+
+    return `
+        <div
+            class="tuev-editor-floating-panel tuev-editor-sort-confirm"
+            style="${horizontalStyle} top: ${position.top}px; --tuev-group-accent: ${accentColor};"
+        >
+            <span class="tuev-editor-sort-confirm-message">${localize("editor.discard_manual_sort")}</span>
+            <button type="button" data-cancel-group-sort="${group.id}">${localize("editor.cancel")}</button>
+            <button type="button" data-confirm-group-sort="${group.id}">${localize("editor.yes")}</button>
+        </div>
+    `;
+}
+
+return { renderFloatingPanelStyles: renderFloatingPanelStyles, renderEditorFloatingPanels: renderEditorFloatingPanels };
 
 })();
 
@@ -2415,22 +3780,97 @@ return { renderEditorStyles: renderEditorStyles, renderEntitySection: renderEnti
 const __m_src_editor_editor_js = (() => {
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig, removeLegacyCardConfigOptions } = __m_src_card_config_js;
-const { getAvailableTuevEntities, getEntityIdsFromConfig, getEntityLabel } = __m_src_card_entities_js;
+const { getAvailableTuevEntities, getEntityLabel, sortEntityIds } = __m_src_card_entities_js;
+const { createGroup, getNewGroupTitle, getUngroupedEntityIdsFromConfig, normalizeGroups, normalizeGroupSort, normalizeGroupSortDirection } = __m_src_card_groups_js;
 const { checkPlateFontAvailable, ensurePlateFont } = __m_src_plate_renderer_js;
-const { getColumnLabel, getColumnsFromSliderValue, getColumnSliderValue } = __m_src_editor_columns_js;
-const { renderColumnsSection, renderEditorStyles, renderEntitySection, renderOptionsSection, renderSortSection } = __m_src_editor_render_parts_js;
+const { getColumnLabel } = __m_src_editor_columns_js;
+const { renderDisplayOptionsSection, renderEntitySection, renderGroupsSection } = __m_src_editor_render_parts_js;
+const { renderEditorStyles } = __m_src_editor_styles_js;
+const { renderEditorFloatingPanels } = __m_src_editor_floating_panels_js;
 
 class TuevCardEditor extends HTMLElement {
     setConfig(config) {
+        const openGroupColorId = this._openGroupColorId;
+        const displayOptionsOpen = this._displayOptionsOpen === true;
+        const displayOptionsAnchor = this._displayOptionsAnchor;
+        const colorPopoverAnchor = this._colorPopoverAnchor;
+        const sortConfirmAnchor = this._sortConfirmAnchor;
+
         this._config = normalizeCardConfig(config, { requireEntity: false });
 
-        this._plateFontAvailable = false;
-        this._draftEntityIds = this.getEntityIdsFromConfig();
+        this._plateFontAvailable = this._plateFontAvailable === true;
+        this._draftGroups = normalizeGroups(this._config.groups);
+        this._draftEntityIds = this.getUngroupedEntityIdsFromConfig();
         this._pickerOpen = false;
+        this._pickerOpenKey = null;
         this._searchText = "";
+        this._pendingGroupSort = null;
+        this._openGroupColorId = this._draftGroups.some((group) => group.id === openGroupColorId)
+            ? openGroupColorId
+            : null;
+        this._displayOptionsOpen = displayOptionsOpen;
+        this._displayOptionsAnchor = displayOptionsAnchor || null;
+        this._colorPopoverAnchor = this._openGroupColorId ? (colorPopoverAnchor || null) : null;
+        this._sortConfirmAnchor = sortConfirmAnchor || null;
+        this._draggedGroupEntity = null;
 
         this.checkPlateFontAvailability();
         this.render();
+    }
+
+    connectedCallback() {
+        if (!this._boundHandleDocumentClick) {
+            this._boundHandleDocumentClick = (event) => this.handleDocumentClick(event);
+        }
+
+        document.addEventListener("click", this._boundHandleDocumentClick, true);
+    }
+
+    disconnectedCallback() {
+        if (this._boundHandleDocumentClick) {
+            document.removeEventListener("click", this._boundHandleDocumentClick, true);
+        }
+    }
+
+    handleDocumentClick(event) {
+        const path = typeof event.composedPath === "function" ? event.composedPath() : [];
+        const target = event.target;
+
+        const hasClass = (className) => path.some((item) => item?.classList?.contains?.(className));
+        const clickedInsideEditor = path.includes(this) || (target instanceof Node && this.contains(target));
+
+        const clickedInsideFloatingControl = hasClass("tuev-editor-display-menu")
+            || hasClass("tuev-editor-color-toggle-wrap")
+            || hasClass("tuev-editor-floating-layer")
+            || hasClass("tuev-editor-floating-panel");
+
+        if (clickedInsideEditor && clickedInsideFloatingControl) {
+            return;
+        }
+
+        let shouldRender = false;
+
+        if (this._displayOptionsOpen) {
+            this._displayOptionsOpen = false;
+            this._displayOptionsAnchor = null;
+            shouldRender = true;
+        }
+
+        if (this._openGroupColorId) {
+            this._openGroupColorId = null;
+            this._colorPopoverAnchor = null;
+            shouldRender = true;
+        }
+
+        if (this._pendingGroupSort) {
+            this._pendingGroupSort = null;
+            this._sortConfirmAnchor = null;
+            shouldRender = true;
+        }
+
+        if (shouldRender) {
+            this.render();
+        }
     }
 
     set hass(hass) {
@@ -2479,8 +3919,8 @@ class TuevCardEditor extends HTMLElement {
         });
     }
 
-    getEntityIdsFromConfig() {
-        return getEntityIdsFromConfig(this._config);
+    getUngroupedEntityIdsFromConfig() {
+        return getUngroupedEntityIdsFromConfig(this._config);
     }
 
     getAvailableTuevEntities() {
@@ -2491,8 +3931,15 @@ class TuevCardEditor extends HTMLElement {
         return getEntityLabel(this._hass, entityId);
     }
 
+    getSelectedEntityIds() {
+        return [...new Set([
+            ...this._draftEntityIds.filter(Boolean),
+            ...this._draftGroups.flatMap((group) => group.entities || [])
+        ])];
+    }
+
     getUnselectedEntities() {
-        const selected = new Set(this._draftEntityIds.filter(Boolean));
+        const selected = new Set(this.getSelectedEntityIds());
         const search = String(this._searchText || "").trim().toLowerCase();
 
         return this.getAvailableTuevEntities()
@@ -2513,19 +3960,19 @@ class TuevCardEditor extends HTMLElement {
         }
 
         const selectedEntityIds = this._draftEntityIds.filter(Boolean);
+        const selectedAllEntityIds = this.getSelectedEntityIds();
         const availableTuevEntities = this.getAvailableTuevEntities();
         const unselectedEntities = this.getUnselectedEntities();
         const hasAvailableToAdd = availableTuevEntities
-            .some((entityId) => !selectedEntityIds.includes(entityId));
+            .some((entityId) => !selectedAllEntityIds.includes(entityId));
         const newEntityCount = availableTuevEntities
-            .filter((entityId) => !selectedEntityIds.includes(entityId))
+            .filter((entityId) => !selectedAllEntityIds.includes(entityId))
             .length;
         const entityHint = availableTuevEntities.length > 0 && !hasAvailableToAdd
             ? this.localize("editor.all_entities_added")
             : this.localize("editor.single_entity_hint");
         const canRenderPlate = this._plateFontAvailable === true;
-        const showColumnSetting = selectedEntityIds.length > 1;
-        const columnSliderValue = getColumnSliderValue(this._config.columns);
+        const showColumnSetting = selectedAllEntityIds.length > 1;
         const columnLabel = getColumnLabel(
             this._config.columns,
             (key) => this.localize(key)
@@ -2534,40 +3981,59 @@ class TuevCardEditor extends HTMLElement {
         this.innerHTML = `
             ${renderEditorStyles()}
 
-            <div style="
-                display: flex;
-                flex-direction: column;
-                gap: 18px;
-                padding: 4px 0;
-            ">
-                ${renderEntitySection({
+            <div class="tuev-editor-root">
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: 18px;
+                    padding: 4px 0;
+                ">
+                    ${renderEntitySection({
                     selectedEntityIds,
                     unselectedEntities,
                     hasAvailableToAdd,
                     newEntityCount,
                     entityHint,
+                    hasUngroupedToRelease: selectedEntityIds.length > 0,
                     pickerOpen: this._pickerOpen,
                     searchText: this._searchText,
+                    sort: this._config.sort,
+                    sortDirection: this._config.sort_direction,
                     localize: (key) => this.localize(key),
                     getEntityLabel: (entityId) => this.getEntityLabel(entityId),
                     escapeHtml: (value) => this.escapeHtml(value)
                 })}
 
-                ${renderColumnsSection({
-                    showColumnSetting,
-                    columnSliderValue,
-                    columnLabel,
+                ${renderDisplayOptionsSection({
+                    displayOptionsOpen: this._displayOptionsOpen,
                     localize: (key) => this.localize(key)
                 })}
 
-                ${renderSortSection({
-                    sort: this._config.sort,
-                    localize: (key) => this.localize(key)
+                ${renderGroupsSection({
+                    groups: this._draftGroups,
+                    pickerOpenKey: this._pickerOpenKey,
+                    unselectedEntities,
+                    searchText: this._searchText,
+                    pendingGroupSort: this._pendingGroupSort,
+                    openGroupColorId: this._openGroupColorId,
+                    localize: (key) => this.localize(key),
+                    getEntityLabel: (entityId) => this.getEntityLabel(entityId),
+                    escapeHtml: (value) => this.escapeHtml(value)
                 })}
+                </div>
 
-                ${renderOptionsSection({
-                    config: this._config,
-                    canRenderPlate,
+                ${renderEditorFloatingPanels({
+                displayOptionsOpen: this._displayOptionsOpen,
+                displayAnchor: this._displayOptionsAnchor,
+                showColumnSetting,
+                columns: this._config.columns,
+                config: this._config,
+                canRenderPlate,
+                openGroupColorId: this._openGroupColorId,
+                colorAnchor: this._colorPopoverAnchor,
+                groups: this._draftGroups,
+                pendingGroupSort: this._pendingGroupSort,
+                sortConfirmAnchor: this._sortConfirmAnchor,
                     localize: (key) => this.localize(key)
                 })}
             </div>
@@ -2583,12 +4049,17 @@ class TuevCardEditor extends HTMLElement {
             }
 
             this._pickerOpen = !this._pickerOpen;
+            this._pickerOpenKey = this._pickerOpen ? null : this._pickerOpenKey;
             this._searchText = "";
             this.render();
         });
 
         this.querySelector("#addAllNewEntities")?.addEventListener("click", () => {
             this.addAllNewEntities();
+        });
+
+        this.querySelector("#releaseUngroupedEntities")?.addEventListener("click", () => {
+            this.releaseUngroupedEntities();
         });
 
         this.querySelector("#entitySearch")?.addEventListener("input", (event) => {
@@ -2610,8 +4081,9 @@ class TuevCardEditor extends HTMLElement {
                 ])];
 
                 this._pickerOpen = false;
+                this._pickerOpenKey = null;
                 this._searchText = "";
-                this.applyEntities();
+                this.applyDraftConfig();
                 this.render();
             });
         });
@@ -2623,17 +4095,264 @@ class TuevCardEditor extends HTMLElement {
                 this._draftEntityIds = this._draftEntityIds
                     .filter((currentEntityId) => currentEntityId !== entityId);
 
-                this.applyEntities();
+                this.applyDraftConfig();
                 this.render();
             });
         });
 
-        this.querySelector("#columns")?.addEventListener("input", () => {
-            this.updateConfig();
+        this.querySelector("#addGroup")?.addEventListener("click", () => {
+            this._draftGroups = [
+                ...this._draftGroups,
+                createGroup(getNewGroupTitle((key) => this.localize(key)))
+            ];
+            this.applyDraftConfig();
+            this.render();
         });
 
-        this.querySelector("#sort")?.addEventListener("change", () => {
-            this.updateConfig();
+        this.querySelectorAll("[data-group-title]").forEach((input) => {
+            const updateDraftTitle = () => {
+                const groupId = input.getAttribute("data-group-title");
+                this._draftGroups = this._draftGroups.map((group) => (
+                    group.id === groupId
+                        ? { ...group, title: input.value || "" }
+                        : group
+                ));
+            };
+
+            input.addEventListener("input", () => {
+                updateDraftTitle();
+            });
+
+            input.addEventListener("change", () => {
+                updateDraftTitle();
+                this.applyDraftConfig();
+            });
+        });
+
+        this.querySelectorAll("[data-remove-group]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const groupId = button.getAttribute("data-remove-group");
+
+                this._draftGroups = this._draftGroups
+                    .filter((candidate) => candidate.id !== groupId);
+                this._pickerOpenKey = null;
+                this._openGroupColorId = null;
+                this.applyDraftConfig();
+                this.render();
+            });
+        });
+
+        this.querySelectorAll("[data-group-up]").forEach((button) => {
+            button.addEventListener("click", () => {
+                this.moveGroup(button.getAttribute("data-group-up"), -1);
+            });
+        });
+
+        this.querySelectorAll("[data-group-color-toggle]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const groupId = button.getAttribute("data-group-color-toggle");
+                this._pendingGroupSort = null;
+                this._displayOptionsOpen = false;
+                const willOpen = this._openGroupColorId !== groupId;
+                this._openGroupColorId = willOpen ? groupId : null;
+                this._colorPopoverAnchor = willOpen ? this.getPopoverAnchor(button) : null;
+                this.render();
+            });
+        });
+
+        this.querySelectorAll("[data-group-color]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const groupId = button.getAttribute("data-group-color");
+                const color = button.getAttribute("data-color");
+
+                if (!groupId || !color) {
+                    return;
+                }
+
+                this._draftGroups = this._draftGroups.map((group) => (
+                    group.id === groupId
+                        ? { ...group, color }
+                        : group
+                ));
+
+                this.applyDraftConfig();
+                this.render();
+            });
+        });
+
+        this.querySelectorAll("[data-group-down]").forEach((button) => {
+            button.addEventListener("click", () => {
+                this.moveGroup(button.getAttribute("data-group-down"), 1);
+            });
+        });
+
+        this.querySelectorAll("[data-toggle-group-picker]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const groupId = button.getAttribute("data-toggle-group-picker");
+                this._pickerOpen = false;
+                this._displayOptionsOpen = false;
+                this._pickerOpenKey = this._pickerOpenKey === groupId ? null : groupId;
+                this._searchText = "";
+                this.render();
+            });
+        });
+
+        this.querySelectorAll("[data-group-search]").forEach((input) => {
+            input.addEventListener("input", () => {
+                this._searchText = input.value || "";
+                this.render();
+            });
+        });
+
+        this.querySelectorAll("[data-add-group-entity]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const entityId = button.getAttribute("data-add-group-entity");
+                const groupId = button.getAttribute("data-group-id");
+
+                if (!entityId || !groupId) {
+                    return;
+                }
+
+                this._draftEntityIds = this._draftEntityIds
+                    .filter((currentEntityId) => currentEntityId !== entityId);
+                this._draftGroups = this._draftGroups.map((group) => ({
+                    ...group,
+                    entities: group.id === groupId
+                        ? [...new Set([...(group.entities || []), entityId])]
+                        : (group.entities || []).filter((currentEntityId) => currentEntityId !== entityId)
+                }));
+                this._pickerOpenKey = null;
+                this._searchText = "";
+                this.applyDraftConfig();
+                this.render();
+            });
+        });
+
+        this.querySelectorAll("[data-ungrouped-sort]").forEach((button) => {
+            button.addEventListener("click", () => {
+                this.setUngroupedSort(button.getAttribute("data-ungrouped-sort"));
+            });
+        });
+
+        this.querySelector("[data-ungrouped-sort-direction]")?.addEventListener("click", () => {
+            this.toggleUngroupedSortDirection();
+        });
+
+        this.querySelectorAll("[data-group-sort]").forEach((button) => {
+            button.addEventListener("click", () => {
+                this.setGroupSort(
+                    button.getAttribute("data-group-id"),
+                    button.getAttribute("data-group-sort"),
+                    this.getGroupRightPopoverAnchor(button)
+                );
+            });
+        });
+
+        this.querySelectorAll("[data-group-sort-direction]").forEach((button) => {
+            button.addEventListener("click", () => {
+                this.toggleGroupSortDirection(button.getAttribute("data-group-sort-direction"));
+            });
+        });
+
+        this.querySelectorAll("[data-confirm-group-sort]").forEach((button) => {
+            button.addEventListener("click", () => {
+                this.confirmPendingGroupSort(button.getAttribute("data-confirm-group-sort"));
+            });
+        });
+
+        this.querySelectorAll("[data-cancel-group-sort]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const groupId = button.getAttribute("data-cancel-group-sort");
+
+                if (this._pendingGroupSort?.groupId === groupId) {
+                    this._pendingGroupSort = null;
+                    this._sortConfirmAnchor = null;
+                    this.render();
+                }
+            });
+        });
+
+        this.querySelectorAll("[data-remove-group-entity]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const entityId = button.getAttribute("data-remove-group-entity");
+                const groupId = button.getAttribute("data-group-id");
+
+                if (!entityId || !groupId) {
+                    return;
+                }
+
+                this._draftGroups = this._draftGroups.map((group) => (
+                    group.id === groupId
+                        ? {
+                            ...group,
+                            entities: (group.entities || [])
+                                .filter((currentEntityId) => currentEntityId !== entityId)
+                        }
+                        : group
+                ));
+                this.applyDraftConfig();
+                this.render();
+            });
+        });
+
+        this.querySelectorAll("[data-group-entity-chip]").forEach((chip) => {
+            chip.addEventListener("dragstart", (event) => {
+                const groupId = chip.getAttribute("data-group-id");
+                const entityId = chip.getAttribute("data-entity-id");
+
+                if (!groupId || !entityId || chip.getAttribute("draggable") !== "true") {
+                    event.preventDefault();
+                    return;
+                }
+
+                this._draggedGroupEntity = { groupId, entityId };
+                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.setData("text/plain", `${groupId}::${entityId}`);
+                chip.classList.add("is-dragging");
+            });
+
+            chip.addEventListener("dragend", () => {
+                this._draggedGroupEntity = null;
+                chip.classList.remove("is-dragging");
+            });
+
+            chip.addEventListener("dragover", (event) => {
+                const groupId = chip.getAttribute("data-group-id");
+
+                if (!this.canDropGroupEntity(groupId)) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.dataTransfer.dropEffect = "move";
+            });
+
+            chip.addEventListener("drop", (event) => {
+                event.preventDefault();
+                this.dropGroupEntity(
+                    chip.getAttribute("data-group-id"),
+                    chip.getAttribute("data-entity-id")
+                );
+            });
+        });
+
+        this.querySelector("#toggleDisplayOptions")?.addEventListener("click", (event) => {
+            const willOpen = !this._displayOptionsOpen;
+            this._displayOptionsOpen = willOpen;
+            this._displayOptionsAnchor = willOpen ? this.getPopoverAnchor(event.currentTarget) : null;
+            this._pickerOpen = false;
+            this._pickerOpenKey = null;
+            this._openGroupColorId = null;
+            this._colorPopoverAnchor = null;
+            this._pendingGroupSort = null;
+            this._sortConfirmAnchor = null;
+            this.render();
+        });
+
+        this.querySelectorAll("[data-display-columns]").forEach((button) => {
+            button.addEventListener("click", () => {
+                this.setColumns(button.getAttribute("data-display-columns"));
+            });
         });
 
         this.querySelector("#renderPlate")?.addEventListener("change", () => {
@@ -2645,8 +4364,35 @@ class TuevCardEditor extends HTMLElement {
         });
     }
 
+    setUngroupedSort(sort) {
+        const allowed = ["name", "plate", "due_date", "status"];
+        const nextSort = allowed.includes(sort) ? sort : "name";
+
+        if (this._config.sort === nextSort) {
+            return;
+        }
+
+        this._config = {
+            ...this._config,
+            sort: nextSort
+        };
+        this.fireConfigChanged();
+        this.render();
+    }
+
+    toggleUngroupedSortDirection() {
+        const nextDirection = this._config.sort_direction === "desc" ? "asc" : "desc";
+
+        this._config = {
+            ...this._config,
+            sort_direction: nextDirection
+        };
+        this.fireConfigChanged();
+        this.render();
+    }
+
     addAllNewEntities() {
-        const selected = new Set(this._draftEntityIds.filter(Boolean));
+        const selected = new Set(this.getSelectedEntityIds());
 
         const newEntityIds = this.getAvailableTuevEntities()
             .filter((entityId) => !selected.has(entityId));
@@ -2661,18 +4407,213 @@ class TuevCardEditor extends HTMLElement {
         ])];
 
         this._pickerOpen = false;
+        this._pickerOpenKey = null;
         this._searchText = "";
 
-        this.applyEntities();
+        this.applyDraftConfig();
         this.render();
     }
 
-    applyEntities() {
-        const cleanedEntityIds = [...new Set(
-            this._draftEntityIds
+    releaseUngroupedEntities() {
+        if (!this._draftEntityIds.filter(Boolean).length) {
+            return;
+        }
+
+        this._draftEntityIds = [];
+        this._pickerOpen = false;
+        this._pickerOpenKey = null;
+        this._searchText = "";
+
+        this.applyDraftConfig();
+        this.render();
+    }
+
+    moveGroup(groupId, direction) {
+        const index = this._draftGroups.findIndex((group) => group.id === groupId);
+        const targetIndex = index + direction;
+
+        if (index < 0 || targetIndex < 0 || targetIndex >= this._draftGroups.length) {
+            return;
+        }
+
+        const nextGroups = [...this._draftGroups];
+        const [group] = nextGroups.splice(index, 1);
+        nextGroups.splice(targetIndex, 0, group);
+
+        this._draftGroups = nextGroups;
+        this.applyDraftConfig();
+        this.render();
+    }
+
+    canDropGroupEntity(groupId) {
+        if (!this._draggedGroupEntity || !groupId) {
+            return false;
+        }
+
+        const group = this._draftGroups.find((candidate) => candidate.id === groupId);
+
+        return group?.id === this._draggedGroupEntity.groupId
+            && normalizeGroupSort(group.sort) === "manual";
+    }
+
+    dropGroupEntity(groupId, targetEntityId) {
+        if (!this._draggedGroupEntity || !groupId || !targetEntityId) {
+            return;
+        }
+
+        const { entityId } = this._draggedGroupEntity;
+
+        if (entityId === targetEntityId) {
+            return;
+        }
+
+        this._draftGroups = this._draftGroups.map((group) => {
+            if (group.id !== groupId || normalizeGroupSort(group.sort) !== "manual") {
+                return group;
+            }
+
+            const entities = (group.entities || []).filter(Boolean);
+            const fromIndex = entities.indexOf(entityId);
+            const toIndex = entities.indexOf(targetEntityId);
+
+            if (fromIndex < 0 || toIndex < 0) {
+                return group;
+            }
+
+            const nextEntities = [...entities];
+            const [moved] = nextEntities.splice(fromIndex, 1);
+            nextEntities.splice(toIndex, 0, moved);
+
+            return {
+                ...group,
+                entities: nextEntities
+            };
+        });
+
+        this._draggedGroupEntity = null;
+        this.applyDraftConfig();
+        this.render();
+    }
+
+    getSortedGroupEntityIds(entityIds, sort, direction) {
+        const sorted = sortEntityIds(entityIds || [], sort, this._hass);
+
+        return direction === "desc"
+            ? sorted.reverse()
+            : sorted;
+    }
+
+    setGroupSort(groupId, sort, anchor = null) {
+        const nextSort = normalizeGroupSort(sort);
+
+        if (!groupId || !nextSort) {
+            return;
+        }
+
+        const group = this._draftGroups.find((candidate) => candidate.id === groupId);
+        const currentSort = normalizeGroupSort(group?.sort);
+
+        if (currentSort === nextSort) {
+            return;
+        }
+
+        if (currentSort === "manual" && nextSort !== "manual") {
+            this._pendingGroupSort = { groupId, sort: nextSort };
+            this._sortConfirmAnchor = anchor;
+            this.render();
+            return;
+        }
+
+        this.applyGroupSort(groupId, nextSort);
+    }
+
+    confirmPendingGroupSort(groupId) {
+        if (!groupId || this._pendingGroupSort?.groupId !== groupId) {
+            return;
+        }
+
+        const nextSort = this._pendingGroupSort.sort;
+        this._pendingGroupSort = null;
+        this._sortConfirmAnchor = null;
+        this._openGroupColorId = null;
+        this._colorPopoverAnchor = null;
+        this._displayOptionsOpen = false;
+        this._displayOptionsAnchor = null;
+        this._draggedGroupEntity = null;
+        this.applyGroupSort(groupId, nextSort);
+    }
+
+    applyGroupSort(groupId, sort) {
+        const nextSort = normalizeGroupSort(sort);
+
+        this._draftGroups = this._draftGroups.map((group) => {
+            if (group.id !== groupId) {
+                return group;
+            }
+
+            const direction = normalizeGroupSortDirection(group.sort_direction);
+            const entities = nextSort === "manual"
+                ? [...(group.entities || [])]
+                : this.getSortedGroupEntityIds(group.entities, nextSort, direction);
+
+            return {
+                ...group,
+                sort: nextSort === "manual" ? undefined : nextSort,
+                sort_direction: nextSort === "manual" || direction === "asc" ? undefined : direction,
+                entities
+            };
+        });
+
+        this.applyDraftConfig();
+        this.render();
+    }
+
+    toggleGroupSortDirection(groupId) {
+        if (!groupId) {
+            return;
+        }
+
+        this._draftGroups = this._draftGroups.map((group) => {
+            if (group.id !== groupId) {
+                return group;
+            }
+
+            const sort = normalizeGroupSort(group.sort);
+
+            if (sort === "manual") {
+                return group;
+            }
+
+            const nextDirection = normalizeGroupSortDirection(group.sort_direction) === "asc"
+                ? "desc"
+                : "asc";
+
+            return {
+                ...group,
+                sort,
+                sort_direction: nextDirection === "asc" ? undefined : nextDirection,
+                entities: this.getSortedGroupEntityIds(group.entities, sort, nextDirection)
+            };
+        });
+
+        this.applyDraftConfig();
+        this.render();
+    }
+
+    applyDraftConfig() {
+        const cleanList = (entityIds) => [...new Set(
+            (entityIds || [])
                 .map((entityId) => String(entityId || "").trim())
                 .filter(Boolean)
         )];
+        const cleanedGroups = normalizeGroups(this._draftGroups)
+            .map((group) => ({
+                ...group,
+                entities: cleanList(group.entities)
+            }));
+        const groupedIds = new Set(cleanedGroups.flatMap((group) => group.entities));
+        const cleanedEntityIds = cleanList(this._draftEntityIds)
+            .filter((entityId) => !groupedIds.has(entityId));
 
         const newConfig = {
             ...this._config
@@ -2689,27 +4630,45 @@ class TuevCardEditor extends HTMLElement {
             delete newConfig.entities;
         }
 
+        if (cleanedGroups.length > 0) {
+            newConfig.groups = cleanedGroups;
+        } else {
+            delete newConfig.groups;
+        }
+
         delete newConfig.auto_add_entities;
         delete newConfig.badge_size;
         delete newConfig.compact_badge_size;
 
         this._config = newConfig;
+        this._draftGroups = cleanedGroups;
+        this._draftEntityIds = cleanedEntityIds;
         this.fireConfigChanged();
     }
 
-    updateConfig() {
-        const columnsSlider = this.querySelector("#columns");
-        const columns = columnsSlider
-            ? getColumnsFromSliderValue(columnsSlider.value)
-            : (this._config.columns || "auto");
+    setColumns(columns) {
+        const value = ["1", "2", "3", "4", "auto"].includes(String(columns))
+            ? String(columns)
+            : "auto";
 
-        const sort = this.querySelector("#sort")?.value || "name";
+        this._config = {
+            ...this._config,
+            columns: value
+        };
+        this.fireConfigChanged();
+        this.render();
+    }
+
+    updateConfig() {
+        const columns = this._config.columns || "auto";
+
         const renderPlate = this.querySelector("#renderPlate")?.checked ?? false;
         const showDetails = this.querySelector("#showDetails")?.checked ?? true;
         const newConfig = {
             ...this._config,
             columns,
-            sort,
+            sort: this._config.sort || "name",
+            sort_direction: this._config.sort_direction === "desc" ? "desc" : "asc",
             plate_style: renderPlate ? "plate" : "text",
             show_details: showDetails
         };
@@ -2724,6 +4683,52 @@ class TuevCardEditor extends HTMLElement {
         this._config = newConfig;
         this.fireConfigChanged();
         this.render();
+    }
+
+    getGroupRightPopoverAnchor(element) {
+        if (!element || typeof element.getBoundingClientRect !== "function") {
+            return null;
+        }
+
+        const root = this.querySelector(".tuev-editor-root");
+        const rootRect = root?.getBoundingClientRect?.();
+        const groupCard = element.closest?.(".tuev-editor-group-card");
+        const groupRect = groupCard?.getBoundingClientRect?.();
+        const elementRect = element.getBoundingClientRect();
+
+        if (!rootRect || !groupRect) {
+            return this.getPopoverAnchor(element);
+        }
+
+        return {
+            right: Math.max(8, Math.round(rootRect.right - groupRect.right)),
+            top: Math.round(elementRect.bottom - rootRect.top + 10),
+            containerWidth: Math.round(rootRect.width || this.clientWidth || 360)
+        };
+    }
+
+    getPopoverAnchor(element) {
+        if (!element || typeof element.getBoundingClientRect !== "function") {
+            return null;
+        }
+
+        const rect = element.getBoundingClientRect();
+        const root = this.querySelector(".tuev-editor-root");
+        const rootRect = root?.getBoundingClientRect?.();
+
+        if (!rootRect) {
+            return {
+                left: Math.round(rect.left),
+                top: Math.round(rect.bottom + 10),
+                containerWidth: Math.round(window.innerWidth || 1024)
+            };
+        }
+
+        return {
+            left: Math.round(rect.left - rootRect.left),
+            top: Math.round(rect.bottom - rootRect.top + 10),
+            containerWidth: Math.round(rootRect.width || this.clientWidth || 360)
+        };
     }
 
     fireConfigChanged() {
@@ -2751,11 +4756,12 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- tuev-card.js ----
 const __m_tuev_card_js = (() => {
-// TÜV Card v0.1.0-a95
+// TÜV Card v0.1.0-b24
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
-const { findFirstTuevEntity, getSortedEntityIds } = __m_src_card_entities_js;
+const { findFirstTuevEntity } = __m_src_card_entities_js;
+const { getAllEntityIdsFromConfig, getEntitySections } = __m_src_card_groups_js;
 const { calculateAutomaticBadgeSize, calculateLayoutInfo } = __m_src_card_layout_js;
 const { getSharedPlateLayout } = __m_src_card_plate_layout_js;
 const { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } = __m_src_card_ui_state_js;
@@ -2935,9 +4941,11 @@ class TuevCard extends HTMLElement {
         this._entityUiState = this._entityUiState || {};
         this.checkPlateFontAvailability(false);
 
-        const entityIds = getSortedEntityIds(this.config, hass);
+        const sections = getEntitySections(this.config, hass);
+        const allEntityIds = getAllEntityIdsFromConfig(this.config)
+            .filter((entityId) => hass.states[entityId]);
 
-        if (entityIds.length === 0) {
+        if (allEntityIds.length === 0) {
             this.innerHTML = `
                 <ha-card style="display:block;width:100%;">
                     <div style="padding:16px;">
@@ -2948,46 +4956,9 @@ class TuevCard extends HTMLElement {
             return;
         }
 
-        const isMulti = entityIds.length > 1;
+        const isMulti = allEntityIds.length > 1;
         const layoutContext = this.getLayoutContext(isMulti);
-        const layout = calculateLayoutInfo({
-            cardWidth: layoutContext.layoutWidth,
-            isMulti,
-            requestedColumns: layoutContext.requestedColumns || this.config.columns
-        });
-
-        const automaticBadgeSize = calculateAutomaticBadgeSize({
-            isMulti,
-            effectiveColumns: layout.effectiveColumns,
-            tileWidth: layout.tileWidth
-        });
-
-        const sharedPlateLayout = getSharedPlateLayout({
-            entityIds,
-            hass,
-            tileWidth: layout.tileWidth,
-            isGraphicalPlateAvailable: this.isGraphicalPlateAvailable(),
-            getLicensePlateMetrics
-        });
-
-        const cardContent = `
-            <div style="
-                padding: 16px;
-                display: grid;
-                grid-template-columns: ${layout.gridTemplateColumns};
-                gap: ${layout.gap}px;
-                align-items: start;
-            ">
-                ${entityIds.map((entityId) => this.renderVehicle(
-                    hass,
-                    entityId,
-                    isMulti,
-                    automaticBadgeSize,
-                    layout,
-                    sharedPlateLayout
-                )).join("")}
-            </div>
-        `;
+        const cardContent = this.renderSections(hass, sections, layoutContext);
 
         this.innerHTML = `
             <ha-card style="display:block;width:100%;overflow:hidden;">
@@ -3325,6 +5296,149 @@ class TuevCard extends HTMLElement {
 
     getUiState(entityId) {
         return getEntityUiState(this._entityUiState, entityId);
+    }
+
+    renderSections(hass, sections, layoutContext) {
+        const renderSection = (section) => {
+            const entityIds = section.entityIds.filter((entityId) => hass.states[entityId]);
+
+            if (entityIds.length === 0) {
+                return "";
+            }
+
+            const sectionIsMulti = entityIds.length > 1;
+            const layout = calculateLayoutInfo({
+                cardWidth: layoutContext.layoutWidth,
+                isMulti: sectionIsMulti,
+                requestedColumns: layoutContext.requestedColumns || this.config.columns
+            });
+            const automaticBadgeSize = calculateAutomaticBadgeSize({
+                isMulti: sectionIsMulti,
+                effectiveColumns: layout.effectiveColumns,
+                tileWidth: layout.tileWidth
+            });
+            const sharedPlateLayout = getSharedPlateLayout({
+                entityIds,
+                hass,
+                tileWidth: layout.tileWidth,
+                isGraphicalPlateAvailable: this.isGraphicalPlateAvailable(),
+                getLicensePlateMetrics
+            });
+            const grid = `
+                <div style="
+                    display: grid;
+                    grid-template-columns: ${layout.gridTemplateColumns};
+                    gap: ${layout.gap}px;
+                    align-items: start;
+                ">
+                    ${entityIds.map((entityId) => this.renderVehicle(
+                        hass,
+                        entityId,
+                        sectionIsMulti,
+                        automaticBadgeSize,
+                        layout,
+                        sharedPlateLayout
+                    )).join("")}
+                </div>
+            `;
+
+            if (!section.title) {
+                if (section.id === "ungrouped" && sections.some((candidate) => candidate.title)) {
+                    return `
+                        <section style="min-width:0;">
+                            <div style="
+                                height: 1px;
+                                background: var(--divider-color);
+                                opacity: 0.75;
+                                margin: 0 0 16px;
+                            "></div>
+                            ${grid}
+                        </section>
+                    `;
+                }
+
+                return grid;
+            }
+
+            const headingColor = section.color || "var(--divider-color)";
+            const sectionCountLabel = entityIds.length === 1
+                ? this.localize("editor.vehicle_count_one")
+                : `${entityIds.length} ${this.localize("editor.vehicle_count_many")}`;
+
+            return `
+                <section style="min-width:0;">
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        margin: 0 0 12px;
+                        min-width: 0;
+                    ">
+                        <div style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 8px;
+                            min-width: 0;
+                            padding: 5px 9px;
+                            border-radius: 999px;
+                            border: 1px solid color-mix(in srgb, ${headingColor} 34%, transparent);
+                            background: color-mix(in srgb, ${headingColor} 12%, transparent);
+                            color: ${headingColor};
+                            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08) inset;
+                        ">
+                            <span style="
+                                width: 7px;
+                                height: 7px;
+                                border-radius: 50%;
+                                background: ${headingColor};
+                                box-shadow: 0 0 8px ${headingColor};
+                                flex: 0 0 auto;
+                            "></span>
+                            <span style="
+                                font-size: 16px;
+                                font-weight: 700;
+                                line-height: 1.2;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                min-width: 0;
+                            ">
+                                ${section.title}
+                            </span>
+                            <span style="
+                                font-size: 11px;
+                                font-weight: 600;
+                                opacity: 0.78;
+                                white-space: nowrap;
+                            ">
+                                ${sectionCountLabel}
+                            </span>
+                        </div>
+                        <div style="
+                            height: 1px;
+                            background: linear-gradient(90deg, ${headingColor}, transparent);
+                            flex: 1 1 auto;
+                            opacity: 0.75;
+                            min-width: 28px;
+                        "></div>
+                    </div>
+                    ${grid}
+                </section>
+            `;
+        };
+
+        const hasHeadings = sections.some((section) => section.title);
+
+        return `
+            <div style="
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: ${hasHeadings ? 22 : 0}px;
+            ">
+                ${sections.map(renderSection).join("")}
+            </div>
+        `;
     }
 
     renderVehicle(hass, entityId, compact, automaticBadgeSize, layout, sharedPlateLayout) {

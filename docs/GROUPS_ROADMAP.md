@@ -1,22 +1,22 @@
-# Future idea: groups and section headings
+# Groups and section headings
 
-This is a planned optional feature and is not implemented yet.
+Optional groups are implemented as an editor-managed card feature.
+Existing cards without `groups` remain compatible and keep the normal ungrouped layout.
 
-## Goal
+## Current state
 
-Allow users to divide one TÜV Card into freely named groups, for example:
+Implemented:
 
-- Privat
-- Firma
-- Anhänger
-- Autos
-- Motorräder
-- Garage 2
+- Create, rename and delete groups.
+- Move groups up and down.
+- Assign vehicles to groups.
+- Remove vehicles from groups without automatically moving them to the ungrouped section.
+- Release all ungrouped vehicles from the card.
+- Render group headings in the dashboard card.
+- Optional group colors for editor accents and dashboard heading lines.
+- Per-group sorting by name, license plate, HU due date, status or manual order.
 
-The current ungrouped card layout should remain the default. Existing configurations without
-groups must continue to render exactly as before.
-
-## Proposed YAML shape
+## YAML shape
 
 ```yaml
 type: custom:tuev-card
@@ -24,14 +24,14 @@ columns: auto
 groups:
   - id: private
     title: Privat
-    color: blue
+    color: "#42a5f5"
     entities:
       - sensor.porsche_911_tuv
       - sensor.mercedes_eqb_tuv
 
   - id: company
     title: Firma
-    color: green
+    color: "#66bb6a"
     entities:
       - sensor.bmw_330i_tuv
 
@@ -39,27 +39,22 @@ entities:
   - sensor.unassigned_vehicle_tuv
 ```
 
-## Rendering idea
+## Notes
 
-- Each group renders as a section heading plus divider line.
-- Vehicles inside a group keep the same card/tile rendering as today.
-- Ungrouped entities can either render in a default group such as `Weitere` or at the end of the card.
-- Group colors are optional visual accents only.
+- `color` is optional. If omitted, the card/editor use a stable fallback palette.
+- `sort` is optional. If omitted, groups use manual order. Supported values are `name`, `plate`, `due_date`, `status` and `manual`.
+- `sort_direction` is optional and applies to non-manual group sorting.
+- Ungrouped `entities` render after grouped sections.
+- Vehicles removed from a group become available again in the editor picker.
+- Deleting a group does not automatically move its vehicles to the ungrouped section.
 
-## Editor idea
+## Possible later enhancements
 
-- Add a `Groups & order` area.
-- Create, rename and delete groups.
-- Reorder groups.
-- Assign vehicles to groups.
-- Keep the simple entity list for users who do not enable groups.
+- Collapse/expand groups.
+- Hide empty groups.
+- Optional group descriptions.
+- Optional group icons.
+- Drag and drop for manual sorting, if needed.
+- More advanced group assignment UI if needed.
 
-## Implementation notes
-
-Suggested order:
-
-1. Add config normalization for optional `groups`.
-2. Add group-aware entity ordering without changing ungrouped behavior.
-3. Render group headings in the dashboard.
-4. Add editor UI for creating and assigning groups.
-5. Add optional group colors and collapse/expand later if still useful.
+- Card group headings show the group color and vehicle count.
