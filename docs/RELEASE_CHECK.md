@@ -1,6 +1,6 @@
 # TÜV Card release check
 
-Current checked version: `b31`.
+Current checked version: `b32`.
 
 ## Local test install
 
@@ -15,7 +15,7 @@ For source-level modular debugging, copy `src/` as well and point the resource t
 Reload the Lovelace resource with a fresh cache-buster, for example:
 
 ```text
-/local/community/tuev-card/tuev-card.js?v=b31
+/local/community/tuev-card/tuev-card.js?v=b32
 ```
 
 ## HACS release install
@@ -61,7 +61,7 @@ After the root bundle migration, verify that HACS and Home Assistant load the pr
 
 ```text
 /config/www/community/tuev-card/tuev-card.js
-/hacsfiles/tuev-card/tuev-card.js?v=b31
+/hacsfiles/tuev-card/tuev-card.js?v=b32
 ```
 
 Make sure these old names are not present in the installed HACS folder or Lovelace resource configuration:

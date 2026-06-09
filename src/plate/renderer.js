@@ -3,7 +3,7 @@ import {
     ensurePlateFont,
     injectPlateFont,
     isPlateFontLoaded
-} from "./font.js?v=b31";
+} from "./font.js?v=b32";
 
 export {
     checkPlateFontAvailable,
@@ -35,6 +35,22 @@ const PLATE_GEOMETRY = {
     countryY: 0.72,
     countryFontSize: 8.2
 };
+
+// HA's card editor preview scales the whole card after rendering. With the
+// normal plate geometry this can make the visible top/bottom padding around
+// the plate text look slightly uneven. Keep the dashboard geometry unchanged
+// and use a minimally taller, optically centered preview geometry only there.
+const PREVIEW_PLATE_GEOMETRY = {
+    ...PLATE_GEOMETRY,
+    height: 40,
+    textY: 0.505,
+    starY: 0.295,
+    countryY: 0.715
+};
+
+function getPlateGeometry(options = {}) {
+    return options.preview === true ? PREVIEW_PLATE_GEOMETRY : PLATE_GEOMETRY;
+}
 
 const CHAR_WIDTH = {
     space: 0.29,
@@ -127,7 +143,7 @@ export function getLicensePlateMetrics(plate, options = {}) {
         };
     }
 
-    const layout = PLATE_GEOMETRY;
+    const layout = getPlateGeometry(options);
     const plainChars = normalizedPlate.replace(/\s/g, "");
     const charCount = plainChars.length;
     const textPadLeft = getLeftPadding(charCount);

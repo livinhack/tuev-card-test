@@ -1,12 +1,12 @@
-// TÜV Card source entry v0.1.0-b31
+// TÜV Card source entry v0.1.0-b32
 
-import { localize } from "./translations/index.js?v=b31";
-import { normalizeCardConfig } from "./card/config.js?v=b31";
-import { findFirstTuevEntity } from "./card/entities.js?v=b31";
-import { getAllEntityIdsFromConfig, getEntitySections } from "./card/groups.js?v=b31";
-import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./card/layout.js?v=b31";
-import { getSharedPlateLayout } from "./card/plate-layout.js?v=b31";
-import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./card/ui-state.js?v=b31";
+import { localize } from "./translations/index.js?v=b32";
+import { normalizeCardConfig } from "./card/config.js?v=b32";
+import { findFirstTuevEntity } from "./card/entities.js?v=b32";
+import { getAllEntityIdsFromConfig, getEntitySections } from "./card/groups.js?v=b32";
+import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./card/layout.js?v=b32";
+import { getSharedPlateLayout } from "./card/plate-layout.js?v=b32";
+import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./card/ui-state.js?v=b32";
 import {
     getOverlayStyleOptions,
     renderBadgeArea,
@@ -16,15 +16,15 @@ import {
     renderMissingEntity,
     renderVehicleDetails,
     renderVehicleHeader
-} from "./card/render-parts.js?v=b31";
+} from "./card/render-parts.js?v=b32";
 import {
     checkPlateFontAvailable,
     ensurePlateFont,
     getLicensePlateMetrics,
     isPlateFontLoaded,
     renderLicensePlate
-} from "./plate/renderer.js?v=b31";
-import { TuevCardEditor } from "./editor/editor.js?v=b31";
+} from "./plate/renderer.js?v=b32";
+import { TuevCardEditor } from "./editor/editor.js?v=b32";
 
 window.customCards = window.customCards || [];
 
@@ -790,7 +790,8 @@ class TuevCard extends HTMLElement {
             renderPlate: () => renderLicensePlate(plate, {
                 compact,
                 maxWidth: plateLayout.maxWidth,
-                scale: plateLayout.scale
+                scale: plateLayout.scale,
+                preview: layoutContext.previewScaled === true
             })
         });
 
