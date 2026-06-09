@@ -40,7 +40,7 @@ Install the card through HACS.
 If the Lovelace resource is not added automatically, add:
 
 ```yaml
-url: /hacsfiles/tuev-card-test/dist/tuev-card-test.js
+url: /hacsfiles/tuev-card/dist/tuev-card.js
 type: module
 ```
 
@@ -49,7 +49,7 @@ type: module
 Copy the complete card folder to:
 
 ```text
-/config/www/community/tuev-card-test/
+/config/www/community/tuev-card/
 ```
 
 For modular local testing, use:
@@ -62,14 +62,14 @@ src/
 Add the Lovelace resource:
 
 ```yaml
-url: /local/community/tuev-card-test/tuev-card.js
+url: /local/community/tuev-card/tuev-card.js
 type: module
 ```
 
 For release/HACS installs, the bundled file is used:
 
 ```text
-dist/tuev-card-test.js
+dist/tuev-card.js
 ```
 
 After changing frontend files, reload the dashboard and clear the browser cache if needed.
@@ -215,7 +215,7 @@ src/translations/   Card/editor translations
 HACS uses the generated bundled file:
 
 ```text
-dist/tuev-card-test.js
+dist/tuev-card.js
 ```
 
 To rebuild the HACS bundle locally, either double-click:
@@ -301,7 +301,7 @@ Installiere die Card über HACS.
 Falls die Lovelace-Ressource nicht automatisch hinzugefügt wird, füge sie manuell hinzu:
 
 ```yaml
-url: /hacsfiles/tuev-card-test/dist/tuev-card-test.js
+url: /hacsfiles/tuev-card/dist/tuev-card.js
 type: module
 ```
 
@@ -310,7 +310,7 @@ type: module
 Kopiere den vollständigen Card-Ordner nach:
 
 ```text
-/config/www/community/tuev-card-test/
+/config/www/community/tuev-card/
 ```
 
 Für lokale modulare Tests reichen:
@@ -323,14 +323,14 @@ src/
 Füge die Lovelace-Ressource hinzu:
 
 ```yaml
-url: /local/community/tuev-card-test/tuev-card.js
+url: /local/community/tuev-card/tuev-card.js
 type: module
 ```
 
 Für Release-/HACS-Installationen wird die gebündelte Datei verwendet:
 
 ```text
-dist/tuev-card-test.js
+dist/tuev-card.js
 ```
 
 Nach Änderungen an Frontend-Dateien das Dashboard neu laden und bei Bedarf den Browser-Cache leeren.
@@ -476,7 +476,7 @@ src/translations/   Card-/Editor-Übersetzungen
 HACS verwendet die erzeugte Bundle-Datei:
 
 ```text
-dist/tuev-card-test.js
+dist/tuev-card.js
 ```
 
 Zum lokalen Neubauen des HACS-Bundles entweder doppelklicken:

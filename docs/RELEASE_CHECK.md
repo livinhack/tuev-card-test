@@ -1,10 +1,10 @@
 # TÜV Card release check
 
-Current checked version: `b26`.
+Current checked version: `b27`.
 
 ## Local modular test install
 
-Copy these files/folders into the local test resource folder, for example `/config/www/community/tuev-card-test/`:
+Copy these files/folders into the local test resource folder, for example `/config/www/community/tuev-card/`:
 
 ```text
 tuev-card.js
@@ -14,21 +14,21 @@ src/
 Reload the Lovelace resource with a fresh cache-buster, for example:
 
 ```text
-/local/community/tuev-card-test/tuev-card.js?v=b26
+/local/community/tuev-card/tuev-card.js?v=b27
 ```
 
-## HACS/test release install
+## HACS release install
 
-The current test repository configuration uses:
+The current repository configuration uses:
 
 ```text
-dist/tuev-card-test.js
+dist/tuev-card.js
 ```
 
-Important files for a HACS/test release package:
+Important files for a HACS release package:
 
 ```text
-dist/tuev-card-test.js
+dist/tuev-card.js
 hacs.json
 README.md
 LICENSE
@@ -53,7 +53,7 @@ Equivalent manual checks:
 node scripts/build-bundle.mjs
 node --check tuev-card.js
 find src -name '*.js' -print0 | xargs -0 -n1 node --check
-node --check dist/tuev-card-test.js
+node --check dist/tuev-card.js
 ```
 
 ## Functional smoke test

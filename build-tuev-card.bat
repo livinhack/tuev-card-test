@@ -77,9 +77,7 @@ echo  Build erfolgreich abgeschlossen.
 echo ========================================
 echo.
 
-if exist "dist\tuev-card-test.js" (
-    echo Aktualisiert: dist\tuev-card-test.js
-) else if exist "dist\tuev-card.js" (
+if exist "dist\tuev-card.js" (
     echo Aktualisiert: dist\tuev-card.js
 ) else (
     echo HINWEIS: Keine erwartete Bundle-Datei in dist gefunden.
