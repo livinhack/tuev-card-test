@@ -3,6 +3,8 @@ export function renderEditorStyles() {
         <style>
             .tuev-editor-root {
                 position: relative;
+                min-height: 430px;
+                box-sizing: border-box;
             }
 
             .tuev-editor-pill-button {
@@ -585,6 +587,11 @@ export function renderEditorStyles() {
 
 
             @media (max-width: 620px) {
+                .tuev-editor-root {
+                    min-height: 360px;
+                }
+
+
                 .tuev-editor-group-header {
                     grid-template-columns: minmax(0, 1fr) auto;
                 }
