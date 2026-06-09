@@ -1,6 +1,6 @@
 # TÜV Card release check
 
-Current checked version: `b30`.
+Current checked version: `b31`.
 
 ## Local test install
 
@@ -15,7 +15,7 @@ For source-level modular debugging, copy `src/` as well and point the resource t
 Reload the Lovelace resource with a fresh cache-buster, for example:
 
 ```text
-/local/community/tuev-card/tuev-card.js?v=b30
+/local/community/tuev-card/tuev-card.js?v=b31
 ```
 
 ## HACS release install
@@ -53,6 +53,29 @@ Equivalent manual checks:
 node scripts/build-bundle.mjs
 node --check tuev-card.js
 find src -name '*.js' -print0 | xargs -0 -n1 node --check
+```
+
+## Post naming migration checks
+
+After the root bundle migration, verify that HACS and Home Assistant load the production file directly from the repository root:
+
+```text
+/config/www/community/tuev-card/tuev-card.js
+/hacsfiles/tuev-card/tuev-card.js?v=b31
+```
+
+Make sure these old names are not present in the installed HACS folder or Lovelace resource configuration:
+
+```text
+tuev-card-test.js
+dist/tuev-card.js
+/hacsfiles/tuev-card-test/
+```
+
+The dashboard card type remains unchanged:
+
+```yaml
+type: custom:tuev-card
 ```
 
 ## Functional smoke test
