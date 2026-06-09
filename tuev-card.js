@@ -1,4 +1,4 @@
-// TÜV Card bundled v0.1.0-b34
+// TÜV Card bundled v0.1.0-b35
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -1910,6 +1910,18 @@ const PLATE_GEOMETRY = {
     countryFontSize: 8.2
 };
 
+// Editor-preview-only geometry. The dashboard renderer stays on
+// PLATE_GEOMETRY. This only gives the scaled HA editor preview a slightly
+// more centered visual balance without enabling any system-font fallback.
+const PREVIEW_PLATE_GEOMETRY = {
+    ...PLATE_GEOMETRY,
+    height: 40,
+    fontSize: 30,
+    textY: 0.535,
+    starY: 0.31,
+    countryY: 0.715
+};
+
 const CHAR_WIDTH = {
     space: 0.29,
     digit: 0.48,
@@ -2001,7 +2013,7 @@ function getLicensePlateMetrics(plate, options = {}) {
         };
     }
 
-    const layout = PLATE_GEOMETRY;
+    const layout = options.preview === true ? PREVIEW_PLATE_GEOMETRY : PLATE_GEOMETRY;
     const plainChars = normalizedPlate.replace(/\s/g, "");
     const charCount = plainChars.length;
     const textPadLeft = getLeftPadding(charCount);
@@ -4789,7 +4801,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry v0.1.0-b34
+// TÜV Card source entry v0.1.0-b35
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5069,6 +5081,7 @@ class TuevCard extends HTMLElement {
                 measuredWidth,
                 layoutWidth: measuredWidth,
                 requestedColumns,
+                previewContext,
                 previewScaled: false,
                 scale: 1
             };
@@ -5081,6 +5094,7 @@ class TuevCard extends HTMLElement {
                 measuredWidth,
                 layoutWidth: measuredWidth,
                 requestedColumns,
+                previewContext,
                 previewScaled: false,
                 scale: 1
             };
@@ -5095,6 +5109,7 @@ class TuevCard extends HTMLElement {
                 measuredWidth,
                 layoutWidth: measuredWidth,
                 requestedColumns: previewSimulation.requestedColumns || requestedColumns,
+                previewContext,
                 previewScaled: false,
                 scale: 1
             };
@@ -5104,6 +5119,7 @@ class TuevCard extends HTMLElement {
             measuredWidth,
             layoutWidth: simulatedWidth,
             requestedColumns: previewSimulation.requestedColumns || requestedColumns,
+            previewContext,
             previewScaled: true,
             scale
         };
@@ -5370,7 +5386,8 @@ class TuevCard extends HTMLElement {
                         sectionIsMulti,
                         automaticBadgeSize,
                         layout,
-                        sharedPlateLayout
+                        sharedPlateLayout,
+                        layoutContext.previewContext === true
                     )).join("")}
                 </div>
             `;
@@ -5474,7 +5491,7 @@ class TuevCard extends HTMLElement {
         `;
     }
 
-    renderVehicle(hass, entityId, compact, automaticBadgeSize, layout, sharedPlateLayout) {
+    renderVehicle(hass, entityId, compact, automaticBadgeSize, layout, sharedPlateLayout, previewPlateTuning = false) {
         const entity = hass.states[entityId];
 
         if (!entity) {
@@ -5565,6 +5582,7 @@ class TuevCard extends HTMLElement {
             plateLayout,
             renderPlate: () => renderLicensePlate(plate, {
                 compact,
+                preview: previewPlateTuning,
                 maxWidth: plateLayout.maxWidth,
                 scale: plateLayout.scale
             })

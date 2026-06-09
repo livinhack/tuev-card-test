@@ -3,7 +3,7 @@ import {
     ensurePlateFont,
     injectPlateFont,
     isPlateFontLoaded
-} from "./font.js?v=b34";
+} from "./font.js?v=b35";
 
 export {
     checkPlateFontAvailable,
@@ -34,6 +34,18 @@ const PLATE_GEOMETRY = {
     starDotRadius: 0.75,
     countryY: 0.72,
     countryFontSize: 8.2
+};
+
+// Editor-preview-only geometry. The dashboard renderer stays on
+// PLATE_GEOMETRY. This only gives the scaled HA editor preview a slightly
+// more centered visual balance without enabling any system-font fallback.
+const PREVIEW_PLATE_GEOMETRY = {
+    ...PLATE_GEOMETRY,
+    height: 40,
+    fontSize: 30,
+    textY: 0.535,
+    starY: 0.31,
+    countryY: 0.715
 };
 
 const CHAR_WIDTH = {
@@ -127,7 +139,7 @@ export function getLicensePlateMetrics(plate, options = {}) {
         };
     }
 
-    const layout = PLATE_GEOMETRY;
+    const layout = options.preview === true ? PREVIEW_PLATE_GEOMETRY : PLATE_GEOMETRY;
     const plainChars = normalizedPlate.replace(/\s/g, "");
     const charCount = plainChars.length;
     const textPadLeft = getLeftPadding(charCount);
