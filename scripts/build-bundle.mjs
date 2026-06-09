@@ -3,7 +3,7 @@ import { dirname, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const version = "b35";
+const version = "b36";
 const entry = resolve(root, "src/tuev-card-entry.js");
 const moduleIds = new Map();
 const modules = [];
