@@ -1,6 +1,6 @@
 # TÜV Card release check
 
-Current checked version: `b29`.
+Current checked version: `b30`.
 
 ## Local test install
 
@@ -15,7 +15,7 @@ For source-level modular debugging, copy `src/` as well and point the resource t
 Reload the Lovelace resource with a fresh cache-buster, for example:
 
 ```text
-/local/community/tuev-card/tuev-card.js?v=b29
+/local/community/tuev-card/tuev-card.js?v=b30
 ```
 
 ## HACS release install

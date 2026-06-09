@@ -1,4 +1,4 @@
-import { GROUP_ACCENT_COLORS, getGroupAccentColor } from "../card/groups.js?v=b29";
+import { GROUP_ACCENT_COLORS, getGroupAccentColor } from "../card/groups.js?v=b30";
 
 function clampPanelPosition(anchor = {}, width = 360) {
     const margin = 8;
@@ -10,6 +10,25 @@ function clampPanelPosition(anchor = {}, width = 360) {
     return {
         left: Math.max(margin, Math.min(Number(anchor.left ?? margin), maxLeft)),
         top: Math.max(margin, Number(anchor.top ?? margin))
+    };
+}
+
+function resolveVerticalPanelPosition(anchor = {}, estimatedHeight = 140) {
+    const margin = 8;
+    const availableBelow = Number(anchor.availableBelow || 0);
+    const availableAbove = Number(anchor.availableAbove || 0);
+    const shouldOpenAbove = availableBelow < estimatedHeight && availableAbove > availableBelow;
+
+    if (!shouldOpenAbove) {
+        return {
+            top: Math.max(margin, Number(anchor.top ?? margin)),
+            placement: "below"
+        };
+    }
+
+    return {
+        top: Math.max(margin, Number(anchor.aboveTop ?? margin) - estimatedHeight),
+        placement: "above"
     };
 }
 
@@ -146,12 +165,17 @@ export function renderEditorFloatingPanels({
 function renderDisplayOptionsPopover({ anchor, showColumnSetting, columns, config, canRenderPlate, localize }) {
     const currentColumns = String(columns || "auto");
     const width = 360;
-    const position = clampPanelPosition(anchor, width);
+    const horizontalPosition = clampPanelPosition(anchor, width);
+    const estimatedHeight = showColumnSetting
+        ? (canRenderPlate ? 156 : 124)
+        : (canRenderPlate ? 102 : 68);
+    const verticalPosition = resolveVerticalPanelPosition(anchor, estimatedHeight);
 
     return `
         <div
             class="tuev-editor-floating-panel tuev-editor-display-popover"
-            style="left: ${position.left}px; top: ${position.top}px;"
+            data-placement="${verticalPosition.placement}"
+            style="left: ${horizontalPosition.left}px; top: ${verticalPosition.top}px;"
         >
             ${showColumnSetting ? `
                 <div class="tuev-editor-display-popover-title">${localize("editor.columns")}</div>

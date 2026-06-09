@@ -1,21 +1,21 @@
-import { localize } from "../translations/index.js?v=b29";
-import { normalizeCardConfig, removeLegacyCardConfigOptions } from "../card/config.js?v=b29";
-import { getAvailableTuevEntities, getEntityLabel, sortEntityIds } from "../card/entities.js?v=b29";
-import { createGroup, getNewGroupTitle, getUngroupedEntityIdsFromConfig, normalizeGroups, normalizeGroupSort, normalizeGroupSortDirection } from "../card/groups.js?v=b29";
+import { localize } from "../translations/index.js?v=b30";
+import { normalizeCardConfig, removeLegacyCardConfigOptions } from "../card/config.js?v=b30";
+import { getAvailableTuevEntities, getEntityLabel, sortEntityIds } from "../card/entities.js?v=b30";
+import { createGroup, getNewGroupTitle, getUngroupedEntityIdsFromConfig, normalizeGroups, normalizeGroupSort, normalizeGroupSortDirection } from "../card/groups.js?v=b30";
 import {
     checkPlateFontAvailable,
     ensurePlateFont
-} from "../plate/renderer.js?v=b29";
+} from "../plate/renderer.js?v=b30";
 import {
     getColumnLabel
-} from "./columns.js?v=b29";
+} from "./columns.js?v=b30";
 import {
     renderDisplayOptionsSection,
     renderEntitySection,
     renderGroupsSection
-} from "./render-parts.js?v=b29";
-import { renderEditorStyles } from "./styles.js?v=b29";
-import { renderEditorFloatingPanels } from "./floating-panels.js?v=b29";
+} from "./render-parts.js?v=b30";
+import { renderEditorStyles } from "./styles.js?v=b30";
+import { renderEditorFloatingPanels } from "./floating-panels.js?v=b30";
 
 export class TuevCardEditor extends HTMLElement {
     setConfig(config) {
@@ -944,11 +944,16 @@ export class TuevCardEditor extends HTMLElement {
         const rect = element.getBoundingClientRect();
         const root = this.querySelector(".tuev-editor-root");
         const rootRect = root?.getBoundingClientRect?.();
+        const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 768;
+        const margin = 12;
 
         if (!rootRect) {
             return {
                 left: Math.round(rect.left),
                 top: Math.round(rect.bottom + 10),
+                aboveTop: Math.round(rect.top - 10),
+                availableBelow: Math.max(0, Math.round(viewportHeight - rect.bottom - margin)),
+                availableAbove: Math.max(0, Math.round(rect.top - margin)),
                 containerWidth: Math.round(window.innerWidth || 1024)
             };
         }
@@ -956,6 +961,9 @@ export class TuevCardEditor extends HTMLElement {
         return {
             left: Math.round(rect.left - rootRect.left),
             top: Math.round(rect.bottom - rootRect.top + 10),
+            aboveTop: Math.round(rect.top - rootRect.top - 10),
+            availableBelow: Math.max(0, Math.round(Math.min(rootRect.bottom, viewportHeight) - rect.bottom - margin)),
+            availableAbove: Math.max(0, Math.round(rect.top - Math.max(rootRect.top, 0) - margin)),
             containerWidth: Math.round(rootRect.width || this.clientWidth || 360)
         };
     }

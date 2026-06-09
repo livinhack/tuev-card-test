@@ -1,4 +1,4 @@
-// TÜV Card bundled v0.1.0-b29
+// TÜV Card bundled v0.1.0-b30
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -2882,7 +2882,6 @@ function renderEditorStyles() {
         <style>
             .tuev-editor-root {
                 position: relative;
-                min-height: 430px;
                 box-sizing: border-box;
             }
 
@@ -3466,11 +3465,6 @@ function renderEditorStyles() {
 
 
             @media (max-width: 620px) {
-                .tuev-editor-root {
-                    min-height: 360px;
-                }
-
-
                 .tuev-editor-group-header {
                     grid-template-columns: minmax(0, 1fr) auto;
                 }
@@ -3540,6 +3534,25 @@ function clampPanelPosition(anchor = {}, width = 360) {
     return {
         left: Math.max(margin, Math.min(Number(anchor.left ?? margin), maxLeft)),
         top: Math.max(margin, Number(anchor.top ?? margin))
+    };
+}
+
+function resolveVerticalPanelPosition(anchor = {}, estimatedHeight = 140) {
+    const margin = 8;
+    const availableBelow = Number(anchor.availableBelow || 0);
+    const availableAbove = Number(anchor.availableAbove || 0);
+    const shouldOpenAbove = availableBelow < estimatedHeight && availableAbove > availableBelow;
+
+    if (!shouldOpenAbove) {
+        return {
+            top: Math.max(margin, Number(anchor.top ?? margin)),
+            placement: "below"
+        };
+    }
+
+    return {
+        top: Math.max(margin, Number(anchor.aboveTop ?? margin) - estimatedHeight),
+        placement: "above"
     };
 }
 
@@ -3676,12 +3689,17 @@ function renderEditorFloatingPanels({
 function renderDisplayOptionsPopover({ anchor, showColumnSetting, columns, config, canRenderPlate, localize }) {
     const currentColumns = String(columns || "auto");
     const width = 360;
-    const position = clampPanelPosition(anchor, width);
+    const horizontalPosition = clampPanelPosition(anchor, width);
+    const estimatedHeight = showColumnSetting
+        ? (canRenderPlate ? 156 : 124)
+        : (canRenderPlate ? 102 : 68);
+    const verticalPosition = resolveVerticalPanelPosition(anchor, estimatedHeight);
 
     return `
         <div
             class="tuev-editor-floating-panel tuev-editor-display-popover"
-            style="left: ${position.left}px; top: ${position.top}px;"
+            data-placement="${verticalPosition.placement}"
+            style="left: ${horizontalPosition.left}px; top: ${verticalPosition.top}px;"
         >
             ${showColumnSetting ? `
                 <div class="tuev-editor-display-popover-title">${localize("editor.columns")}</div>
@@ -4722,11 +4740,16 @@ class TuevCardEditor extends HTMLElement {
         const rect = element.getBoundingClientRect();
         const root = this.querySelector(".tuev-editor-root");
         const rootRect = root?.getBoundingClientRect?.();
+        const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 768;
+        const margin = 12;
 
         if (!rootRect) {
             return {
                 left: Math.round(rect.left),
                 top: Math.round(rect.bottom + 10),
+                aboveTop: Math.round(rect.top - 10),
+                availableBelow: Math.max(0, Math.round(viewportHeight - rect.bottom - margin)),
+                availableAbove: Math.max(0, Math.round(rect.top - margin)),
                 containerWidth: Math.round(window.innerWidth || 1024)
             };
         }
@@ -4734,6 +4757,9 @@ class TuevCardEditor extends HTMLElement {
         return {
             left: Math.round(rect.left - rootRect.left),
             top: Math.round(rect.bottom - rootRect.top + 10),
+            aboveTop: Math.round(rect.top - rootRect.top - 10),
+            availableBelow: Math.max(0, Math.round(Math.min(rootRect.bottom, viewportHeight) - rect.bottom - margin)),
+            availableAbove: Math.max(0, Math.round(rect.top - Math.max(rootRect.top, 0) - margin)),
             containerWidth: Math.round(rootRect.width || this.clientWidth || 360)
         };
     }
@@ -4763,7 +4789,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry v0.1.0-b29
+// TÜV Card source entry v0.1.0-b30
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;

@@ -1,4 +1,4 @@
-import { normalizeGroups } from "./groups.js?v=b29";
+import { normalizeGroups } from "./groups.js?v=b30";
 
 export const ALLOWED_SORTS = ["name", "plate", "due_date", "status"];
 export const ALLOWED_COLUMNS = ["auto", "1", "2", "3", "4"];
