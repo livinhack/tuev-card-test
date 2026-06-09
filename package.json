@@ -1,10 +1,10 @@
 {
   "name": "tuev-card",
-  "version": "0.1.0-b27",
+  "version": "0.1.0-b28",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "node scripts/build-bundle.mjs",
-    "check": "node --check tuev-card.js && find src -name '*.js' -print0 | xargs -0 -n1 node --check && node --check dist/tuev-card.js"
+    "check": "node --check tuev-card.js && find src -name '*.js' -print0 | xargs -0 -n1 node --check"
   }
 }

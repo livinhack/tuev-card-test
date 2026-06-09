@@ -37,7 +37,7 @@ if not exist "package.json" (
     echo FEHLER: package.json wurde nicht gefunden.
     echo.
     echo Diese Datei muss im Root-Ordner des tuev-card-Projekts liegen.
-    echo Lege diese BAT-Datei bitte neben package.json, tuev-card.js und den src-Ordner.
+    echo Lege diese BAT-Datei bitte neben package.json, src und scripts.
     echo.
     pause
     exit /b 1
@@ -77,10 +77,10 @@ echo  Build erfolgreich abgeschlossen.
 echo ========================================
 echo.
 
-if exist "dist\tuev-card.js" (
-    echo Aktualisiert: dist\tuev-card.js
+if exist "tuev-card.js" (
+    echo Aktualisiert: tuev-card.js
 ) else (
-    echo HINWEIS: Keine erwartete Bundle-Datei in dist gefunden.
+    echo HINWEIS: Keine erwartete Bundle-Datei im Projektroot gefunden.
     echo Bitte pruefe package.json und scripts\build-bundle.mjs.
 )
 

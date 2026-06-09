@@ -21,8 +21,8 @@ coverage/
 .cache/
 .temp/
 
-# Keep dist/tuev-card.js tracked for HACS installs
-# Do not ignore dist/ in this repository.
+# Keep the generated root bundle tuev-card.js tracked for HACS installs.
+# Do not ignore tuev-card.js in this repository.
 
 # Temporary files
 *.tmp

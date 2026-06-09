@@ -3,8 +3,8 @@ import { dirname, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const version = "b27";
-const entry = resolve(root, "tuev-card.js");
+const version = "b28";
+const entry = resolve(root, "src/tuev-card-entry.js");
 const moduleIds = new Map();
 const modules = [];
 
@@ -109,5 +109,4 @@ for (const path of modules) {
   bundled += `\n// ---- ${rel} ----\nconst ${id} = (() => {\n${transformModule(path, path === entry)}\n})();\n`;
 }
 
-mkdirSync(resolve(root, "dist"), { recursive: true });
-writeFileSync(resolve(root, "dist/tuev-card.js"), bundled);
+writeFileSync(resolve(root, "tuev-card.js"), bundled);

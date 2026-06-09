@@ -40,7 +40,7 @@ Install the card through HACS.
 If the Lovelace resource is not added automatically, add:
 
 ```yaml
-url: /hacsfiles/tuev-card/dist/tuev-card.js
+url: /hacsfiles/tuev-card/tuev-card.js
 type: module
 ```
 
@@ -52,12 +52,13 @@ Copy the complete card folder to:
 /config/www/community/tuev-card/
 ```
 
-For modular local testing, use:
+For normal local testing, use the generated bundle:
 
 ```text
 tuev-card.js
-src/
 ```
+
+For source-level modular debugging, copy `src/` as well and use `src/tuev-card-entry.js` as the resource.
 
 Add the Lovelace resource:
 
@@ -66,10 +67,10 @@ url: /local/community/tuev-card/tuev-card.js
 type: module
 ```
 
-For release/HACS installs, the bundled file is used:
+For release/HACS installs, the same root bundle is used:
 
 ```text
-dist/tuev-card.js
+tuev-card.js
 ```
 
 After changing frontend files, reload the dashboard and clear the browser cache if needed.
@@ -212,10 +213,10 @@ src/editor/         Visual editor, editor styles, buttons, and floating panels
 src/translations/   Card/editor translations
 ```
 
-HACS uses the generated bundled file:
+HACS uses the generated root bundle:
 
 ```text
-dist/tuev-card.js
+tuev-card.js
 ```
 
 To rebuild the HACS bundle locally, either double-click:
@@ -301,7 +302,7 @@ Installiere die Card über HACS.
 Falls die Lovelace-Ressource nicht automatisch hinzugefügt wird, füge sie manuell hinzu:
 
 ```yaml
-url: /hacsfiles/tuev-card/dist/tuev-card.js
+url: /hacsfiles/tuev-card/tuev-card.js
 type: module
 ```
 
@@ -313,12 +314,13 @@ Kopiere den vollständigen Card-Ordner nach:
 /config/www/community/tuev-card/
 ```
 
-Für lokale modulare Tests reichen:
+Für normale lokale Tests reicht das erzeugte Bundle:
 
 ```text
 tuev-card.js
-src/
 ```
+
+Für modulare Quelltext-Tests zusätzlich `src/` kopieren und `src/tuev-card-entry.js` als Ressource verwenden.
 
 Füge die Lovelace-Ressource hinzu:
 
@@ -327,10 +329,10 @@ url: /local/community/tuev-card/tuev-card.js
 type: module
 ```
 
-Für Release-/HACS-Installationen wird die gebündelte Datei verwendet:
+Für Release-/HACS-Installationen wird dieselbe Bundle-Datei im Root verwendet:
 
 ```text
-dist/tuev-card.js
+tuev-card.js
 ```
 
 Nach Änderungen an Frontend-Dateien das Dashboard neu laden und bei Bedarf den Browser-Cache leeren.
@@ -473,10 +475,10 @@ src/editor/         Visueller Editor, Editor-Styles, Buttons und Floating Panels
 src/translations/   Card-/Editor-Übersetzungen
 ```
 
-HACS verwendet die erzeugte Bundle-Datei:
+HACS verwendet die erzeugte Bundle-Datei im Root:
 
 ```text
-dist/tuev-card.js
+tuev-card.js
 ```
 
 Zum lokalen Neubauen des HACS-Bundles entweder doppelklicken:
