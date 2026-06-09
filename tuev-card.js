@@ -1,4 +1,4 @@
-// TÜV Card bundled v0.1.0-b32
+// TÜV Card bundled v0.1.0-b34
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -1910,22 +1910,6 @@ const PLATE_GEOMETRY = {
     countryFontSize: 8.2
 };
 
-// HA's card editor preview scales the whole card after rendering. With the
-// normal plate geometry this can make the visible top/bottom padding around
-// the plate text look slightly uneven. Keep the dashboard geometry unchanged
-// and use a minimally taller, optically centered preview geometry only there.
-const PREVIEW_PLATE_GEOMETRY = {
-    ...PLATE_GEOMETRY,
-    height: 40,
-    textY: 0.505,
-    starY: 0.295,
-    countryY: 0.715
-};
-
-function getPlateGeometry(options = {}) {
-    return options.preview === true ? PREVIEW_PLATE_GEOMETRY : PLATE_GEOMETRY;
-}
-
 const CHAR_WIDTH = {
     space: 0.29,
     digit: 0.48,
@@ -2017,7 +2001,7 @@ function getLicensePlateMetrics(plate, options = {}) {
         };
     }
 
-    const layout = getPlateGeometry(options);
+    const layout = PLATE_GEOMETRY;
     const plainChars = normalizedPlate.replace(/\s/g, "");
     const charCount = plainChars.length;
     const textPadLeft = getLeftPadding(charCount);
@@ -4805,7 +4789,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry v0.1.0-b32
+// TÜV Card source entry v0.1.0-b34
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5582,8 +5566,7 @@ class TuevCard extends HTMLElement {
             renderPlate: () => renderLicensePlate(plate, {
                 compact,
                 maxWidth: plateLayout.maxWidth,
-                scale: plateLayout.scale,
-                preview: layoutContext.previewScaled === true
+                scale: plateLayout.scale
             })
         });
 
