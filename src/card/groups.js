@@ -1,4 +1,4 @@
-import { getEntityIdsFromConfig, sortEntityIds } from "./entities.js?v=b49";
+import { getEntityIdsFromConfig, sortEntityIds } from "./entities.js?v=b50";
 
 export const GROUP_SORTS = ["name", "plate", "due_date", "status", "manual"];
 export const GROUP_SORT_DIRECTIONS = ["asc", "desc"];
@@ -7,7 +7,7 @@ export const GROUP_ACCENT_COLORS = [
     "#42a5f5",
     "#66bb6a",
     "#ffa726",
-    "#ab49bc",
+    "#ab50bc",
     "#26c6da",
     "#ef5350",
     "#8d6e63"

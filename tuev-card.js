@@ -1,4 +1,4 @@
-// TÜV Card bundled b48
+// TÜV Card bundled b50
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -366,7 +366,7 @@ const GROUP_ACCENT_COLORS = [
     "#42a5f5",
     "#66bb6a",
     "#ffa726",
-    "#ab49bc",
+    "#ab50bc",
     "#26c6da",
     "#ef5350",
     "#8d6e63"
@@ -4924,7 +4924,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry b49
+// TÜV Card source entry b50
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5642,7 +5642,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db4937)"
+            expired: "var(--error-color, #db5037)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year
