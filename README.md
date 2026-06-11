@@ -98,6 +98,7 @@ Multiple vehicles:
 type: custom:tuev-card
 columns: auto
 sort: name
+show_badge: true
 show_details: true
 entities:
   - sensor.focus_rs_tuv
@@ -154,6 +155,7 @@ The native Home Assistant editor preview may be narrower than the final dashboar
 | `columns` | `auto` | `auto`, `1`, `2`, `3`, or `4`; treated as a maximum/limit |
 | `sort` | `name` | Ungrouped sorting: `name`, `plate`, `due_date`, or `status` |
 | `sort_direction` | `asc` | Ungrouped sort direction: `asc` or `desc` |
+| `show_badge` | `true` | Show the TÜV sticker. Set to `false` for a more compact card while keeping status/details visible. |
 | `show_details` | `true` | Show next HU and status |
 | `plate_style` | `text` | `text` or `plate` |
 
@@ -360,6 +362,7 @@ Mehrere Fahrzeuge:
 type: custom:tuev-card
 columns: auto
 sort: name
+show_badge: true
 show_details: true
 entities:
   - sensor.focus_rs_tuv
@@ -416,6 +419,7 @@ Die native Home-Assistant-Editor-Vorschau kann schmaler sein als die endgültige
 | `columns` | `auto` | `auto`, `1`, `2`, `3` oder `4`; wird als Maximum/Begrenzung behandelt |
 | `sort` | `name` | Sortierung ungruppierter Fahrzeuge: `name`, `plate`, `due_date` oder `status` |
 | `sort_direction` | `asc` | Sortierrichtung ungruppierter Fahrzeuge: `asc` oder `desc` |
+| `show_badge` | `true` | TÜV-Plakette anzeigen. Mit `false` wird die Card kompakter, Status/Details bleiben sichtbar. |
 | `show_details` | `true` | Nächste HU und Status anzeigen |
 | `plate_style` | `text` | `text` oder `plate` |
 

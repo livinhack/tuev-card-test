@@ -1,4 +1,4 @@
-// TÜV Card bundled v0.1.0
+// TÜV Card bundled b44
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -41,6 +41,7 @@ const en = {
         "editor.sort_plate": "License plate",
         "editor.sort_due_date": "Inspection due date",
         "editor.sort_status": "Status",
+        "editor.show_badge": "Show TÜV badge",
         "editor.show_details": "Show details",
         "editor.render_plate": "Render license plate graphically",
         "editor.display_options": "Display options",
@@ -130,6 +131,7 @@ const de = {
         "editor.sort_plate": "Kennzeichen",
         "editor.sort_due_date": "HU-Fälligkeit",
         "editor.sort_status": "Status",
+        "editor.show_badge": "TÜV-Plakette anzeigen",
         "editor.show_details": "Details anzeigen",
         "editor.render_plate": "Kennzeichen grafisch darstellen",
         "editor.display_options": "Darstellungsoptionen",
@@ -561,6 +563,7 @@ const DEFAULT_CARD_CONFIG = {
     columns: "auto",
     sort: "name",
     show_details: true,
+    show_badge: true,
     plate_style: "text",
     sort_direction: "asc"
 };
@@ -1746,6 +1749,68 @@ function renderCrossfadeLayer(crossfade, size) {
     `;
 }
 
+function renderCompactConfirmPanel({
+    entityId,
+    ui,
+    showSuccess,
+    overlayTitle,
+    overlayText,
+    buttonText,
+    compact
+}) {
+    return `
+        <div style="
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: ${compact ? "5px" : "7px"};
+            padding: ${compact ? "8px 10px" : "10px 12px"};
+            border-radius: 14px;
+            border: 1px solid color-mix(in srgb, var(--primary-color) 28%, var(--divider-color));
+            background: color-mix(in srgb, var(--primary-color) 8%, var(--card-background-color));
+            text-align: center;
+        ">
+            <div style="
+                font-size: ${compact ? "13px" : "14px"};
+                font-weight: 700;
+                line-height: 1.15;
+            ">
+                ${overlayTitle}
+            </div>
+
+            <div style="
+                font-size: ${compact ? "11px" : "12px"};
+                opacity: 0.82;
+                line-height: 1.2;
+            ">
+                ${overlayText}
+            </div>
+
+            <button
+                data-confirm-entity="${entityId}"
+                ${ui.confirming || showSuccess ? "disabled" : ""}
+                style="
+                    border: none;
+                    border-radius: 999px;
+                    padding: ${compact ? "6px 11px" : "7px 13px"};
+                    background: ${showSuccess ? "var(--success-color, #43a047)" : "var(--primary-color)"};
+                    color: var(--text-primary-color);
+                    font-size: ${compact ? "11px" : "12px"};
+                    font-weight: 700;
+                    cursor: ${ui.confirming || showSuccess ? "default" : "pointer"};
+                    white-space: nowrap;
+                    opacity: ${ui.confirming ? "0.75" : "1"};
+                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+                "
+            >
+                ${buttonText}
+            </button>
+        </div>
+    `;
+}
+
 function renderBadgeArea({
     badgeSize,
     badgeLayer,
@@ -1768,7 +1833,7 @@ function renderBadgeArea({
     `;
 }
 
-return { renderMissingEntity: renderMissingEntity, renderVehicleHeader: renderVehicleHeader, getOverlayStyleOptions: getOverlayStyleOptions, renderConfirmOverlay: renderConfirmOverlay, renderVehicleDetails: renderVehicleDetails, renderBadgeLayer: renderBadgeLayer, renderCrossfadeLayer: renderCrossfadeLayer, renderBadgeArea: renderBadgeArea };
+return { renderMissingEntity: renderMissingEntity, renderVehicleHeader: renderVehicleHeader, getOverlayStyleOptions: getOverlayStyleOptions, renderConfirmOverlay: renderConfirmOverlay, renderVehicleDetails: renderVehicleDetails, renderBadgeLayer: renderBadgeLayer, renderCrossfadeLayer: renderCrossfadeLayer, renderCompactConfirmPanel: renderCompactConfirmPanel, renderBadgeArea: renderBadgeArea };
 
 })();
 
@@ -3703,8 +3768,8 @@ function renderDisplayOptionsPopover({ anchor, showColumnSetting, columns, confi
     const width = 360;
     const horizontalPosition = clampPanelPosition(anchor, width);
     const estimatedHeight = showColumnSetting
-        ? (canRenderPlate ? 156 : 124)
-        : (canRenderPlate ? 102 : 68);
+        ? (canRenderPlate ? 186 : 154)
+        : (canRenderPlate ? 132 : 98);
     const verticalPosition = resolveVerticalPanelPosition(anchor, estimatedHeight);
 
     return `
@@ -3725,6 +3790,15 @@ function renderDisplayOptionsPopover({ anchor, showColumnSetting, columns, confi
             ` : ""}
 
             <div class="tuev-editor-display-options">
+                <label>
+                    <input
+                        id="showBadge"
+                        type="checkbox"
+                        ${config.show_badge !== false ? "checked" : ""}
+                    >
+                    ${localize("editor.show_badge")}
+                </label>
+
                 <label>
                     <input
                         id="showDetails"
@@ -4413,6 +4487,10 @@ class TuevCardEditor extends HTMLElement {
             this.updateConfig();
         });
 
+        this.querySelector("#showBadge")?.addEventListener("change", () => {
+            this.updateConfig();
+        });
+
         this.querySelector("#showDetails")?.addEventListener("change", () => {
             this.updateConfig();
         });
@@ -4717,6 +4795,7 @@ class TuevCardEditor extends HTMLElement {
         const columns = this._config.columns || "auto";
 
         const renderPlate = this.querySelector("#renderPlate")?.checked ?? false;
+        const showBadge = this.querySelector("#showBadge")?.checked ?? true;
         const showDetails = this.querySelector("#showDetails")?.checked ?? true;
         const newConfig = {
             ...this._config,
@@ -4724,6 +4803,7 @@ class TuevCardEditor extends HTMLElement {
             sort: this._config.sort || "name",
             sort_direction: this._config.sort_direction === "desc" ? "desc" : "asc",
             plate_style: renderPlate ? "plate" : "text",
+            show_badge: showBadge,
             show_details: showDetails
         };
 
@@ -4818,7 +4898,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry v0.1.0
+// TÜV Card source entry b44
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -4827,7 +4907,7 @@ const { getAllEntityIdsFromConfig, getEntitySections } = __m_src_card_groups_js;
 const { calculateAutomaticBadgeSize, calculateLayoutInfo } = __m_src_card_layout_js;
 const { getSharedPlateLayout } = __m_src_card_plate_layout_js;
 const { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } = __m_src_card_ui_state_js;
-const { getOverlayStyleOptions, renderBadgeArea, renderBadgeLayer, renderConfirmOverlay, renderCrossfadeLayer, renderMissingEntity, renderVehicleDetails, renderVehicleHeader } = __m_src_card_render_parts_js;
+const { getOverlayStyleOptions, renderBadgeArea, renderCompactConfirmPanel, renderBadgeLayer, renderConfirmOverlay, renderCrossfadeLayer, renderMissingEntity, renderVehicleDetails, renderVehicleHeader } = __m_src_card_render_parts_js;
 const { checkPlateFontAvailable, ensurePlateFont, getLicensePlateMetrics, isPlateFontLoaded, renderLicensePlate } = __m_src_plate_renderer_js;
 const { TuevCardEditor } = __m_src_editor_editor_js;
 
@@ -4914,6 +4994,7 @@ class TuevCard extends HTMLElement {
             columns: "auto",
             sort: "name",
             show_details: true,
+            show_badge: true,
             ...(entityId ? { entity: entityId } : {})
         };
     }
@@ -5524,6 +5605,7 @@ class TuevCard extends HTMLElement {
         const year = Number(attr.year || new Date().getFullYear());
         const status = attr.status || entity.state || "";
         const showDetails = this.config.show_details !== false;
+        const showBadge = this.config.show_badge !== false;
 
         const statusLabel = {
             valid: this.localize("status.valid"),
@@ -5617,12 +5699,26 @@ class TuevCard extends HTMLElement {
             })
             : "";
 
-        const badgeArea = renderBadgeArea({
-            badgeSize,
-            badgeLayer: renderBadgeLayer(displayBadge, badgeSize),
-            crossfadeLayer: ui.crossfadeBadge ? renderCrossfadeLayer(ui.crossfadeBadge, badgeSize) : "",
-            overlay
-        });
+        const badgeArea = showBadge
+            ? renderBadgeArea({
+                badgeSize,
+                badgeLayer: renderBadgeLayer(displayBadge, badgeSize),
+                crossfadeLayer: ui.crossfadeBadge ? renderCrossfadeLayer(ui.crossfadeBadge, badgeSize) : "",
+                overlay
+            })
+            : "";
+
+        const compactConfirmPanel = !showBadge && showConfirmOverlay
+            ? renderCompactConfirmPanel({
+                entityId,
+                ui,
+                showSuccess,
+                overlayTitle,
+                overlayText,
+                buttonText,
+                compact
+            })
+            : "";
 
         const details = renderVehicleDetails({
             showDetails,
@@ -5642,6 +5738,7 @@ class TuevCard extends HTMLElement {
             ">
                 ${header}
                 ${badgeArea}
+                ${compactConfirmPanel}
                 ${details}
             </div>
         `;

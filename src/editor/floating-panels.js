@@ -1,4 +1,4 @@
-import { GROUP_ACCENT_COLORS, getGroupAccentColor } from "../card/groups.js?v=v0.1.0";
+import { GROUP_ACCENT_COLORS, getGroupAccentColor } from "../card/groups.js?v=b44";
 
 function clampPanelPosition(anchor = {}, width = 360) {
     const margin = 8;
@@ -167,8 +167,8 @@ function renderDisplayOptionsPopover({ anchor, showColumnSetting, columns, confi
     const width = 360;
     const horizontalPosition = clampPanelPosition(anchor, width);
     const estimatedHeight = showColumnSetting
-        ? (canRenderPlate ? 156 : 124)
-        : (canRenderPlate ? 102 : 68);
+        ? (canRenderPlate ? 186 : 154)
+        : (canRenderPlate ? 132 : 98);
     const verticalPosition = resolveVerticalPanelPosition(anchor, estimatedHeight);
 
     return `
@@ -189,6 +189,15 @@ function renderDisplayOptionsPopover({ anchor, showColumnSetting, columns, confi
             ` : ""}
 
             <div class="tuev-editor-display-options">
+                <label>
+                    <input
+                        id="showBadge"
+                        type="checkbox"
+                        ${config.show_badge !== false ? "checked" : ""}
+                    >
+                    ${localize("editor.show_badge")}
+                </label>
+
                 <label>
                     <input
                         id="showDetails"

@@ -1,21 +1,21 @@
-import { localize } from "../translations/index.js?v=v0.1.0";
-import { normalizeCardConfig, removeLegacyCardConfigOptions } from "../card/config.js?v=v0.1.0";
-import { getAvailableTuevEntities, getEntityLabel, sortEntityIds } from "../card/entities.js?v=v0.1.0";
-import { createGroup, getNewGroupTitle, getUngroupedEntityIdsFromConfig, normalizeGroups, normalizeGroupSort, normalizeGroupSortDirection } from "../card/groups.js?v=v0.1.0";
+import { localize } from "../translations/index.js?v=b44";
+import { normalizeCardConfig, removeLegacyCardConfigOptions } from "../card/config.js?v=b44";
+import { getAvailableTuevEntities, getEntityLabel, sortEntityIds } from "../card/entities.js?v=b44";
+import { createGroup, getNewGroupTitle, getUngroupedEntityIdsFromConfig, normalizeGroups, normalizeGroupSort, normalizeGroupSortDirection } from "../card/groups.js?v=b44";
 import {
     checkPlateFontAvailable,
     ensurePlateFont
-} from "../plate/renderer.js?v=v0.1.0";
+} from "../plate/renderer.js?v=b44";
 import {
     getColumnLabel
-} from "./columns.js?v=v0.1.0";
+} from "./columns.js?v=b44";
 import {
     renderDisplayOptionsSection,
     renderEntitySection,
     renderGroupsSection
-} from "./render-parts.js?v=v0.1.0";
-import { renderEditorStyles } from "./styles.js?v=v0.1.0";
-import { renderEditorFloatingPanels } from "./floating-panels.js?v=v0.1.0";
+} from "./render-parts.js?v=b44";
+import { renderEditorStyles } from "./styles.js?v=b44";
+import { renderEditorFloatingPanels } from "./floating-panels.js?v=b44";
 
 export class TuevCardEditor extends HTMLElement {
     setConfig(config) {
@@ -605,6 +605,10 @@ export class TuevCardEditor extends HTMLElement {
             this.updateConfig();
         });
 
+        this.querySelector("#showBadge")?.addEventListener("change", () => {
+            this.updateConfig();
+        });
+
         this.querySelector("#showDetails")?.addEventListener("change", () => {
             this.updateConfig();
         });
@@ -909,6 +913,7 @@ export class TuevCardEditor extends HTMLElement {
         const columns = this._config.columns || "auto";
 
         const renderPlate = this.querySelector("#renderPlate")?.checked ?? false;
+        const showBadge = this.querySelector("#showBadge")?.checked ?? true;
         const showDetails = this.querySelector("#showDetails")?.checked ?? true;
         const newConfig = {
             ...this._config,
@@ -916,6 +921,7 @@ export class TuevCardEditor extends HTMLElement {
             sort: this._config.sort || "name",
             sort_direction: this._config.sort_direction === "desc" ? "desc" : "asc",
             plate_style: renderPlate ? "plate" : "text",
+            show_badge: showBadge,
             show_details: showDetails
         };
 

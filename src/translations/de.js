@@ -36,6 +36,7 @@ export const de = {
         "editor.sort_plate": "Kennzeichen",
         "editor.sort_due_date": "HU-Fälligkeit",
         "editor.sort_status": "Status",
+        "editor.show_badge": "TÜV-Plakette anzeigen",
         "editor.show_details": "Details anzeigen",
         "editor.render_plate": "Kennzeichen grafisch darstellen",
         "editor.display_options": "Darstellungsoptionen",

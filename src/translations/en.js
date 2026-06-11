@@ -36,6 +36,7 @@ export const en = {
         "editor.sort_plate": "License plate",
         "editor.sort_due_date": "Inspection due date",
         "editor.sort_status": "Status",
+        "editor.show_badge": "Show TÜV badge",
         "editor.show_details": "Show details",
         "editor.render_plate": "Render license plate graphically",
         "editor.display_options": "Display options",

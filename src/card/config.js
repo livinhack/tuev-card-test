@@ -1,4 +1,4 @@
-import { normalizeGroups } from "./groups.js?v=v0.1.0";
+import { normalizeGroups } from "./groups.js?v=b44";
 
 export const ALLOWED_SORTS = ["name", "plate", "due_date", "status"];
 export const ALLOWED_COLUMNS = ["auto", "1", "2", "3", "4"];
@@ -9,6 +9,7 @@ export const DEFAULT_CARD_CONFIG = {
     columns: "auto",
     sort: "name",
     show_details: true,
+    show_badge: true,
     plate_style: "text",
     sort_direction: "asc"
 };

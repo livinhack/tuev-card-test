@@ -1,4 +1,4 @@
-import { renderBadge } from "../badge/renderer.js?v=v0.1.0";
+import { renderBadge } from "../badge/renderer.js?v=b44";
 
 export function renderMissingEntity(entityId, localize) {
     return `
@@ -304,6 +304,68 @@ export function renderCrossfadeLayer(crossfade, size) {
                     to { opacity: 1; transform: scale(1); }
                 }
             </style>
+        </div>
+    `;
+}
+
+export function renderCompactConfirmPanel({
+    entityId,
+    ui,
+    showSuccess,
+    overlayTitle,
+    overlayText,
+    buttonText,
+    compact
+}) {
+    return `
+        <div style="
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: ${compact ? "5px" : "7px"};
+            padding: ${compact ? "8px 10px" : "10px 12px"};
+            border-radius: 14px;
+            border: 1px solid color-mix(in srgb, var(--primary-color) 28%, var(--divider-color));
+            background: color-mix(in srgb, var(--primary-color) 8%, var(--card-background-color));
+            text-align: center;
+        ">
+            <div style="
+                font-size: ${compact ? "13px" : "14px"};
+                font-weight: 700;
+                line-height: 1.15;
+            ">
+                ${overlayTitle}
+            </div>
+
+            <div style="
+                font-size: ${compact ? "11px" : "12px"};
+                opacity: 0.82;
+                line-height: 1.2;
+            ">
+                ${overlayText}
+            </div>
+
+            <button
+                data-confirm-entity="${entityId}"
+                ${ui.confirming || showSuccess ? "disabled" : ""}
+                style="
+                    border: none;
+                    border-radius: 999px;
+                    padding: ${compact ? "6px 11px" : "7px 13px"};
+                    background: ${showSuccess ? "var(--success-color, #43a047)" : "var(--primary-color)"};
+                    color: var(--text-primary-color);
+                    font-size: ${compact ? "11px" : "12px"};
+                    font-weight: 700;
+                    cursor: ${ui.confirming || showSuccess ? "default" : "pointer"};
+                    white-space: nowrap;
+                    opacity: ${ui.confirming ? "0.75" : "1"};
+                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+                "
+            >
+                ${buttonText}
+            </button>
         </div>
     `;
 }
