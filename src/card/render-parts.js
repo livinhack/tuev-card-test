@@ -1,4 +1,4 @@
-import { renderBadge } from "../badge/renderer.js?v=b45";
+import { renderBadge } from "../badge/renderer.js?v=b46";
 
 export function renderMissingEntity(entityId, localize) {
     return `
@@ -324,54 +324,69 @@ export function renderCompactConfirmPanel({
             top: 50%;
             transform: translate(-50%, -50%);
             z-index: 6;
-            width: min(92%, ${compact ? "185px" : "220px"});
+            width: min(94%, ${compact ? "250px" : "290px"});
             box-sizing: border-box;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            gap: ${compact ? "5px" : "7px"};
-            padding: ${compact ? "8px 10px" : "10px 12px"};
+            justify-content: space-between;
+            gap: ${compact ? "8px" : "10px"};
+            padding: ${compact ? "7px 9px" : "8px 10px"};
             border-radius: 14px;
-            border: 1px solid color-mix(in srgb, var(--primary-color) 38%, var(--divider-color));
+            border: 1px solid color-mix(in srgb, var(--primary-color) 34%, var(--divider-color));
             background:
-                radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--primary-color) 20%, transparent), transparent 54%),
-                color-mix(in srgb, var(--card-background-color) 86%, rgba(0, 0, 0, 0.72));
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            text-align: center;
+                radial-gradient(circle at 28% 20%, color-mix(in srgb, var(--primary-color) 16%, transparent), transparent 58%),
+                color-mix(in srgb, var(--card-background-color) 68%, rgba(0, 0, 0, 0.42));
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.26);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            text-align: left;
         ">
             <div style="
-                font-size: ${compact ? "13px" : "14px"};
-                font-weight: 700;
-                line-height: 1.15;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
             ">
-                ${overlayTitle}
-            </div>
+                <div style="
+                    font-size: ${compact ? "12px" : "13px"};
+                    font-weight: 700;
+                    line-height: 1.1;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                ">
+                    ${overlayTitle}
+                </div>
 
-            <div style="
-                font-size: ${compact ? "11px" : "12px"};
-                opacity: 0.82;
-                line-height: 1.2;
-            ">
-                ${overlayText}
+                <div style="
+                    font-size: ${compact ? "10px" : "11px"};
+                    opacity: 0.78;
+                    line-height: 1.15;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                ">
+                    ${overlayText}
+                </div>
             </div>
 
             <button
                 data-confirm-entity="${entityId}"
                 ${ui.confirming || showSuccess ? "disabled" : ""}
                 style="
+                    flex: 0 0 auto;
                     border: none;
                     border-radius: 999px;
-                    padding: ${compact ? "6px 11px" : "7px 13px"};
+                    padding: ${compact ? "6px 10px" : "7px 12px"};
                     background: ${showSuccess ? "var(--success-color, #43a047)" : "var(--primary-color)"};
                     color: var(--text-primary-color);
-                    font-size: ${compact ? "11px" : "12px"};
+                    font-size: ${compact ? "10px" : "11px"};
                     font-weight: 700;
                     cursor: ${ui.confirming || showSuccess ? "default" : "pointer"};
                     white-space: nowrap;
                     opacity: ${ui.confirming ? "0.75" : "1"};
-                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+                    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
                 "
             >
                 ${buttonText}
