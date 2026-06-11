@@ -1,5 +1,5 @@
-import { getGroupAccentColor } from "../card/groups.js?v=b38";
-import { renderButton } from "./buttons.js?v=b38";
+import { getGroupAccentColor } from "../card/groups.js?v=b40";
+import { renderButton } from "./buttons.js?v=b40";
 export function renderEntitySection({
     selectedEntityIds,
     unselectedEntities,

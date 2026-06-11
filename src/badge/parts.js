@@ -1,11 +1,11 @@
-import { renderBadgeDigits } from "./digits.js?v=b38";
-import { polar, splitMarkerVertical } from "./geometry.js?v=b38";
+import { renderBadgeDigits } from "./digits.js?v=b40";
+import { polar, splitMarkerVertical } from "./geometry.js?v=b40";
 import {
     BADGE_CENTER,
     BADGE_MARKER_PROFILE,
     BADGE_MONTH_LABEL_ORDER,
     BADGE_PROFILE
-} from "./profile.js?v=b38";
+} from "./profile.js?v=b40";
 
 export function renderMarkerPaths() {
     const markerGapWidth = BADGE_PROFILE.strokeWidth;

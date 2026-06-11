@@ -1,6 +1,6 @@
 # Responsive / Browser Test Checklist
 
-Current checked version: `b38`.
+Current checked version: `b40`.
 
 This checklist is for validating the TÜV Card across Home Assistant views, browsers, and the Android companion app. It is intentionally a manual smoke-test document; it does not change card behavior.
 
@@ -26,7 +26,7 @@ Test each environment in these dashboard contexts:
 The loaded resource should be:
 
 ```yaml
-url: /hacsfiles/tuev-card/tuev-card.js?v=b38
+url: /hacsfiles/tuev-card/tuev-card.js?v=b40
 type: module
 ```
 

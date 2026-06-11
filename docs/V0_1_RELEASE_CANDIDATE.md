@@ -1,8 +1,8 @@
 # TÜV Card v0.1 release candidate notes
 
-Current checked version: `b38`.
+Current checked version: `b40`.
 
-This document collects the current release-candidate status for the first `v0.1` milestone. It is intentionally a planning and verification document only; `b38` does not change UI behavior or rendering logic.
+This document collects the current release-candidate status for the first `v0.1` milestone. It is intentionally a planning and verification document only; `b40` does not change UI behavior or rendering logic.
 
 ## Current stable baseline
 
@@ -43,7 +43,7 @@ This document collects the current release-candidate status for the first `v0.1`
 - Compact mode / option to hide the TÜV badge.
 - Optional side-by-side group layout for small groups.
 - README screenshots and final image assets. Screenshots should be added late, after the UI is stable.
-- GitHub tags/releases for HACS update notifications. This should start when the project reaches the first real `v0.1` release.
+- GitHub tags/releases for HACS update notifications are verified with the temporary `b39` test. For the first real public version, switch from `bXX` test tags to semantic releases such as `v0.1.0`.
 
 ## Known product decisions
 
@@ -55,4 +55,6 @@ This document collects the current release-candidate status for the first `v0.1`
 
 ## Current recommended next step
 
-After `b38`, continue only with concrete issues found during the v0.1 release-candidate test pass. Avoid new feature work until the release-candidate state is confirmed.
+After `b40`, continue only with concrete issues found during the v0.1 release-candidate test pass. Avoid new feature work until the release-candidate state is confirmed.
+
+Recommended next practical step: prepare the `v0.1.0` versioning/release naming only after the remaining must-have checks are confirmed in Home Assistant.

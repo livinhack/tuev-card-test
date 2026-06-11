@@ -1,4 +1,4 @@
-import { GROUP_ACCENT_COLORS, getGroupAccentColor } from "../card/groups.js?v=b38";
+import { GROUP_ACCENT_COLORS, getGroupAccentColor } from "../card/groups.js?v=b40";
 
 function clampPanelPosition(anchor = {}, width = 360) {
     const margin = 8;

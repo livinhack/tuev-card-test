@@ -1,11 +1,14 @@
 # TÜV Card release check
 
-Current checked version: `b38`.
+Current checked version: `b40`.
 
-## b38 note
+## b40 note
 
-This version intentionally restores the b31 plate rendering / EuroPlate behavior.
-The graphical plate option is only available when `EuroPlate.ttf` is reachable; no system-font fallback is used for graphical plates.
+This version is a v0.1 must-fix audit / release-preparation checkpoint.
+It documents the successful `b39` HACS release trigger test and keeps the current EuroPlate rule unchanged:
+
+- Graphical plates are only available when `EuroPlate.ttf` is reachable.
+- No graphical system-font fallback is used.
 
 
 ## Local test install
@@ -21,7 +24,7 @@ For source-level modular debugging, copy `src/` as well and point the resource t
 Reload the Lovelace resource with a fresh cache-buster, for example:
 
 ```text
-/local/community/tuev-card/tuev-card.js?v=b38
+/local/community/tuev-card/tuev-card.js?v=b40
 ```
 
 ## HACS release install
@@ -46,6 +49,14 @@ scripts/build-bundle.mjs
 src/
 ```
 
+
+
+## HACS release/update trigger
+
+The temporary `b39` release trigger test confirmed the GitHub Desktop + GitHub Release + HACS update-information workflow.
+
+See `docs/HACS_RELEASE_FLOW.md` for the release/update trigger checklist.
+
 ## Build/check commands
 
 ```bash
@@ -67,7 +78,7 @@ After the root bundle migration, verify that HACS and Home Assistant load the pr
 
 ```text
 /config/www/community/tuev-card/tuev-card.js
-/hacsfiles/tuev-card/tuev-card.js?v=b38
+/hacsfiles/tuev-card/tuev-card.js?v=b40
 ```
 
 Make sure these old names are not present in the installed HACS folder or Lovelace resource configuration:
@@ -97,7 +108,7 @@ type: custom:tuev-card
 
 ## Responsive / Browser test
 
-See `docs/RESPONSIVE_BROWSER_TEST.md` for the dedicated cross-browser and Home Assistant view checklist introduced in `b38`.
+See `docs/RESPONSIVE_BROWSER_TEST.md` for the dedicated cross-browser and Home Assistant view checklist introduced in `b36`.
 
 
 ## v0.1 release candidate notes
