@@ -1,8 +1,8 @@
 # TÜV Card release check
 
-Current checked version: `b37`.
+Current checked version: `b38`.
 
-## b37 note
+## b38 note
 
 This version intentionally restores the b31 plate rendering / EuroPlate behavior.
 The graphical plate option is only available when `EuroPlate.ttf` is reachable; no system-font fallback is used for graphical plates.
@@ -21,7 +21,7 @@ For source-level modular debugging, copy `src/` as well and point the resource t
 Reload the Lovelace resource with a fresh cache-buster, for example:
 
 ```text
-/local/community/tuev-card/tuev-card.js?v=b37
+/local/community/tuev-card/tuev-card.js?v=b38
 ```
 
 ## HACS release install
@@ -67,7 +67,7 @@ After the root bundle migration, verify that HACS and Home Assistant load the pr
 
 ```text
 /config/www/community/tuev-card/tuev-card.js
-/hacsfiles/tuev-card/tuev-card.js?v=b37
+/hacsfiles/tuev-card/tuev-card.js?v=b38
 ```
 
 Make sure these old names are not present in the installed HACS folder or Lovelace resource configuration:
@@ -97,4 +97,9 @@ type: custom:tuev-card
 
 ## Responsive / Browser test
 
-See `docs/RESPONSIVE_BROWSER_TEST.md` for the dedicated cross-browser and Home Assistant view checklist introduced in `b37`.
+See `docs/RESPONSIVE_BROWSER_TEST.md` for the dedicated cross-browser and Home Assistant view checklist introduced in `b38`.
+
+
+## v0.1 release candidate notes
+
+See `docs/V0_1_RELEASE_CANDIDATE.md` for the current must-have, optional, and deferred items for the first `v0.1` milestone.

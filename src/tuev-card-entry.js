@@ -1,12 +1,12 @@
-// TÜV Card source entry v0.1.0-b37
+// TÜV Card source entry v0.1.0-b38
 
-import { localize } from "./translations/index.js?v=b37";
-import { normalizeCardConfig } from "./card/config.js?v=b37";
-import { findFirstTuevEntity } from "./card/entities.js?v=b37";
-import { getAllEntityIdsFromConfig, getEntitySections } from "./card/groups.js?v=b37";
-import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./card/layout.js?v=b37";
-import { getSharedPlateLayout } from "./card/plate-layout.js?v=b37";
-import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./card/ui-state.js?v=b37";
+import { localize } from "./translations/index.js?v=b38";
+import { normalizeCardConfig } from "./card/config.js?v=b38";
+import { findFirstTuevEntity } from "./card/entities.js?v=b38";
+import { getAllEntityIdsFromConfig, getEntitySections } from "./card/groups.js?v=b38";
+import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./card/layout.js?v=b38";
+import { getSharedPlateLayout } from "./card/plate-layout.js?v=b38";
+import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./card/ui-state.js?v=b38";
 import {
     getOverlayStyleOptions,
     renderBadgeArea,
@@ -16,15 +16,15 @@ import {
     renderMissingEntity,
     renderVehicleDetails,
     renderVehicleHeader
-} from "./card/render-parts.js?v=b37";
+} from "./card/render-parts.js?v=b38";
 import {
     checkPlateFontAvailable,
     ensurePlateFont,
     getLicensePlateMetrics,
     isPlateFontLoaded,
     renderLicensePlate
-} from "./plate/renderer.js?v=b37";
-import { TuevCardEditor } from "./editor/editor.js?v=b37";
+} from "./plate/renderer.js?v=b38";
+import { TuevCardEditor } from "./editor/editor.js?v=b38";
 
 window.customCards = window.customCards || [];
 
