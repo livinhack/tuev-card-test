@@ -1,14 +1,14 @@
 # TÜV Card v0.1 release candidate notes
 
-Current checked version: `b42`.
+Current checked version: `b43`.
 
-This document collects the current release-candidate status for the first `v0.1` milestone. `b42` is the dedicated release-candidate checkpoint after the successful `b41` Home Assistant/HACS test pass. It does not change UI behavior or rendering logic.
+This document collects the current release-candidate status for the first `v0.1` milestone. `b43` is the dedicated release-candidate checkpoint after the successful `b41` Home Assistant/HACS test pass. It does not change UI behavior or rendering logic.
 
 ## Release-candidate checkpoint
 
 - `b41` was tested successfully in Home Assistant/HACS.
-- `b42` only updates documentation, version markers, and release-candidate notes.
-- No UI, renderer, editor, HACS naming, or runtime behavior was intentionally changed in `b42`.
+- `b43` performs final repository cleanup before `v0.1.0`, including cross-platform check tooling and root-bundle layout documentation.
+- No UI, renderer, editor, HACS naming, or runtime behavior is intentionally changed in `b43`.
 
 ## Current stable baseline
 
@@ -65,6 +65,11 @@ The semantic `v0.1.0` switch is prepared in `docs/VERSIONING_AND_RELEASE_PREP.md
 
 ## Current recommended next step
 
-After `b42`, do only a short release-candidate verification pass in Home Assistant. Avoid new feature work until the release-candidate state is confirmed.
+After `b43`, do only a short release-candidate verification pass in Home Assistant. Avoid new feature work until the release-candidate state is confirmed.
 
-Recommended next practical step: install/test `b42`. If no blockers remain, prepare the semantic `v0.1.0` ZIP/tag/release from this checkpoint.
+Recommended next practical step: install/test `b43`. If no blockers remain, prepare the semantic `v0.1.0` ZIP/tag/release from this checkpoint.
+
+
+## b43 cleanup checkpoint
+
+`b43` adds `docs/REPO_CLEANUP.md`, switches `npm run check` to a cross-platform Node script, and updates `build-tuev-card.bat` to run build plus check. This is intended as the final repository hygiene step before preparing `v0.1.0`.

@@ -72,8 +72,20 @@ if errorlevel 1 (
 )
 
 echo.
+echo Fuehre JavaScript-Syntaxcheck aus...
+echo.
+call npm.cmd run check
+if errorlevel 1 (
+    echo.
+    echo FEHLER: npm run check ist fehlgeschlagen.
+    echo.
+    pause
+    exit /b 1
+)
+
+echo.
 echo ========================================
-echo  Build erfolgreich abgeschlossen.
+echo  Build und Check erfolgreich abgeschlossen.
 echo ========================================
 echo.
 

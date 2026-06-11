@@ -1,14 +1,15 @@
 # TÜV Card release check
 
-Current checked version: `b42`.
+Current checked version: `b43`.
 
-## b42 release-candidate note
+## b43 repository cleanup note
 
-`b42` is a documentation/version checkpoint after the successful `b41` HA/HACS test. It contains no intentional UI or runtime changes.
+`b43` is a repository cleanup checkpoint before the semantic `v0.1.0` release. It updates version markers, adds a cross-platform JavaScript syntax check script, documents the final root-bundle layout, and keeps runtime behavior unchanged.
+
+See `docs/REPO_CLEANUP.md` for the detailed cleanup notes.
 
 
-This version is a v0.1 must-fix audit / release-preparation checkpoint.
-It documents the successful `b39` HACS release trigger test and keeps the current EuroPlate rule unchanged:
+This cleanup keeps the current EuroPlate rule unchanged:
 
 - Graphical plates are only available when `EuroPlate.ttf` is reachable.
 - No graphical system-font fallback is used.
@@ -27,7 +28,7 @@ For source-level modular debugging, copy `src/` as well and point the resource t
 Reload the Lovelace resource with a fresh cache-buster, for example:
 
 ```text
-/local/community/tuev-card/tuev-card.js?v=b42
+/local/community/tuev-card/tuev-card.js?v=b43
 ```
 
 ## HACS release install
@@ -72,12 +73,11 @@ npm run build
 npm run check
 ```
 
-Equivalent manual checks:
+Equivalent explicit commands:
 
 ```bash
 node scripts/build-bundle.mjs
-node --check tuev-card.js
-find src -name '*.js' -print0 | xargs -0 -n1 node --check
+node scripts/check-js.mjs
 ```
 
 ## Post naming migration checks
@@ -86,7 +86,7 @@ After the root bundle migration, verify that HACS and Home Assistant load the pr
 
 ```text
 /config/www/community/tuev-card/tuev-card.js
-/hacsfiles/tuev-card/tuev-card.js?v=b42
+/hacsfiles/tuev-card/tuev-card.js?v=b43
 ```
 
 Make sure these old names are not present in the installed HACS folder or Lovelace resource configuration:
@@ -112,7 +112,7 @@ type: custom:tuev-card
 - Switch manual group sorting to an automatic mode and confirm/cancel the discard dialog.
 - Sort ungrouped entities by name, plate, HU, status.
 - Check grouped and ungrouped dashboard rendering.
-- Verify graphical license plates with and without `EuroPlate.ttf`.
+- Verify graphical license plates with reachable `EuroPlate.ttf`; verify text rendering when `EuroPlate.ttf` is missing or unreachable.
 
 ## Responsive / Browser test
 

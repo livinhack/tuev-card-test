@@ -1,9 +1,9 @@
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const version = "b42";
+const version = "b43";
 const entry = resolve(root, "src/tuev-card-entry.js");
 const moduleIds = new Map();
 const modules = [];
