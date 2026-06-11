@@ -1,8 +1,8 @@
 # TÜV Card v0.1 release candidate notes
 
-Current checked version: `b40`.
+Current checked version: `b41`.
 
-This document collects the current release-candidate status for the first `v0.1` milestone. It is intentionally a planning and verification document only; `b40` does not change UI behavior or rendering logic.
+This document collects the current release-candidate status for the first `v0.1` milestone. It is intentionally a planning and verification document only; `b41` does not change UI behavior or rendering logic.
 
 ## Current stable baseline
 
@@ -53,8 +53,12 @@ This document collects the current release-candidate status for the first `v0.1`
 - Save/transition checkpoints should be created before the conversation or version chain gets too long.
 - Graphical license plates require a real plate font. System-font rendering is intentionally not used for graphical plates.
 
+## Versioning preparation
+
+The semantic `v0.1.0` switch is prepared in `docs/VERSIONING_AND_RELEASE_PREP.md`. Keep using `bXX` checkpoints until the remaining must-have checks are confirmed.
+
 ## Current recommended next step
 
-After `b40`, continue only with concrete issues found during the v0.1 release-candidate test pass. Avoid new feature work until the release-candidate state is confirmed.
+After `b41`, continue only with concrete issues found during the v0.1 release-candidate test pass. Avoid new feature work until the release-candidate state is confirmed.
 
-Recommended next practical step: prepare the `v0.1.0` versioning/release naming only after the remaining must-have checks are confirmed in Home Assistant.
+Recommended next practical step: confirm the remaining must-have checks in Home Assistant. If no blockers remain, create a dedicated `v0.1.0` release-preparation ZIP from the latest stable `bXX` checkpoint.
