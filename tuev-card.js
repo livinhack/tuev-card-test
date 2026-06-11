@@ -1,4 +1,4 @@
-// TÜV Card bundled b46
+// TÜV Card bundled b48
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -366,7 +366,7 @@ const GROUP_ACCENT_COLORS = [
     "#42a5f5",
     "#66bb6a",
     "#ffa726",
-    "#ab47bc",
+    "#ab48bc",
     "#26c6da",
     "#ef5350",
     "#8d6e63"
@@ -1471,7 +1471,7 @@ function renderVehicleHeader({
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 1px;
             text-align: center;
         ">
             <div style="
@@ -1762,17 +1762,18 @@ function renderCompactConfirmPanel({
         <div style="
             position: absolute;
             left: 50%;
-            top: 62%;
+            top: 75%;
             transform: translate(-50%, -50%);
             z-index: 6;
-            width: min(94%, ${compact ? "236px" : "268px"});
+            width: max-content;
+            max-width: min(94%, ${compact ? "216px" : "248px"});
             box-sizing: border-box;
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: space-between;
-            gap: ${compact ? "4px" : "6px"};
-            padding: ${compact ? "6px 8px" : "7px 9px"};
+            justify-content: center;
+            gap: ${compact ? "2px" : "4px"};
+            padding: ${compact ? "5px 7px" : "6px 8px"};
             border-radius: 14px;
             border: 1px solid color-mix(in srgb, var(--primary-color) 34%, var(--divider-color));
             background:
@@ -1819,7 +1820,7 @@ function renderCompactConfirmPanel({
                     flex: 0 0 auto;
                     border: none;
                     border-radius: 999px;
-                    padding: ${compact ? "5px 9px" : "6px 10px"};
+                    padding: ${compact ? "5px 8px" : "6px 9px"};
                     background: ${showSuccess ? "var(--success-color, #43a047)" : "var(--primary-color)"};
                     color: var(--text-primary-color);
                     font-size: ${compact ? "10px" : "11px"};
@@ -4923,7 +4924,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry b47
+// TÜV Card source entry b48
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5641,7 +5642,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db4737)"
+            expired: "var(--error-color, #db4837)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year

@@ -1,4 +1,4 @@
-import { renderBadge } from "../badge/renderer.js?v=b47";
+import { renderBadge } from "../badge/renderer.js?v=b48";
 
 export function renderMissingEntity(entityId, localize) {
     return `
@@ -30,7 +30,7 @@ export function renderVehicleHeader({
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 1px;
             text-align: center;
         ">
             <div style="
@@ -321,17 +321,18 @@ export function renderCompactConfirmPanel({
         <div style="
             position: absolute;
             left: 50%;
-            top: 62%;
+            top: 75%;
             transform: translate(-50%, -50%);
             z-index: 6;
-            width: min(94%, ${compact ? "236px" : "268px"});
+            width: max-content;
+            max-width: min(94%, ${compact ? "216px" : "248px"});
             box-sizing: border-box;
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: space-between;
-            gap: ${compact ? "4px" : "6px"};
-            padding: ${compact ? "6px 8px" : "7px 9px"};
+            justify-content: center;
+            gap: ${compact ? "2px" : "4px"};
+            padding: ${compact ? "5px 7px" : "6px 8px"};
             border-radius: 14px;
             border: 1px solid color-mix(in srgb, var(--primary-color) 34%, var(--divider-color));
             background:
@@ -378,7 +379,7 @@ export function renderCompactConfirmPanel({
                     flex: 0 0 auto;
                     border: none;
                     border-radius: 999px;
-                    padding: ${compact ? "5px 9px" : "6px 10px"};
+                    padding: ${compact ? "5px 8px" : "6px 9px"};
                     background: ${showSuccess ? "var(--success-color, #43a047)" : "var(--primary-color)"};
                     color: var(--text-primary-color);
                     font-size: ${compact ? "10px" : "11px"};
