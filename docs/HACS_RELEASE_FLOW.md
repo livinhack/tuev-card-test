@@ -1,6 +1,6 @@
 # HACS release / update trigger flow
 
-Current checked version: `b41`.
+Current checked version: `b42`.
 
 This document captures the manual release flow that was tested with the intermediate `b39` upload/release trigger.
 It is meant as a practical checklist for later `v0.1.x` releases.
@@ -29,7 +29,7 @@ type: custom:tuev-card
 4. Commit to `main`, for example:
 
 ```text
-b41: v0.1 must-fix audit
+b42: v0.1 must-fix audit
 ```
 
 5. Push origin.
@@ -47,7 +47,7 @@ v0.1.0
 v0.1.1
 ```
 
-For internal test releases, temporary tags such as `b39`, `b41`, ... are acceptable.
+For internal test releases, temporary tags such as `b39`, `b42`, ... are acceptable.
 
 ## HACS update check in Home Assistant
 

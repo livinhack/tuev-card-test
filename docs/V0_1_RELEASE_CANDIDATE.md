@@ -1,8 +1,14 @@
 # TÜV Card v0.1 release candidate notes
 
-Current checked version: `b41`.
+Current checked version: `b42`.
 
-This document collects the current release-candidate status for the first `v0.1` milestone. It is intentionally a planning and verification document only; `b41` does not change UI behavior or rendering logic.
+This document collects the current release-candidate status for the first `v0.1` milestone. `b42` is the dedicated release-candidate checkpoint after the successful `b41` Home Assistant/HACS test pass. It does not change UI behavior or rendering logic.
+
+## Release-candidate checkpoint
+
+- `b41` was tested successfully in Home Assistant/HACS.
+- `b42` only updates documentation, version markers, and release-candidate notes.
+- No UI, renderer, editor, HACS naming, or runtime behavior was intentionally changed in `b42`.
 
 ## Current stable baseline
 
@@ -59,6 +65,6 @@ The semantic `v0.1.0` switch is prepared in `docs/VERSIONING_AND_RELEASE_PREP.md
 
 ## Current recommended next step
 
-After `b41`, continue only with concrete issues found during the v0.1 release-candidate test pass. Avoid new feature work until the release-candidate state is confirmed.
+After `b42`, do only a short release-candidate verification pass in Home Assistant. Avoid new feature work until the release-candidate state is confirmed.
 
-Recommended next practical step: confirm the remaining must-have checks in Home Assistant. If no blockers remain, create a dedicated `v0.1.0` release-preparation ZIP from the latest stable `bXX` checkpoint.
+Recommended next practical step: install/test `b42`. If no blockers remain, prepare the semantic `v0.1.0` ZIP/tag/release from this checkpoint.

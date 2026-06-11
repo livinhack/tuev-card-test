@@ -1,9 +1,9 @@
 # TÜV Card versioning and v0.1.0 release preparation
 
-Current checked version: `b41`.
+Current checked version: `b42`.
 
 This document prepares the switch from internal `bXX` test versions to the first semantic public release `v0.1.0`.
-It is documentation only. `b41` does not change UI behavior, rendering logic, HACS naming, or editor behavior.
+It is documentation only. `b42` does not change UI behavior, rendering logic, HACS naming, or editor behavior.
 
 ## Current internal versioning
 
@@ -13,20 +13,20 @@ During development, every generated ZIP gets a new internal version:
 b38
 b39
 b40
-b41
+b42
 ...
 ```
 
 The npm package version follows the same checkpoint style:
 
 ```json
-"version": "0.1.0-b41"
+"version": "0.1.0-b42"
 ```
 
 The generated root bundle includes the same checkpoint label in its generated header:
 
 ```text
-TÜV Card bundled v0.1.0-b41
+TÜV Card bundled v0.1.0-b42
 ```
 
 Temporary GitHub Releases such as `b39` are acceptable for testing the HACS update trigger, but they are not intended as the final public release style.
