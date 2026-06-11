@@ -1,21 +1,21 @@
-import { localize } from "../translations/index.js?v=b36";
-import { normalizeCardConfig, removeLegacyCardConfigOptions } from "../card/config.js?v=b36";
-import { getAvailableTuevEntities, getEntityLabel, sortEntityIds } from "../card/entities.js?v=b36";
-import { createGroup, getNewGroupTitle, getUngroupedEntityIdsFromConfig, normalizeGroups, normalizeGroupSort, normalizeGroupSortDirection } from "../card/groups.js?v=b36";
+import { localize } from "../translations/index.js?v=b37";
+import { normalizeCardConfig, removeLegacyCardConfigOptions } from "../card/config.js?v=b37";
+import { getAvailableTuevEntities, getEntityLabel, sortEntityIds } from "../card/entities.js?v=b37";
+import { createGroup, getNewGroupTitle, getUngroupedEntityIdsFromConfig, normalizeGroups, normalizeGroupSort, normalizeGroupSortDirection } from "../card/groups.js?v=b37";
 import {
     checkPlateFontAvailable,
     ensurePlateFont
-} from "../plate/renderer.js?v=b36";
+} from "../plate/renderer.js?v=b37";
 import {
     getColumnLabel
-} from "./columns.js?v=b36";
+} from "./columns.js?v=b37";
 import {
     renderDisplayOptionsSection,
     renderEntitySection,
     renderGroupsSection
-} from "./render-parts.js?v=b36";
-import { renderEditorStyles } from "./styles.js?v=b36";
-import { renderEditorFloatingPanels } from "./floating-panels.js?v=b36";
+} from "./render-parts.js?v=b37";
+import { renderEditorStyles } from "./styles.js?v=b37";
+import { renderEditorFloatingPanels } from "./floating-panels.js?v=b37";
 
 export class TuevCardEditor extends HTMLElement {
     setConfig(config) {
@@ -104,6 +104,23 @@ export class TuevCardEditor extends HTMLElement {
 
     set hass(hass) {
         this._hass = hass;
+
+        if (this.isEditingGroupTitle()) {
+            return;
+        }
+
+        this.render();
+    }
+
+    isEditingGroupTitle() {
+        return this.querySelector(".tuev-editor-group-title:focus") !== null;
+    }
+
+    renderUnlessEditingGroupTitle() {
+        if (this.isEditingGroupTitle()) {
+            return;
+        }
+
         this.render();
     }
 
@@ -124,16 +141,16 @@ export class TuevCardEditor extends HTMLElement {
                     this.fireConfigChanged();
                 }
 
-                this.render();
+                this.renderUnlessEditingGroupTitle();
                 return;
             }
 
             ensurePlateFont(() => {
                 this._plateFontAvailable = true;
-                this.render();
+                this.renderUnlessEditingGroupTitle();
             });
 
-            this.render();
+            this.renderUnlessEditingGroupTitle();
         }).catch(() => {
             const hadGraphicalPlate = this._config.plate_style === "plate";
             this._plateFontAvailable = false;
@@ -144,7 +161,7 @@ export class TuevCardEditor extends HTMLElement {
                 this.fireConfigChanged();
             }
 
-            this.render();
+            this.renderUnlessEditingGroupTitle();
         });
     }
 

@@ -1,4 +1,4 @@
-// TÜV Card bundled v0.1.0-b36
+// TÜV Card bundled v0.1.0-b37
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -1779,42 +1779,42 @@ const PLATE_FONT_URL = "/local/EuroPlate.ttf";
 let plateFontInjected = false;
 let plateFontLoadPromise = null;
 
+function hasValidFontSignature(buffer) {
+    if (!buffer || buffer.byteLength < 4) {
+        return false;
+    }
+
+    const bytes = new Uint8Array(buffer.slice(0, 4));
+    const signature = String.fromCharCode(...bytes);
+
+    return (
+        signature === "ttcf" ||
+        signature === "OTTO" ||
+        signature === "true" ||
+        (bytes[0] === 0x00 && bytes[1] === 0x01 && bytes[2] === 0x00 && bytes[3] === 0x00)
+    );
+}
+
 async function checkPlateFontAvailable() {
     const cacheBuster = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
     try {
-        const headResponse = await fetch(`${PLATE_FONT_URL}?v=${cacheBuster}`, {
-            method: "HEAD",
-            cache: "no-store",
-            headers: {
-                "Cache-Control": "no-cache, no-store, must-revalidate",
-                Pragma: "no-cache"
-            }
-        });
-
-        if (headResponse.ok) {
-            return true;
-        }
-
-        if (headResponse.status && headResponse.status !== 405) {
-            return false;
-        }
-    } catch (error) {
-        // Some Home Assistant/static-file setups do not support HEAD reliably.
-        // Fall through to a small GET check with its own cache buster.
-    }
-
-    try {
-        const getResponse = await fetch(`${PLATE_FONT_URL}?v=${cacheBuster}-get`, {
+        const response = await fetch(`${PLATE_FONT_URL}?v=${cacheBuster}`, {
             method: "GET",
             cache: "no-store",
             headers: {
                 "Cache-Control": "no-cache, no-store, must-revalidate",
-                Pragma: "no-cache"
+                Pragma: "no-cache",
+                Range: "bytes=0-15"
             }
         });
 
-        return getResponse.ok;
+        if (!response.ok) {
+            return false;
+        }
+
+        const buffer = await response.arrayBuffer();
+        return hasValidFontSignature(buffer);
     } catch (error) {
         return false;
     }
@@ -3912,6 +3912,23 @@ class TuevCardEditor extends HTMLElement {
 
     set hass(hass) {
         this._hass = hass;
+
+        if (this.isEditingGroupTitle()) {
+            return;
+        }
+
+        this.render();
+    }
+
+    isEditingGroupTitle() {
+        return this.querySelector(".tuev-editor-group-title:focus") !== null;
+    }
+
+    renderUnlessEditingGroupTitle() {
+        if (this.isEditingGroupTitle()) {
+            return;
+        }
+
         this.render();
     }
 
@@ -3932,16 +3949,16 @@ class TuevCardEditor extends HTMLElement {
                     this.fireConfigChanged();
                 }
 
-                this.render();
+                this.renderUnlessEditingGroupTitle();
                 return;
             }
 
             ensurePlateFont(() => {
                 this._plateFontAvailable = true;
-                this.render();
+                this.renderUnlessEditingGroupTitle();
             });
 
-            this.render();
+            this.renderUnlessEditingGroupTitle();
         }).catch(() => {
             const hadGraphicalPlate = this._config.plate_style === "plate";
             this._plateFontAvailable = false;
@@ -3952,7 +3969,7 @@ class TuevCardEditor extends HTMLElement {
                 this.fireConfigChanged();
             }
 
-            this.render();
+            this.renderUnlessEditingGroupTitle();
         });
     }
 
@@ -4801,7 +4818,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry v0.1.0-b36
+// TÜV Card source entry v0.1.0-b37
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;

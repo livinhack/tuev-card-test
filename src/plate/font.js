@@ -3,42 +3,42 @@ const PLATE_FONT_URL = "/local/EuroPlate.ttf";
 let plateFontInjected = false;
 let plateFontLoadPromise = null;
 
+function hasValidFontSignature(buffer) {
+    if (!buffer || buffer.byteLength < 4) {
+        return false;
+    }
+
+    const bytes = new Uint8Array(buffer.slice(0, 4));
+    const signature = String.fromCharCode(...bytes);
+
+    return (
+        signature === "ttcf" ||
+        signature === "OTTO" ||
+        signature === "true" ||
+        (bytes[0] === 0x00 && bytes[1] === 0x01 && bytes[2] === 0x00 && bytes[3] === 0x00)
+    );
+}
+
 export async function checkPlateFontAvailable() {
     const cacheBuster = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
     try {
-        const headResponse = await fetch(`${PLATE_FONT_URL}?v=${cacheBuster}`, {
-            method: "HEAD",
-            cache: "no-store",
-            headers: {
-                "Cache-Control": "no-cache, no-store, must-revalidate",
-                Pragma: "no-cache"
-            }
-        });
-
-        if (headResponse.ok) {
-            return true;
-        }
-
-        if (headResponse.status && headResponse.status !== 405) {
-            return false;
-        }
-    } catch (error) {
-        // Some Home Assistant/static-file setups do not support HEAD reliably.
-        // Fall through to a small GET check with its own cache buster.
-    }
-
-    try {
-        const getResponse = await fetch(`${PLATE_FONT_URL}?v=${cacheBuster}-get`, {
+        const response = await fetch(`${PLATE_FONT_URL}?v=${cacheBuster}`, {
             method: "GET",
             cache: "no-store",
             headers: {
                 "Cache-Control": "no-cache, no-store, must-revalidate",
-                Pragma: "no-cache"
+                Pragma: "no-cache",
+                Range: "bytes=0-15"
             }
         });
 
-        return getResponse.ok;
+        if (!response.ok) {
+            return false;
+        }
+
+        const buffer = await response.arrayBuffer();
+        return hasValidFontSignature(buffer);
     } catch (error) {
         return false;
     }
