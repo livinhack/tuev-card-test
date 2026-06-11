@@ -1,25 +1,25 @@
 # TÜV Card versioning and release preparation
 
-Current checked version: `b46`.
+Current checked version: `b47`.
 
-The project has switched from internal `bXX` checkpoint labels to the first semantic test release `b46`.
+The project has switched from internal `bXX` checkpoint labels to the first semantic test release `b47`.
 
 ## Current release version
 
 ```json
-"version": "0.1.1-b46"
+"version": "0.1.1-b47"
 ```
 
 The generated root bundle should start with:
 
 ```text
-TÜV Card bundled b46
+TÜV Card bundled b47
 ```
 
 The GitHub Release tag should be:
 
 ```text
-b46
+b47
 ```
 
 ## HACS file naming
@@ -36,15 +36,15 @@ The HACS filename stays unchanged:
 The dashboard resource should use the root bundle:
 
 ```yaml
-url: /hacsfiles/tuev-card/tuev-card.js?v=b46
+url: /hacsfiles/tuev-card/tuev-card.js?v=b47
 type: module
 ```
 
 ## Release flow
 
 1. Start from the confirmed release-candidate checkpoint.
-2. Change the package version to `0.1.1-b46`.
-3. Adjust the bundle release label to `b46`.
+2. Change the package version to `0.1.1-b47`.
+3. Adjust the bundle release label to `b47`.
 4. Run:
 
 ```bash
@@ -53,10 +53,10 @@ npm run check
 ```
 
 5. Commit and push with GitHub Desktop.
-6. Create a GitHub Release with tag `b46`.
+6. Create a GitHub Release with tag `b47`.
 7. Let HACS discover the update, or use **Informationen aktualisieren** for a manual test.
 
-## What should not change for b46
+## What should not change for b47
 
 Do not rename the card type:
 
@@ -78,7 +78,7 @@ Graphical license plates require reachable EuroPlate.ttf.
 No graphical system-font fallback.
 ```
 
-## Deferred after b46
+## Deferred after b47
 
 The following items are intentionally not part of the first release versioning switch:
 

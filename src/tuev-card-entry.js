@@ -1,12 +1,12 @@
-// TÜV Card source entry b46
+// TÜV Card source entry b47
 
-import { localize } from "./translations/index.js?v=b46";
-import { normalizeCardConfig } from "./card/config.js?v=b46";
-import { findFirstTuevEntity } from "./card/entities.js?v=b46";
-import { getAllEntityIdsFromConfig, getEntitySections } from "./card/groups.js?v=b46";
-import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./card/layout.js?v=b46";
-import { getSharedPlateLayout } from "./card/plate-layout.js?v=b46";
-import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./card/ui-state.js?v=b46";
+import { localize } from "./translations/index.js?v=b47";
+import { normalizeCardConfig } from "./card/config.js?v=b47";
+import { findFirstTuevEntity } from "./card/entities.js?v=b47";
+import { getAllEntityIdsFromConfig, getEntitySections } from "./card/groups.js?v=b47";
+import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./card/layout.js?v=b47";
+import { getSharedPlateLayout } from "./card/plate-layout.js?v=b47";
+import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./card/ui-state.js?v=b47";
 import {
     getOverlayStyleOptions,
     renderBadgeArea,
@@ -17,15 +17,15 @@ import {
     renderMissingEntity,
     renderVehicleDetails,
     renderVehicleHeader
-} from "./card/render-parts.js?v=b46";
+} from "./card/render-parts.js?v=b47";
 import {
     checkPlateFontAvailable,
     ensurePlateFont,
     getLicensePlateMetrics,
     isPlateFontLoaded,
     renderLicensePlate
-} from "./plate/renderer.js?v=b46";
-import { TuevCardEditor } from "./editor/editor.js?v=b46";
+} from "./plate/renderer.js?v=b47";
+import { TuevCardEditor } from "./editor/editor.js?v=b47";
 
 window.customCards = window.customCards || [];
 
@@ -732,7 +732,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db4637)"
+            expired: "var(--error-color, #db4737)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year

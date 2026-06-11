@@ -1762,17 +1762,17 @@ function renderCompactConfirmPanel({
         <div style="
             position: absolute;
             left: 50%;
-            top: 50%;
+            top: 62%;
             transform: translate(-50%, -50%);
             z-index: 6;
-            width: min(94%, ${compact ? "250px" : "290px"});
+            width: min(94%, ${compact ? "236px" : "268px"});
             box-sizing: border-box;
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            gap: ${compact ? "8px" : "10px"};
-            padding: ${compact ? "7px 9px" : "8px 10px"};
+            gap: ${compact ? "4px" : "6px"};
+            padding: ${compact ? "6px 8px" : "7px 9px"};
             border-radius: 14px;
             border: 1px solid color-mix(in srgb, var(--primary-color) 34%, var(--divider-color));
             background:
@@ -1819,7 +1819,7 @@ function renderCompactConfirmPanel({
                     flex: 0 0 auto;
                     border: none;
                     border-radius: 999px;
-                    padding: ${compact ? "6px 10px" : "7px 12px"};
+                    padding: ${compact ? "5px 9px" : "6px 10px"};
                     background: ${showSuccess ? "var(--success-color, #43a047)" : "var(--primary-color)"};
                     color: var(--text-primary-color);
                     font-size: ${compact ? "10px" : "11px"};
@@ -4923,7 +4923,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry b46
+// TÜV Card source entry b47
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5641,7 +5641,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db4637)"
+            expired: "var(--error-color, #db4737)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year
