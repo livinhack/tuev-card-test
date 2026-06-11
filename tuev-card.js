@@ -366,7 +366,7 @@ const GROUP_ACCENT_COLORS = [
     "#42a5f5",
     "#66bb6a",
     "#ffa726",
-    "#ab48bc",
+    "#ab49bc",
     "#26c6da",
     "#ef5350",
     "#8d6e63"
@@ -1772,7 +1772,7 @@ function renderCompactConfirmPanel({
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: ${compact ? "2px" : "4px"};
+            gap: ${compact ? "7px" : "8px"};
             padding: ${compact ? "5px 7px" : "6px 8px"};
             border-radius: 14px;
             border: 1px solid color-mix(in srgb, var(--primary-color) 34%, var(--divider-color));
@@ -4924,7 +4924,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry b48
+// TÜV Card source entry b49
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5642,7 +5642,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db4837)"
+            expired: "var(--error-color, #db4937)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year
