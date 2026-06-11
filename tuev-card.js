@@ -1760,7 +1760,12 @@ function renderCompactConfirmPanel({
 }) {
     return `
         <div style="
-            width: 100%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+            width: min(92%, ${compact ? "185px" : "220px"});
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -1768,8 +1773,13 @@ function renderCompactConfirmPanel({
             gap: ${compact ? "5px" : "7px"};
             padding: ${compact ? "8px 10px" : "10px 12px"};
             border-radius: 14px;
-            border: 1px solid color-mix(in srgb, var(--primary-color) 28%, var(--divider-color));
-            background: color-mix(in srgb, var(--primary-color) 8%, var(--card-background-color));
+            border: 1px solid color-mix(in srgb, var(--primary-color) 38%, var(--divider-color));
+            background:
+                radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--primary-color) 20%, transparent), transparent 54%),
+                color-mix(in srgb, var(--card-background-color) 86%, rgba(0, 0, 0, 0.72));
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             text-align: center;
         ">
             <div style="
@@ -4898,7 +4908,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry b44
+// TÜV Card source entry b45
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5616,7 +5626,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db4437)"
+            expired: "var(--error-color, #db4537)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year
@@ -5730,6 +5740,7 @@ class TuevCard extends HTMLElement {
 
         return `
             <div style="
+                position: relative;
                 display: flex;
                 flex-direction: column;
                 gap: 10px;

@@ -1,10 +1,10 @@
 # TÜV Card release check
 
-Current checked version: `b44`.
+Current checked version: `b45`.
 
-## b44 release note
+## b45 release note
 
-`b44` is the first semantic test release. It is based on the confirmed release-candidate and repository-cleanup checkpoints and should not introduce new runtime behavior compared with the tested candidate state.
+`b45` is the first semantic test release. It is based on the confirmed release-candidate and repository-cleanup checkpoints and should not introduce new runtime behavior compared with the tested candidate state.
 
 This release keeps the current EuroPlate rule unchanged:
 
@@ -24,7 +24,7 @@ For source-level modular debugging, copy `src/` as well and point the resource t
 Reload the Lovelace resource with a fresh cache-buster, for example:
 
 ```text
-/local/community/tuev-card/tuev-card.js?v=b44
+/local/community/tuev-card/tuev-card.js?v=b45
 ```
 
 ## HACS release install
@@ -54,13 +54,13 @@ src/
 The package version for this release is:
 
 ```json
-"version": "0.1.1-b44"
+"version": "0.1.1-b45"
 ```
 
 The GitHub Release tag should be:
 
 ```text
-b44
+b45
 ```
 
 See `docs/VERSIONING_AND_RELEASE_PREP.md` and `docs/HACS_RELEASE_FLOW.md` for the release/update trigger checklist.
@@ -85,7 +85,7 @@ Verify that HACS and Home Assistant load the production file directly from the r
 
 ```text
 /config/www/community/tuev-card/tuev-card.js
-/hacsfiles/tuev-card/tuev-card.js?v=b44
+/hacsfiles/tuev-card/tuev-card.js?v=b45
 ```
 
 Make sure these old names are not present in the installed HACS folder or Lovelace resource configuration:

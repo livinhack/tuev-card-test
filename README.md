@@ -155,7 +155,7 @@ The native Home Assistant editor preview may be narrower than the final dashboar
 | `columns` | `auto` | `auto`, `1`, `2`, `3`, or `4`; treated as a maximum/limit |
 | `sort` | `name` | Ungrouped sorting: `name`, `plate`, `due_date`, or `status` |
 | `sort_direction` | `asc` | Ungrouped sort direction: `asc` or `desc` |
-| `show_badge` | `true` | Show the TÜV sticker. Set to `false` for a more compact card while keeping status/details visible. |
+| `show_badge` | `true` | Show the TÜV sticker. Set to `false` for a more compact card while keeping status/details visible. Due/expired confirmation is shown as a floating panel, so the card height does not jump. |
 | `show_details` | `true` | Show next HU and status |
 | `plate_style` | `text` | `text` or `plate` |
 
@@ -419,7 +419,7 @@ Die native Home-Assistant-Editor-Vorschau kann schmaler sein als die endgültige
 | `columns` | `auto` | `auto`, `1`, `2`, `3` oder `4`; wird als Maximum/Begrenzung behandelt |
 | `sort` | `name` | Sortierung ungruppierter Fahrzeuge: `name`, `plate`, `due_date` oder `status` |
 | `sort_direction` | `asc` | Sortierrichtung ungruppierter Fahrzeuge: `asc` oder `desc` |
-| `show_badge` | `true` | TÜV-Plakette anzeigen. Mit `false` wird die Card kompakter, Status/Details bleiben sichtbar. |
+| `show_badge` | `true` | TÜV-Plakette anzeigen. Mit `false` wird die Card kompakter, Status/Details bleiben sichtbar. Die Bestätigung bei fälligem/abgelaufenem TÜV erscheint dann schwebend, damit die Card-Höhe nicht springt. |
 | `show_details` | `true` | Nächste HU und Status anzeigen |
 | `plate_style` | `text` | `text` oder `plate` |
 
