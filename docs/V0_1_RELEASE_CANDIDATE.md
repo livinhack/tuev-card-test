@@ -1,14 +1,15 @@
-# TÜV Card v0.1 release candidate notes
+# TÜV Card v0.1.0 release notes
 
-Current checked version: `b43`.
+Current checked version: `v0.1.0`.
 
-This document collects the current release-candidate status for the first `v0.1` milestone. `b43` is the dedicated release-candidate checkpoint after the successful `b41` Home Assistant/HACS test pass. It does not change UI behavior or rendering logic.
+This document records the first semantic test release milestone. `v0.1.0` is based on the confirmed `b42` release candidate and the `b43` repository cleanup checkpoint.
 
-## Release-candidate checkpoint
+## Release status
 
-- `b41` was tested successfully in Home Assistant/HACS.
-- `b43` performs final repository cleanup before `v0.1.0`, including cross-platform check tooling and root-bundle layout documentation.
-- No UI, renderer, editor, HACS naming, or runtime behavior is intentionally changed in `b43`.
+- First semantic test release: `v0.1.0`.
+- Not actively advertised as a public launch yet.
+- Intended as a stable technical baseline for further testing through HACS.
+- No UI, renderer, editor, HACS naming, or runtime behavior changes were intentionally introduced during the final version switch.
 
 ## Current stable baseline
 
@@ -21,25 +22,25 @@ This document collects the current release-candidate status for the first `v0.1`
 - Group title editing should keep focus while typing.
 - Display, color, and manual-sort confirmation floating panels are currently stable.
 
-## Must-have before v0.1
+## Must-have checks before publishing the GitHub Release
 
-- Confirm the latest HACS install loads the root bundle, not an old `dist/` or `-test` resource.
+- Confirm the package version is `0.1.0`.
+- Confirm the generated bundle header says `TÜV Card bundled v0.1.0`.
+- Confirm HACS uses `tuev-card.js` from the repository root.
+- Confirm README installation paths match the root-bundle HACS structure.
+- Confirm NOTICE/license notes are acceptable for the current state.
+- Run `npm run build`.
+- Run `npm run check`.
+
+## Functional smoke test
+
 - Confirm Firefox, Chrome, and the Home Assistant Android app all behave consistently when `EuroPlate.ttf` is missing.
 - Confirm Firefox, Chrome, and the Home Assistant Android app all show graphical plates when `EuroPlate.ttf` is reachable.
 - Confirm the editor can create, rename, color, sort, and delete groups without focus loss or stale state.
 - Confirm dashboard save/reload keeps group order, group colors, sort modes, and display options.
 - Confirm no browser-console errors appear on normal card load, editor open, or popover interactions.
-- Confirm README installation paths match the current root-bundle HACS structure.
-- Confirm NOTICE/license notes are acceptable for the current state.
 
-## Optional before v0.1
-
-- Minor README wording cleanup.
-- Minor release-check documentation cleanup.
-- Additional manual test pass in Home Assistant Sections and Panel views.
-- Small visual adjustments only if they are low-risk and do not affect the plate renderer.
-
-## Explicitly deferred until after v0.1
+## Explicitly deferred until after v0.1.0
 
 - Plate Renderer v2 based on FZV Anlage 4.
 - Replacing manual `EuroPlate.ttf` installation with bundled GL-Nummernschild fonts.
@@ -49,27 +50,19 @@ This document collects the current release-candidate status for the first `v0.1`
 - Compact mode / option to hide the TÜV badge.
 - Optional side-by-side group layout for small groups.
 - README screenshots and final image assets. Screenshots should be added late, after the UI is stable.
-- GitHub tags/releases for HACS update notifications are verified with the temporary `b39` test. For the first real public version, switch from `bXX` test tags to semantic releases such as `v0.1.0`.
 
 ## Known product decisions
 
 - Code and file names stay English.
 - User-facing labels are handled through translations.
-- ZIP/version numbering continues with every generated ZIP.
+- ZIP/version numbering continues for future generated ZIPs after the release.
 - Save/transition checkpoints should be created before the conversation or version chain gets too long.
 - Graphical license plates require a real plate font. System-font rendering is intentionally not used for graphical plates.
 
-## Versioning preparation
+## Release flow
 
-The semantic `v0.1.0` switch is prepared in `docs/VERSIONING_AND_RELEASE_PREP.md`. Keep using `bXX` checkpoints until the remaining must-have checks are confirmed.
-
-## Current recommended next step
-
-After `b43`, do only a short release-candidate verification pass in Home Assistant. Avoid new feature work until the release-candidate state is confirmed.
-
-Recommended next practical step: install/test `b43`. If no blockers remain, prepare the semantic `v0.1.0` ZIP/tag/release from this checkpoint.
-
-
-## b43 cleanup checkpoint
-
-`b43` adds `docs/REPO_CLEANUP.md`, switches `npm run check` to a cross-platform Node script, and updates `build-tuev-card.bat` to run build plus check. This is intended as the final repository hygiene step before preparing `v0.1.0`.
+1. Copy this `v0.1.0` ZIP into the repository.
+2. Commit and push with GitHub Desktop.
+3. Create a GitHub Release with tag `v0.1.0`.
+4. Use the release title `v0.1.0 - Initial test release`.
+5. Let HACS discover the update, or use **Informationen aktualisieren** for an immediate manual check.

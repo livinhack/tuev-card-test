@@ -1,19 +1,15 @@
 # TÜV Card release check
 
-Current checked version: `b43`.
+Current checked version: `v0.1.0`.
 
-## b43 repository cleanup note
+## v0.1.0 release note
 
-`b43` is a repository cleanup checkpoint before the semantic `v0.1.0` release. It updates version markers, adds a cross-platform JavaScript syntax check script, documents the final root-bundle layout, and keeps runtime behavior unchanged.
+`v0.1.0` is the first semantic test release. It is based on the confirmed release-candidate and repository-cleanup checkpoints and should not introduce new runtime behavior compared with the tested candidate state.
 
-See `docs/REPO_CLEANUP.md` for the detailed cleanup notes.
-
-
-This cleanup keeps the current EuroPlate rule unchanged:
+This release keeps the current EuroPlate rule unchanged:
 
 - Graphical plates are only available when `EuroPlate.ttf` is reachable.
 - No graphical system-font fallback is used.
-
 
 ## Local test install
 
@@ -28,12 +24,12 @@ For source-level modular debugging, copy `src/` as well and point the resource t
 Reload the Lovelace resource with a fresh cache-buster, for example:
 
 ```text
-/local/community/tuev-card/tuev-card.js?v=b43
+/local/community/tuev-card/tuev-card.js?v=v0.1.0
 ```
 
 ## HACS release install
 
-The current repository configuration uses:
+The current repository configuration uses the generated root bundle:
 
 ```text
 tuev-card.js
@@ -53,18 +49,21 @@ scripts/build-bundle.mjs
 src/
 ```
 
+## Versioning
 
+The package version for this release is:
 
+```json
+"version": "0.1.0"
+```
 
-## Versioning / v0.1.0 preparation
+The GitHub Release tag should be:
 
-See `docs/VERSIONING_AND_RELEASE_PREP.md` for the prepared switch from internal `bXX` checkpoints to the first semantic `v0.1.0` release.
+```text
+v0.1.0
+```
 
-## HACS release/update trigger
-
-The temporary `b39` release trigger test confirmed the GitHub Desktop + GitHub Release + HACS update-information workflow.
-
-See `docs/HACS_RELEASE_FLOW.md` for the release/update trigger checklist.
+See `docs/VERSIONING_AND_RELEASE_PREP.md` and `docs/HACS_RELEASE_FLOW.md` for the release/update trigger checklist.
 
 ## Build/check commands
 
@@ -82,11 +81,11 @@ node scripts/check-js.mjs
 
 ## Post naming migration checks
 
-After the root bundle migration, verify that HACS and Home Assistant load the production file directly from the repository root:
+Verify that HACS and Home Assistant load the production file directly from the repository root:
 
 ```text
 /config/www/community/tuev-card/tuev-card.js
-/hacsfiles/tuev-card/tuev-card.js?v=b43
+/hacsfiles/tuev-card/tuev-card.js?v=v0.1.0
 ```
 
 Make sure these old names are not present in the installed HACS folder or Lovelace resource configuration:
@@ -116,9 +115,4 @@ type: custom:tuev-card
 
 ## Responsive / Browser test
 
-See `docs/RESPONSIVE_BROWSER_TEST.md` for the dedicated cross-browser and Home Assistant view checklist introduced in `b36`.
-
-
-## v0.1 release candidate notes
-
-See `docs/V0_1_RELEASE_CANDIDATE.md` for the current must-have, optional, and deferred items for the first `v0.1` milestone.
+See `docs/RESPONSIVE_BROWSER_TEST.md` for the dedicated cross-browser and Home Assistant view checklist introduced during the release-candidate phase.

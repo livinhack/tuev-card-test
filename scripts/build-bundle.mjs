@@ -3,7 +3,7 @@ import { dirname, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const version = "b43";
+const version = "v0.1.0";
 const entry = resolve(root, "src/tuev-card-entry.js");
 const moduleIds = new Map();
 const modules = [];
@@ -100,7 +100,7 @@ function transformModule(path, isEntry) {
 
 collect(entry);
 
-let bundled = `// TÜV Card bundled v0.1.0-${version}\n`;
+let bundled = `// TÜV Card bundled ${version}\n`;
 bundled += "// This file is generated from the modular source files. Do not edit manually.\n";
 
 for (const path of modules) {
