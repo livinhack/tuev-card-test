@@ -368,7 +368,7 @@ const GROUP_ACCENT_COLORS = [
     "#42a5f5",
     "#66bb6a",
     "#ffa726",
-    "#ab54bc",
+    "#ab55bc",
     "#26c6da",
     "#ef5350",
     "#8d6e63"
@@ -1751,6 +1751,19 @@ function renderCrossfadeLayer(crossfade, size) {
     `;
 }
 
+function renderStampLines(text) {
+    const parts = String(text || "").trim().split(/\s+/).filter(Boolean);
+
+    if (parts.length <= 1) {
+        return `<span>${text}</span>`;
+    }
+
+    return `
+        <span>${parts[0]}</span>
+        <span>${parts.slice(1).join(" ")}</span>
+    `;
+}
+
 function renderCompactConfirmPanel({
     entityId,
     ui,
@@ -1767,6 +1780,8 @@ function renderCompactConfirmPanel({
             ? "var(--error-color, #db5337)"
             : "var(--warning-color, #ffa000)";
     const actionColor = showSuccess ? "var(--success-color, #43a047)" : "var(--success-color, #2e9d43)";
+    const stampLines = renderStampLines(overlayTitle);
+    const actionLines = renderStampLines(actionText);
 
     return `
         <div style="
@@ -1776,47 +1791,49 @@ function renderCompactConfirmPanel({
             transform: translate(-50%, -50%) rotate(-13deg);
             z-index: 6;
             width: max-content;
-            max-width: min(96%, ${compact ? "156px" : "184px"});
+            max-width: min(96%, ${compact ? "154px" : "178px"});
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: ${compact ? "2px" : "3px"};
             pointer-events: none;
-            filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+            filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.48));
         ">
             <div style="
                 position: relative;
                 box-sizing: border-box;
+                min-width: ${compact ? "62px" : "72px"};
                 max-width: 100%;
-                padding: ${compact ? "3px 7px" : "4px 9px"};
-                border: 2px solid color-mix(in srgb, ${stampColor} 82%, transparent);
-                outline: 1px dashed color-mix(in srgb, ${stampColor} 58%, transparent);
+                padding: ${compact ? "4px 8px 5px" : "5px 10px 6px"};
+                border: 2px solid color-mix(in srgb, ${stampColor} 88%, transparent);
+                outline: 1px dashed color-mix(in srgb, ${stampColor} 64%, transparent);
                 outline-offset: -4px;
                 border-radius: 4px;
                 background:
-                    linear-gradient(135deg, transparent 0 12%, color-mix(in srgb, ${stampColor} 10%, transparent) 12% 20%, transparent 20% 100%),
-                    color-mix(in srgb, ${stampColor} 12%, transparent);
-                color: color-mix(in srgb, ${stampColor} 86%, white 14%);
+                    radial-gradient(circle at 22% 28%, color-mix(in srgb, ${stampColor} 22%, transparent), transparent 46%),
+                    linear-gradient(135deg, transparent 0 12%, color-mix(in srgb, ${stampColor} 16%, transparent) 12% 22%, transparent 22% 100%),
+                    color-mix(in srgb, ${stampColor} 24%, rgba(0, 0, 0, 0.62));
+                color: color-mix(in srgb, ${stampColor} 78%, white 22%);
                 font-family: 'Arial Narrow', 'DIN Condensed', 'Bahnschrift SemiCondensed', sans-serif;
-                font-size: ${compact ? "11px" : "12px"};
+                font-size: ${compact ? "10px" : "11px"};
                 font-weight: 900;
-                line-height: 1;
-                letter-spacing: 0.2px;
+                line-height: 0.92;
+                letter-spacing: 0.28px;
                 text-transform: uppercase;
                 text-align: center;
-                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
-                opacity: ${showSuccess ? "0.86" : "0.78"};
+                text-shadow: 0 1px 1px rgba(0, 0, 0, 0.78), 0 0 5px rgba(0, 0, 0, 0.35);
+                opacity: ${showSuccess ? "0.92" : "0.88"};
                 overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
                 pointer-events: none;
-                mix-blend-mode: screen;
+                backdrop-filter: blur(1.5px) saturate(1.08);
             ">
-                <span style="position: absolute; left: 12%; top: -3px; width: 20px; height: 6px; background: rgba(0, 0, 0, 0.55); transform: rotate(-7deg); opacity: 0.34;"></span>
-                <span style="position: absolute; right: 18%; bottom: -3px; width: 25px; height: 5px; background: rgba(0, 0, 0, 0.55); transform: rotate(5deg); opacity: 0.32;"></span>
-                <span style="position: absolute; left: 50%; top: 42%; width: 34px; height: 2px; background: rgba(0, 0, 0, 0.42); transform: rotate(-10deg); opacity: 0.28;"></span>
-                ${overlayTitle}
+                <span style="position: absolute; left: 10%; top: -3px; width: 20px; height: 6px; background: rgba(0, 0, 0, 0.60); transform: rotate(-7deg); opacity: 0.34;"></span>
+                <span style="position: absolute; right: 16%; bottom: -3px; width: 26px; height: 5px; background: rgba(0, 0, 0, 0.62); transform: rotate(5deg); opacity: 0.32;"></span>
+                <span style="position: absolute; left: 46%; top: 47%; width: 31px; height: 2px; background: rgba(0, 0, 0, 0.50); transform: rotate(-10deg); opacity: 0.22;"></span>
+                <span style="position: relative; z-index: 1; display: inline-flex; flex-direction: column; align-items: center; gap: 1px; white-space: nowrap;">
+                    ${stampLines}
+                </span>
             </div>
 
             <button
@@ -1824,41 +1841,45 @@ function renderCompactConfirmPanel({
                 ${acknowledged ? "disabled" : ""}
                 style="
                     position: relative;
-                    transform: translateX(${compact ? "10px" : "14px"}) rotate(9deg);
+                    transform: translateX(${compact ? "8px" : "12px"}) rotate(9deg);
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
-                    gap: ${compact ? "4px" : "5px"};
+                    gap: ${compact ? "5px" : "6px"};
                     max-width: 100%;
                     box-sizing: border-box;
-                    padding: ${compact ? "3px 6px" : "4px 7px"};
+                    padding: ${compact ? "4px 6px" : "5px 8px"};
                     border-radius: 4px;
-                    border: 2px solid color-mix(in srgb, ${actionColor} 82%, transparent);
-                    outline: 1px dashed color-mix(in srgb, ${actionColor} 54%, transparent);
+                    border: 2px solid color-mix(in srgb, ${actionColor} 88%, transparent);
+                    outline: 1px dashed color-mix(in srgb, ${actionColor} 62%, transparent);
                     outline-offset: -4px;
                     background:
-                        linear-gradient(135deg, transparent 0 14%, color-mix(in srgb, ${actionColor} 12%, transparent) 14% 23%, transparent 23% 100%),
-                        color-mix(in srgb, ${actionColor} 13%, rgba(0, 0, 0, 0.12));
-                    color: color-mix(in srgb, ${actionColor} 82%, white 18%);
+                        radial-gradient(circle at 72% 28%, color-mix(in srgb, ${actionColor} 18%, transparent), transparent 44%),
+                        linear-gradient(135deg, transparent 0 14%, color-mix(in srgb, ${actionColor} 16%, transparent) 14% 24%, transparent 24% 100%),
+                        color-mix(in srgb, ${actionColor} 24%, rgba(0, 0, 0, 0.58));
+                    color: color-mix(in srgb, ${actionColor} 76%, white 24%);
                     font-family: 'Arial Narrow', 'DIN Condensed', 'Bahnschrift SemiCondensed', sans-serif;
                     font-size: ${compact ? "9px" : "10px"};
                     font-weight: 900;
-                    line-height: 1;
-                    letter-spacing: 0.1px;
+                    line-height: 0.94;
+                    letter-spacing: 0.18px;
                     text-transform: uppercase;
-                    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+                    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75), 0 0 5px rgba(0, 0, 0, 0.35);
                     cursor: ${acknowledged ? "default" : "pointer"};
-                    opacity: ${acknowledged ? "0.86" : "0.80"};
+                    opacity: ${acknowledged ? "0.92" : "0.88"};
                     pointer-events: auto;
-                    box-shadow: 0 0 9px color-mix(in srgb, ${actionColor} 22%, transparent);
+                    box-shadow: 0 0 10px color-mix(in srgb, ${actionColor} 28%, transparent);
+                    backdrop-filter: blur(1.5px) saturate(1.08);
                 "
             >
                 <span style="
                     min-width: 0;
-                    overflow: hidden;
+                    display: inline-flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 1px;
                     white-space: nowrap;
-                    text-overflow: ellipsis;
-                ">${actionText}</span>
+                ">${actionLines}</span>
                 <span style="
                     flex: 0 0 auto;
                     width: ${compact ? "11px" : "12px"};
@@ -1870,7 +1891,7 @@ function renderCompactConfirmPanel({
                     justify-content: center;
                     font-size: ${compact ? "9px" : "10px"};
                     line-height: 1;
-                    background: ${acknowledged ? "color-mix(in srgb, currentColor 28%, transparent)" : "rgba(0, 0, 0, 0.16)"};
+                    background: ${acknowledged ? "color-mix(in srgb, currentColor 28%, transparent)" : "rgba(0, 0, 0, 0.22)"};
                     transition: transform 160ms ease, background 160ms ease;
                     transform: ${acknowledged ? "scale(1.06)" : "scale(1)"};
                 ">${acknowledged ? "✓" : ""}</span>
@@ -1878,6 +1899,7 @@ function renderCompactConfirmPanel({
         </div>
     `;
 }
+
 
 function renderBadgeArea({
     badgeSize,
@@ -4966,7 +4988,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry b54
+// TÜV Card source entry b55
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5684,7 +5706,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db5437)"
+            expired: "var(--error-color, #db5537)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year

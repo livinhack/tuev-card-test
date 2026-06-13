@@ -1,6 +1,6 @@
-# b54 HU stamp confirm overlay
+# b55 HU stamp confirm overlay
 
-`b54` experiments with a stamp-style confirmation overlay for the compact `show_badge: false` layout.
+`b55` experiments with a stamp-style confirmation overlay for the compact `show_badge: false` layout.
 
 ## Scope
 
