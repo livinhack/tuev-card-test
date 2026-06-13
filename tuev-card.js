@@ -1,4 +1,4 @@
-// TÜV Card bundled b54
+// TÜV Card bundled b57
 // This file is generated from the modular source files. Do not edit manually.
 
 // ---- src/translations/en.js ----
@@ -368,7 +368,7 @@ const GROUP_ACCENT_COLORS = [
     "#42a5f5",
     "#66bb6a",
     "#ffa726",
-    "#ab56bc",
+    "#ab57bc",
     "#26c6da",
     "#ef5350",
     "#8d6e63"
@@ -1684,6 +1684,22 @@ function renderVehicleDetails({ showDetails, compact, huLabel, statusColor, stat
 
 function renderBadgeLayer(badge, size) {
     return `
+        <style>
+            @keyframes tuevStampCheckDraw {
+                from { stroke-dashoffset: 28; }
+                to { stroke-dashoffset: 0; }
+            }
+
+            @keyframes tuevStampWarningFade {
+                from { opacity: 0.92; transform: scale(1); }
+                to { opacity: 0.16; transform: scale(0.98); }
+            }
+
+            @keyframes tuevStampActionFade {
+                from { opacity: 0.92; transform: translateX(${compact ? "9px" : "13px"}) rotate(14deg) scale(1); }
+                to { opacity: 0; transform: translateX(${compact ? "9px" : "13px"}) rotate(14deg) scale(0.96); }
+            }
+        </style>
         <div style="
             position: absolute;
             inset: 0;
@@ -1774,6 +1790,7 @@ function renderCompactConfirmPanel({
     expired
 }) {
     const acknowledged = ui.confirming || showSuccess;
+    const confirming = ui.confirming && !showSuccess;
     const stampColor = showSuccess
         ? "var(--success-color, #43a047)"
         : expired
@@ -1828,6 +1845,7 @@ function renderCompactConfirmPanel({
                 overflow: hidden;
                 pointer-events: none;
                 backdrop-filter: blur(2.2px) saturate(1.18);
+                animation: ${confirming ? "tuevStampWarningFade 520ms ease 440ms forwards" : "none"};
             ">
                 <span style="position: absolute; left: 10%; top: -3px; width: 20px; height: 6px; background: rgba(0, 0, 0, 0.60); transform: rotate(-7deg); opacity: 0.34;"></span>
                 <span style="position: absolute; right: 16%; bottom: -3px; width: 26px; height: 5px; background: rgba(0, 0, 0, 0.62); transform: rotate(5deg); opacity: 0.32;"></span>
@@ -1872,6 +1890,7 @@ function renderCompactConfirmPanel({
                     pointer-events: auto;
                     box-shadow: 0 0 10px color-mix(in srgb, ${actionColor} 28%, transparent);
                     backdrop-filter: blur(2.2px) saturate(1.18);
+                    animation: ${confirming ? "tuevStampActionFade 480ms ease 980ms forwards" : "none"};
                 "
             >
                 <span style="
@@ -1884,19 +1903,32 @@ function renderCompactConfirmPanel({
                 ">${actionLines}</span>
                 <span style="
                     flex: 0 0 auto;
-                    width: ${compact ? "11px" : "12px"};
-                    height: ${compact ? "11px" : "12px"};
+                    width: ${compact ? "13px" : "14px"};
+                    height: ${compact ? "13px" : "14px"};
                     border-radius: 2px;
                     border: 1.6px solid currentColor;
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: ${compact ? "9px" : "10px"};
                     line-height: 1;
                     background: ${acknowledged ? "color-mix(in srgb, currentColor 28%, transparent)" : "rgba(0, 0, 0, 0.22)"};
                     transition: transform 160ms ease, background 160ms ease;
                     transform: ${acknowledged ? "scale(1.06)" : "scale(1)"};
-                ">${acknowledged ? "✓" : ""}</span>
+                ">
+                    ${acknowledged ? `
+                        <svg viewBox="0 0 16 16" width="${compact ? "12" : "13"}" height="${compact ? "12" : "13"}" aria-hidden="true" style="display: block; overflow: visible;">
+                            <path
+                                d="M3.1 8.5 L6.4 11.7 L13.3 3.8"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.4"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                style="stroke-dasharray: 28; stroke-dashoffset: ${confirming ? "28" : "0"}; animation: ${confirming ? "tuevStampCheckDraw 420ms cubic-bezier(.22, .9, .2, 1) forwards" : "none"}; filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.5));"
+                            />
+                        </svg>
+                    ` : ""}
+                </span>
             </button>
         </div>
     `;
@@ -4990,7 +5022,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry b56
+// TÜV Card source entry b57
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5708,7 +5740,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db5637)"
+            expired: "var(--error-color, #db5737)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year
@@ -5739,13 +5771,15 @@ class TuevCard extends HTMLElement {
         const showConfirmOverlay = pending || ui.confirming || showSuccess;
         const isExpired = entity.state === "expired" || attr.status === "expired";
 
+        const statusOverlayTitle = isExpired
+            ? this.localize("overlay.expired")
+            : this.localize("overlay.due");
+
         const overlayTitle = ui.confirming
             ? this.localize("overlay.updating")
             : showSuccess
                 ? this.localize("overlay.updated")
-                : isExpired
-                    ? this.localize("overlay.expired")
-                    : this.localize("overlay.due");
+                : statusOverlayTitle;
 
         const overlayText = ui.confirming
             ? this.localize("overlay.updating_text")
@@ -5805,7 +5839,7 @@ class TuevCard extends HTMLElement {
                 entityId,
                 ui,
                 showSuccess,
-                overlayTitle,
+                overlayTitle: statusOverlayTitle,
                 actionText: this.localize("overlay.hu_passed_question"),
                 compact,
                 expired: isExpired
@@ -5906,6 +5940,10 @@ class TuevCard extends HTMLElement {
         });
 
         this.hass = this._hass;
+
+        if (this._config.show_badge === false) {
+            await new Promise((resolve) => window.setTimeout(resolve, 1450));
+        }
 
         try {
             await this._hass.callService("tuev_reminder", "confirm_passed", {
