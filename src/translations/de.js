@@ -9,6 +9,7 @@ export const de = {
         "overlay.updating_text": "Neue Plakette wird berechnet.",
         "overlay.updated_text": "Neue Plakette übernommen.",
         "overlay.question": "Prüfung bestanden?",
+        "overlay.hu_passed_question": "HU bestanden?",
         "button.wait": "Bitte warten",
         "button.done": "Fertig",
         "button.confirm": "Bestätigen",

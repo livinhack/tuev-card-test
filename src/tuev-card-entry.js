@@ -1,12 +1,12 @@
-// TÜV Card source entry b52
+// TÜV Card source entry b54
 
-import { localize } from "./translations/index.js?v=b52";
-import { normalizeCardConfig } from "./card/config.js?v=b52";
-import { findFirstTuevEntity } from "./card/entities.js?v=b52";
-import { getAllEntityIdsFromConfig, getEntitySections } from "./card/groups.js?v=b52";
-import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./card/layout.js?v=b52";
-import { getSharedPlateLayout } from "./card/plate-layout.js?v=b52";
-import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./card/ui-state.js?v=b52";
+import { localize } from "./translations/index.js?v=b54";
+import { normalizeCardConfig } from "./card/config.js?v=b54";
+import { findFirstTuevEntity } from "./card/entities.js?v=b54";
+import { getAllEntityIdsFromConfig, getEntitySections } from "./card/groups.js?v=b54";
+import { calculateAutomaticBadgeSize, calculateLayoutInfo } from "./card/layout.js?v=b54";
+import { getSharedPlateLayout } from "./card/plate-layout.js?v=b54";
+import { CONFIRM_TIMING, getEntityUiState, resetEntityUiStateAfterError, startEntityConfirmation } from "./card/ui-state.js?v=b54";
 import {
     getOverlayStyleOptions,
     renderBadgeArea,
@@ -17,15 +17,15 @@ import {
     renderMissingEntity,
     renderVehicleDetails,
     renderVehicleHeader
-} from "./card/render-parts.js?v=b52";
+} from "./card/render-parts.js?v=b54";
 import {
     checkPlateFontAvailable,
     ensurePlateFont,
     getLicensePlateMetrics,
     isPlateFontLoaded,
     renderLicensePlate
-} from "./plate/renderer.js?v=b52";
-import { TuevCardEditor } from "./editor/editor.js?v=b52";
+} from "./plate/renderer.js?v=b54";
+import { TuevCardEditor } from "./editor/editor.js?v=b54";
 
 window.customCards = window.customCards || [];
 
@@ -732,7 +732,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db5237)"
+            expired: "var(--error-color, #db5437)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year
@@ -830,9 +830,9 @@ class TuevCard extends HTMLElement {
                 ui,
                 showSuccess,
                 overlayTitle,
-                overlayText,
-                buttonText,
-                compact
+                actionText: this.localize("overlay.hu_passed_question"),
+                compact,
+                expired: isExpired
             })
             : "";
 
@@ -852,8 +852,6 @@ class TuevCard extends HTMLElement {
                 gap: 10px;
                 align-items: center;
                 min-width: 0;
-                box-sizing: border-box;
-                padding-bottom: ${showBadge ? "0" : (compact ? "34px" : "38px")};
             ">
                 ${header}
                 ${badgeArea}

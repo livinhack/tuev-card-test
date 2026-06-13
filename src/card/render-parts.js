@@ -1,4 +1,4 @@
-import { renderBadge } from "../badge/renderer.js?v=b52";
+import { renderBadge } from "../badge/renderer.js?v=b54";
 
 export function renderMissingEntity(entityId, localize) {
     return `
@@ -313,86 +313,124 @@ export function renderCompactConfirmPanel({
     ui,
     showSuccess,
     overlayTitle,
-    overlayText,
-    buttonText,
-    compact
+    actionText,
+    compact,
+    expired
 }) {
+    const acknowledged = ui.confirming || showSuccess;
+    const stampColor = showSuccess
+        ? "var(--success-color, #43a047)"
+        : expired
+            ? "var(--error-color, #db5337)"
+            : "var(--warning-color, #ffa000)";
+    const actionColor = showSuccess ? "var(--success-color, #43a047)" : "var(--success-color, #2e9d43)";
+
     return `
         <div style="
             position: absolute;
-            left: ${compact ? "4px" : "5px"};
-            right: ${compact ? "4px" : "5px"};
-            bottom: ${compact ? "0px" : "1px"};
-            transform: none;
+            left: 50%;
+            top: ${compact ? "58%" : "55%"};
+            transform: translate(-50%, -50%) rotate(-13deg);
             z-index: 6;
-            width: auto;
-            max-width: none;
+            width: max-content;
+            max-width: min(96%, ${compact ? "156px" : "184px"});
             box-sizing: border-box;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            gap: ${compact ? "7px" : "8px"};
-            padding: ${compact ? "5px 7px" : "6px 8px"};
-            border-radius: 14px;
-            border: 1px solid color-mix(in srgb, var(--primary-color) 34%, var(--divider-color));
-            background:
-                radial-gradient(circle at 28% 20%, color-mix(in srgb, var(--primary-color) 16%, transparent), transparent 58%),
-                color-mix(in srgb, var(--card-background-color) 68%, rgba(0, 0, 0, 0.42));
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.26);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            text-align: left;
-            pointer-events: auto;
+            gap: ${compact ? "2px" : "3px"};
+            pointer-events: none;
+            filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
         ">
             <div style="
-                min-width: 0;
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
+                position: relative;
+                box-sizing: border-box;
+                max-width: 100%;
+                padding: ${compact ? "3px 7px" : "4px 9px"};
+                border: 2px solid color-mix(in srgb, ${stampColor} 82%, transparent);
+                outline: 1px dashed color-mix(in srgb, ${stampColor} 58%, transparent);
+                outline-offset: -4px;
+                border-radius: 4px;
+                background:
+                    linear-gradient(135deg, transparent 0 12%, color-mix(in srgb, ${stampColor} 10%, transparent) 12% 20%, transparent 20% 100%),
+                    color-mix(in srgb, ${stampColor} 12%, transparent);
+                color: color-mix(in srgb, ${stampColor} 86%, white 14%);
+                font-family: 'Arial Narrow', 'DIN Condensed', 'Bahnschrift SemiCondensed', sans-serif;
+                font-size: ${compact ? "11px" : "12px"};
+                font-weight: 900;
+                line-height: 1;
+                letter-spacing: 0.2px;
+                text-transform: uppercase;
+                text-align: center;
+                text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+                opacity: ${showSuccess ? "0.86" : "0.78"};
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                pointer-events: none;
+                mix-blend-mode: screen;
             ">
-                <div style="
-                    font-size: ${compact ? "12px" : "13px"};
-                    font-weight: 700;
-                    line-height: 1.1;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                ">
-                    ${overlayTitle}
-                </div>
-
-                <div style="
-                    font-size: ${compact ? "10px" : "11px"};
-                    opacity: 0.78;
-                    line-height: 1.15;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                ">
-                    ${overlayText}
-                </div>
+                <span style="position: absolute; left: 12%; top: -3px; width: 20px; height: 6px; background: rgba(0, 0, 0, 0.55); transform: rotate(-7deg); opacity: 0.34;"></span>
+                <span style="position: absolute; right: 18%; bottom: -3px; width: 25px; height: 5px; background: rgba(0, 0, 0, 0.55); transform: rotate(5deg); opacity: 0.32;"></span>
+                <span style="position: absolute; left: 50%; top: 42%; width: 34px; height: 2px; background: rgba(0, 0, 0, 0.42); transform: rotate(-10deg); opacity: 0.28;"></span>
+                ${overlayTitle}
             </div>
 
             <button
                 data-confirm-entity="${entityId}"
-                ${ui.confirming || showSuccess ? "disabled" : ""}
+                ${acknowledged ? "disabled" : ""}
                 style="
-                    flex: 0 0 auto;
-                    border: none;
-                    border-radius: 999px;
-                    padding: ${compact ? "5px 8px" : "6px 9px"};
-                    background: ${showSuccess ? "var(--success-color, #43a047)" : "var(--primary-color)"};
-                    color: var(--text-primary-color);
-                    font-size: ${compact ? "10px" : "11px"};
-                    font-weight: 700;
-                    cursor: ${ui.confirming || showSuccess ? "default" : "pointer"};
-                    white-space: nowrap;
-                    opacity: ${ui.confirming ? "0.75" : "1"};
-                    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
+                    position: relative;
+                    transform: translateX(${compact ? "10px" : "14px"}) rotate(9deg);
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: ${compact ? "4px" : "5px"};
+                    max-width: 100%;
+                    box-sizing: border-box;
+                    padding: ${compact ? "3px 6px" : "4px 7px"};
+                    border-radius: 4px;
+                    border: 2px solid color-mix(in srgb, ${actionColor} 82%, transparent);
+                    outline: 1px dashed color-mix(in srgb, ${actionColor} 54%, transparent);
+                    outline-offset: -4px;
+                    background:
+                        linear-gradient(135deg, transparent 0 14%, color-mix(in srgb, ${actionColor} 12%, transparent) 14% 23%, transparent 23% 100%),
+                        color-mix(in srgb, ${actionColor} 13%, rgba(0, 0, 0, 0.12));
+                    color: color-mix(in srgb, ${actionColor} 82%, white 18%);
+                    font-family: 'Arial Narrow', 'DIN Condensed', 'Bahnschrift SemiCondensed', sans-serif;
+                    font-size: ${compact ? "9px" : "10px"};
+                    font-weight: 900;
+                    line-height: 1;
+                    letter-spacing: 0.1px;
+                    text-transform: uppercase;
+                    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+                    cursor: ${acknowledged ? "default" : "pointer"};
+                    opacity: ${acknowledged ? "0.86" : "0.80"};
+                    pointer-events: auto;
+                    box-shadow: 0 0 9px color-mix(in srgb, ${actionColor} 22%, transparent);
                 "
             >
-                ${buttonText}
+                <span style="
+                    min-width: 0;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                ">${actionText}</span>
+                <span style="
+                    flex: 0 0 auto;
+                    width: ${compact ? "11px" : "12px"};
+                    height: ${compact ? "11px" : "12px"};
+                    border-radius: 2px;
+                    border: 1.6px solid currentColor;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: ${compact ? "9px" : "10px"};
+                    line-height: 1;
+                    background: ${acknowledged ? "color-mix(in srgb, currentColor 28%, transparent)" : "rgba(0, 0, 0, 0.16)"};
+                    transition: transform 160ms ease, background 160ms ease;
+                    transform: ${acknowledged ? "scale(1.06)" : "scale(1)"};
+                ">${acknowledged ? "✓" : ""}</span>
             </button>
         </div>
     `;

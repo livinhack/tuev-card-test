@@ -9,6 +9,7 @@ export const en = {
         "overlay.updating_text": "Calculating new sticker.",
         "overlay.updated_text": "New sticker applied.",
         "overlay.question": "Inspection passed?",
+        "overlay.hu_passed_question": "HU passed?",
         "button.wait": "Please wait",
         "button.done": "Done",
         "button.confirm": "Confirm",
