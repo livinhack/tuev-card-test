@@ -1,4 +1,4 @@
-# b55 Stamp readability tuning
+# b56 Stamp readability tuning
 
 This checkpoint refines the HU stamp confirmation overlay introduced in b54.
 

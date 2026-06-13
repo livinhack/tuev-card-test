@@ -1,4 +1,4 @@
-import { renderBadge } from "../badge/renderer.js?v=b55";
+import { renderBadge } from "../badge/renderer.js?v=b56";
 
 export function renderMissingEntity(entityId, localize) {
     return `
@@ -344,8 +344,8 @@ export function renderCompactConfirmPanel({
         <div style="
             position: absolute;
             left: 50%;
-            top: ${compact ? "58%" : "55%"};
-            transform: translate(-50%, -50%) rotate(-13deg);
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(-18deg);
             z-index: 6;
             width: max-content;
             max-width: min(96%, ${compact ? "154px" : "178px"});
@@ -353,7 +353,7 @@ export function renderCompactConfirmPanel({
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: ${compact ? "2px" : "3px"};
+            gap: ${compact ? "3px" : "4px"};
             pointer-events: none;
             filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.48));
         ">
@@ -368,9 +368,10 @@ export function renderCompactConfirmPanel({
                 outline-offset: -4px;
                 border-radius: 4px;
                 background:
-                    radial-gradient(circle at 22% 28%, color-mix(in srgb, ${stampColor} 22%, transparent), transparent 46%),
-                    linear-gradient(135deg, transparent 0 12%, color-mix(in srgb, ${stampColor} 16%, transparent) 12% 22%, transparent 22% 100%),
-                    color-mix(in srgb, ${stampColor} 24%, rgba(0, 0, 0, 0.62));
+                    radial-gradient(circle at 24% 24%, color-mix(in srgb, ${stampColor} 28%, transparent), transparent 45%),
+                    radial-gradient(circle at 72% 70%, color-mix(in srgb, ${stampColor} 16%, transparent), transparent 48%),
+                    linear-gradient(135deg, transparent 0 10%, color-mix(in srgb, ${stampColor} 18%, transparent) 10% 21%, transparent 21% 100%),
+                    color-mix(in srgb, ${stampColor} 18%, rgba(0, 0, 0, 0.78));
                 color: color-mix(in srgb, ${stampColor} 78%, white 22%);
                 font-family: 'Arial Narrow', 'DIN Condensed', 'Bahnschrift SemiCondensed', sans-serif;
                 font-size: ${compact ? "10px" : "11px"};
@@ -380,10 +381,10 @@ export function renderCompactConfirmPanel({
                 text-transform: uppercase;
                 text-align: center;
                 text-shadow: 0 1px 1px rgba(0, 0, 0, 0.78), 0 0 5px rgba(0, 0, 0, 0.35);
-                opacity: ${showSuccess ? "0.92" : "0.88"};
+                opacity: ${showSuccess ? "0.94" : "0.92"};
                 overflow: hidden;
                 pointer-events: none;
-                backdrop-filter: blur(1.5px) saturate(1.08);
+                backdrop-filter: blur(2.2px) saturate(1.18);
             ">
                 <span style="position: absolute; left: 10%; top: -3px; width: 20px; height: 6px; background: rgba(0, 0, 0, 0.60); transform: rotate(-7deg); opacity: 0.34;"></span>
                 <span style="position: absolute; right: 16%; bottom: -3px; width: 26px; height: 5px; background: rgba(0, 0, 0, 0.62); transform: rotate(5deg); opacity: 0.32;"></span>
@@ -398,7 +399,7 @@ export function renderCompactConfirmPanel({
                 ${acknowledged ? "disabled" : ""}
                 style="
                     position: relative;
-                    transform: translateX(${compact ? "8px" : "12px"}) rotate(9deg);
+                    transform: translateX(${compact ? "9px" : "13px"}) rotate(14deg);
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
@@ -411,9 +412,10 @@ export function renderCompactConfirmPanel({
                     outline: 1px dashed color-mix(in srgb, ${actionColor} 62%, transparent);
                     outline-offset: -4px;
                     background:
-                        radial-gradient(circle at 72% 28%, color-mix(in srgb, ${actionColor} 18%, transparent), transparent 44%),
-                        linear-gradient(135deg, transparent 0 14%, color-mix(in srgb, ${actionColor} 16%, transparent) 14% 24%, transparent 24% 100%),
-                        color-mix(in srgb, ${actionColor} 24%, rgba(0, 0, 0, 0.58));
+                        radial-gradient(circle at 72% 28%, color-mix(in srgb, ${actionColor} 26%, transparent), transparent 44%),
+                        radial-gradient(circle at 24% 76%, color-mix(in srgb, ${actionColor} 14%, transparent), transparent 48%),
+                        linear-gradient(135deg, transparent 0 12%, color-mix(in srgb, ${actionColor} 18%, transparent) 12% 23%, transparent 23% 100%),
+                        color-mix(in srgb, ${actionColor} 18%, rgba(0, 0, 0, 0.76));
                     color: color-mix(in srgb, ${actionColor} 76%, white 24%);
                     font-family: 'Arial Narrow', 'DIN Condensed', 'Bahnschrift SemiCondensed', sans-serif;
                     font-size: ${compact ? "9px" : "10px"};
@@ -423,10 +425,10 @@ export function renderCompactConfirmPanel({
                     text-transform: uppercase;
                     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75), 0 0 5px rgba(0, 0, 0, 0.35);
                     cursor: ${acknowledged ? "default" : "pointer"};
-                    opacity: ${acknowledged ? "0.92" : "0.88"};
+                    opacity: ${acknowledged ? "0.94" : "0.92"};
                     pointer-events: auto;
                     box-shadow: 0 0 10px color-mix(in srgb, ${actionColor} 28%, transparent);
-                    backdrop-filter: blur(1.5px) saturate(1.08);
+                    backdrop-filter: blur(2.2px) saturate(1.18);
                 "
             >
                 <span style="
