@@ -366,7 +366,7 @@ const GROUP_ACCENT_COLORS = [
     "#42a5f5",
     "#66bb6a",
     "#ffa726",
-    "#ab50bc",
+    "#ab51bc",
     "#26c6da",
     "#ef5350",
     "#8d6e63"
@@ -1762,11 +1762,12 @@ function renderCompactConfirmPanel({
         <div style="
             position: absolute;
             left: 50%;
-            top: 75%;
-            transform: translate(-50%, -50%);
+            right: auto;
+            bottom: ${compact ? "3px" : "4px"};
+            transform: translateX(-50%);
             z-index: 6;
             width: max-content;
-            max-width: min(94%, ${compact ? "216px" : "248px"});
+            max-width: calc(100% - ${compact ? "8px" : "10px"});
             box-sizing: border-box;
             display: flex;
             flex-direction: row;
@@ -1783,6 +1784,7 @@ function renderCompactConfirmPanel({
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             text-align: left;
+            pointer-events: auto;
         ">
             <div style="
                 min-width: 0;
@@ -4924,7 +4926,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry b50
+// TÜV Card source entry b51
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5642,7 +5644,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db5037)"
+            expired: "var(--error-color, #db5137)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year
