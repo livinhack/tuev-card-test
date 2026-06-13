@@ -1,4 +1,4 @@
-# b51 – Fixed-size compact confirm overlay
+# b52 – Fixed-size compact confirm overlay
 
 This checkpoint keeps the `show_badge: false` confirmation panel fully non-reserving.
 

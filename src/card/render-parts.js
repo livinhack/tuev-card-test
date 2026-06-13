@@ -1,4 +1,4 @@
-import { renderBadge } from "../badge/renderer.js?v=b51";
+import { renderBadge } from "../badge/renderer.js?v=b52";
 
 export function renderMissingEntity(entityId, localize) {
     return `
@@ -320,18 +320,18 @@ export function renderCompactConfirmPanel({
     return `
         <div style="
             position: absolute;
-            left: 50%;
-            right: auto;
-            bottom: ${compact ? "3px" : "4px"};
-            transform: translateX(-50%);
+            left: ${compact ? "4px" : "5px"};
+            right: ${compact ? "4px" : "5px"};
+            bottom: ${compact ? "0px" : "1px"};
+            transform: none;
             z-index: 6;
-            width: max-content;
-            max-width: calc(100% - ${compact ? "8px" : "10px"});
+            width: auto;
+            max-width: none;
             box-sizing: border-box;
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             gap: ${compact ? "7px" : "8px"};
             padding: ${compact ? "5px 7px" : "6px 8px"};
             border-radius: 14px;

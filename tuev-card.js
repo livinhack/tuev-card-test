@@ -366,7 +366,7 @@ const GROUP_ACCENT_COLORS = [
     "#42a5f5",
     "#66bb6a",
     "#ffa726",
-    "#ab51bc",
+    "#ab52bc",
     "#26c6da",
     "#ef5350",
     "#8d6e63"
@@ -1761,18 +1761,18 @@ function renderCompactConfirmPanel({
     return `
         <div style="
             position: absolute;
-            left: 50%;
-            right: auto;
-            bottom: ${compact ? "3px" : "4px"};
-            transform: translateX(-50%);
+            left: ${compact ? "4px" : "5px"};
+            right: ${compact ? "4px" : "5px"};
+            bottom: ${compact ? "0px" : "1px"};
+            transform: none;
             z-index: 6;
-            width: max-content;
-            max-width: calc(100% - ${compact ? "8px" : "10px"});
+            width: auto;
+            max-width: none;
             box-sizing: border-box;
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             gap: ${compact ? "7px" : "8px"};
             padding: ${compact ? "5px 7px" : "6px 8px"};
             border-radius: 14px;
@@ -4926,7 +4926,7 @@ return { TuevCardEditor: TuevCardEditor };
 
 // ---- src/tuev-card-entry.js ----
 const __m_src_tuev_card_entry_js = (() => {
-// TÜV Card source entry b51
+// TÜV Card source entry b52
 
 const { localize } = __m_src_translations_index_js;
 const { normalizeCardConfig } = __m_src_card_config_js;
@@ -5644,7 +5644,7 @@ class TuevCard extends HTMLElement {
         const statusColor = {
             valid: "var(--success-color, #43a047)",
             due: "var(--warning-color, #ffa000)",
-            expired: "var(--error-color, #db5137)"
+            expired: "var(--error-color, #db5237)"
         }[status] || "var(--secondary-text-color)";
 
         const huLabel = month && year
@@ -5764,6 +5764,8 @@ class TuevCard extends HTMLElement {
                 gap: 10px;
                 align-items: center;
                 min-width: 0;
+                box-sizing: border-box;
+                padding-bottom: ${showBadge ? "0" : (compact ? "34px" : "38px")};
             ">
                 ${header}
                 ${badgeArea}

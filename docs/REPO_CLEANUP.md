@@ -1,8 +1,8 @@
 # TÜV Card repo cleanup notes
 
-Current checked version: `b51`.
+Current checked version: `b52`.
 
-This checkpoint is a repository cleanup before the first semantic `b51` release. It does not intentionally change UI behavior, editor behavior, card rendering, EuroPlate handling, grouping, sorting, or HACS naming.
+This checkpoint is a repository cleanup before the first semantic `b52` release. It does not intentionally change UI behavior, editor behavior, card rendering, EuroPlate handling, grouping, sorting, or HACS naming.
 
 ## Verified release layout
 
@@ -30,7 +30,7 @@ The HACS metadata points to the root bundle:
 Expected Home Assistant resource path:
 
 ```yaml
-url: /hacsfiles/tuev-card/tuev-card.js?v=b51
+url: /hacsfiles/tuev-card/tuev-card.js?v=b52
 type: module
 ```
 

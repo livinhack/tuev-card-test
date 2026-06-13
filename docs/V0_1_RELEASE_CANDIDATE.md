@@ -1,12 +1,12 @@
-# TÜV Card b51 release notes
+# TÜV Card b52 release notes
 
-Current checked version: `b51`.
+Current checked version: `b52`.
 
-This document records the first semantic test release milestone. `b51` is based on the confirmed `b42` release candidate and the `b43` repository cleanup checkpoint.
+This document records the first semantic test release milestone. `b52` is based on the confirmed `b42` release candidate and the `b43` repository cleanup checkpoint.
 
 ## Release status
 
-- First semantic test release: `b51`.
+- First semantic test release: `b52`.
 - Not actively advertised as a public launch yet.
 - Intended as a stable technical baseline for further testing through HACS.
 - No UI, renderer, editor, HACS naming, or runtime behavior changes were intentionally introduced during the final version switch.
@@ -24,8 +24,8 @@ This document records the first semantic test release milestone. `b51` is based 
 
 ## Must-have checks before publishing the GitHub Release
 
-- Confirm the package version is `0.1.1-b51`.
-- Confirm the generated bundle header says `TÜV Card bundled b51`.
+- Confirm the package version is `0.1.1-b52`.
+- Confirm the generated bundle header says `TÜV Card bundled b52`.
 - Confirm HACS uses `tuev-card.js` from the repository root.
 - Confirm README installation paths match the root-bundle HACS structure.
 - Confirm NOTICE/license notes are acceptable for the current state.
@@ -40,7 +40,7 @@ This document records the first semantic test release milestone. `b51` is based 
 - Confirm dashboard save/reload keeps group order, group colors, sort modes, and display options.
 - Confirm no browser-console errors appear on normal card load, editor open, or popover interactions.
 
-## Explicitly deferred until after b51
+## Explicitly deferred until after b52
 
 - Plate Renderer v2 based on FZV Anlage 4.
 - Replacing manual `EuroPlate.ttf` installation with bundled GL-Nummernschild fonts.
@@ -61,8 +61,8 @@ This document records the first semantic test release milestone. `b51` is based 
 
 ## Release flow
 
-1. Copy this `b51` ZIP into the repository.
+1. Copy this `b52` ZIP into the repository.
 2. Commit and push with GitHub Desktop.
-3. Create a GitHub Release with tag `b51`.
-4. Use the release title `b51 - Initial test release`.
+3. Create a GitHub Release with tag `b52`.
+4. Use the release title `b52 - Initial test release`.
 5. Let HACS discover the update, or use **Informationen aktualisieren** for an immediate manual check.
